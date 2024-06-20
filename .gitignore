@@ -1,0 +1,54 @@
+/EvoEngineX.sln
+# Ignore build output
+[Bb]in/
+[Oo]bj/
+
+# Ignore Rider project files
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio Code workspace files
+.vscode/
+*.code-workspace
+
+# Ignore other files and folders created by common tools
+*.DS_Store
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore node_modules (if ClientApp is using a frontend framework like Angular/React)
+ClientApp/node_modules/
+DesktopApp/node_modules/
+
+# Ignore logs
+*.log
+
+# Ignore npm package-lock files
+ClientApp/package-lock.json
+DesktopApp/package-lock.json
+
+# Ignore yarn lock files
+ClientApp/yarn.lock
+DesktopApp/yarn.lock
+
+# Ignore temporary files
+*.tmp
+*.temp
+
+# Ignore specific files and folders
+ClientApp/dist/
+DesktopApp/dist/
+ClientApp/build/
+DesktopApp/build/
+
+# Ignore Mac system files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
