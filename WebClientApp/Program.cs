@@ -1,6 +1,6 @@
 using Blazorise;
-using Blazorise.Icons.Material;
-using Blazorise.Material;
+using Blazorise.Bootstrap5;
+using Blazorise.Icons.FontAwesome;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using WebClientApp;
@@ -20,8 +20,9 @@ builder.Services.AddOidcAuthentication(options =>
 
 
 builder.Services
-    .AddBlazorise()
-    .AddMaterialProviders()
-    .AddMaterialIcons();
+    .AddBlazorise(
+        options => { options.Immediate = true; })
+    .AddBootstrap5Providers()
+    .AddFontAwesomeIcons();
 
 await builder.Build().RunAsync();
