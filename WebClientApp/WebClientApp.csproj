@@ -22,4 +22,8 @@
       <AdditionalFiles Include="Pages\Features\Users\UserProfile.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\DomainModels\DomainModels.csproj" />
+    </ItemGroup>
+
 </Project>
