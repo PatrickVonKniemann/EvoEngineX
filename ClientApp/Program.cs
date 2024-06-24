@@ -11,6 +11,25 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+var theme = new Theme
+{
+    ColorOptions = new ThemeColorOptions
+    {
+        Primary = "#3498db",
+        Secondary = "#2ecc71",
+        Success = "#1abc9c",
+        Danger = "#e74c3c"
+    },
+    BackgroundOptions = new ThemeBackgroundOptions
+    {
+        Primary = "#3498db"
+    },
+    TextColorOptions = new ThemeTextColorOptions
+    {
+        Primary = "#ffffff"
+    }
+};
+
 
 builder.Services
     .AddBlazorise(
@@ -18,5 +37,6 @@ builder.Services
     .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
 
+builder.Services.AddSingleton(theme);
 
 await builder.Build().RunAsync();
