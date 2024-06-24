@@ -15,12 +15,13 @@ var theme = new Theme
 {
     ColorOptions = new ThemeColorOptions
     {
-        Primary = "#413A9A",
-        Secondary = "#313056",
-        Success = "#FF7A79",
+        Primary = "#FF7979",
+        Secondary = "#CA5EFF",
+        Success = "#CA5EFF",
         Info = "#7885FF",
         Danger = "#D21D04",
         Dark = "#313056",
+        Light = "#464667",
     },
     BackgroundOptions = new ThemeBackgroundOptions
     {
@@ -30,11 +31,12 @@ var theme = new Theme
         Info = "#7885FF",
         Danger = "#D21D04",
         Dark = "#2F2E48",
+        Light = "#464667",
     },
     TextColorOptions = new ThemeTextColorOptions
     {
         Primary = "#F9F9FC",
-        Dark = "#9E9EB1"
+        Secondary = "#9E9EB1"
     }
 };
 

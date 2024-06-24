@@ -5,15 +5,15 @@
 <ThemeProvider Theme="@Theme">
     <Layout Sider>
         <LayoutSider>
-            <LayoutSiderContent>
+            <LayoutSiderContent class="layout-sider-content">
                 <NavMenu/>
             </LayoutSiderContent>
         </LayoutSider>
         <Layout>
-            <LayoutHeader Fixed>
-                Header
+            <LayoutHeader class="header-content" Fixed>
+                <Header></Header>
             </LayoutHeader>
-            <LayoutContent>
+            <LayoutContent class="layout-content">
                 @Body
             </LayoutContent>
         </Layout>
@@ -22,11 +22,26 @@
 
 <style>
     .header-content {
+        background-color: @Theme.BackgroundOptions.Secondary;
         color: @Theme.TextColorOptions.Primary;
+    }
+
+    .layout-sider-content {
+        background-color: @Theme.BackgroundOptions.Dark;
+        color: @Theme.TextColorOptions.Primary;
+    }
+
+    .layout-content {
+        background-color: @Theme.BackgroundOptions.Secondary;
+        color: @Theme.TextColorOptions.Secondary;
+    }
+
+    .main-layout {
         background-color: @Theme.BackgroundOptions.Primary;
     }
-    .layout-sider-content {
-        background-color: @Theme.BackgroundOptions.Primary;
-        color: @Theme.TextColorOptions.Primary;
+    
+    .jumbotron-layout {
+        background-color: @Theme.BackgroundOptions.Light;
+
     }
 </style>
