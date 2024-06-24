@@ -1,7 +1,25 @@
 ﻿@using Blazorise
 @inherits LayoutComponentBase
 @inject Theme Theme
-
+@* *@
+@* <ThemeProvider Theme="@Theme"> *@
+@*     <Layout> *@
+@*         <LayoutHeader> *@
+@*             Header *@
+@*         </LayoutHeader> *@
+@*         <LayoutContent> *@
+@*             Content *@
+@*             <LayoutSider> *@
+@*                 <LayoutSiderContent> *@
+@*                     Sider *@
+@*                 </LayoutSiderContent> *@
+@*             </LayoutSider> *@
+@*         </LayoutContent> *@
+@*         <LayoutFooter> *@
+@*             Footer *@
+@*         </LayoutFooter> *@
+@*     </Layout> *@
+@* </ThemeProvider> *@
 <ThemeProvider Theme="@Theme">
     <Layout Sider>
         <LayoutSider>
@@ -21,6 +39,10 @@
 </ThemeProvider>
 
 <style>
+    body {
+        margin: 0;
+    }
+
     .header-content {
         background-color: @Theme.BackgroundOptions.Secondary;
         color: @Theme.TextColorOptions.Primary;
@@ -39,9 +61,8 @@
     .main-layout {
         background-color: @Theme.BackgroundOptions.Primary;
     }
-    
+
     .jumbotron-layout {
         background-color: @Theme.BackgroundOptions.Light;
-
     }
 </style>
