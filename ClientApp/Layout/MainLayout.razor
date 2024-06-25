@@ -9,11 +9,11 @@
                 <NavMenu/>
             </LayoutSiderContent>
         </LayoutSider>
-        <Layout>
+        <Layout >
             <LayoutHeader class="header-content" Fixed>
                 <Header></Header>
             </LayoutHeader>
-            <LayoutContent class="layout-content">
+            <LayoutContent Padding="Padding.Is3" class="layout-content">
                 @Body
             </LayoutContent>
         </Layout>
@@ -25,7 +25,6 @@
     body {
         margin: 0;
         font-family: monospace;
-
     }
 
 
@@ -34,10 +33,9 @@
         background-color: @Theme.BackgroundOptions.Secondary;
     }
 
-    .header-content, .layout-sider-content {
+    .layout-sider-content {
+        background-color: linear-gradient(135deg, @Theme.BackgroundOptions.Dark, #232137); /* Dark theme color */
         color: @Theme.TextColorOptions.Primary;
-        background-color: @Theme.BackgroundOptions.Dark;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 
     .layout-content {
@@ -52,5 +50,13 @@
         background-color: @Theme.BackgroundOptions.Light;
     }
 
+    .glass {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        text-align: center;
+        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        backdrop-filter: blur(10px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+    }
 
 </style>

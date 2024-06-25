@@ -3,61 +3,57 @@
 <PageTitle>Home</PageTitle>
 
 <h2 class="text-secondary">Write, run and analyze... </h2>
-<Container>
-    <Jumbotron Class="jumbotron-layout">
-        <Row>
-            <Column>
-                <Card>
-                    <CardImage src="/img/1.jpg"/>
-                    <CardBody>
-                        <CardTitle>Card Title 1</CardTitle>
-                        <CardText>This is a description for the first card.</CardText>
-                    </CardBody>
-                </Card>
-            </Column>
-            <Column>
-                <Card>
-                    <CardImage src="/img/2.jpg"/>
-                    <CardBody>
-                        <CardTitle>Card Title 2</CardTitle>
-                        <CardText>This is a description for the first card.</CardText>
-                    </CardBody>
-                </Card>
-            </Column>
-            <Column>
-                <Card>
-                    <CardImage src="/img/3.jpg"/>
-                    <CardBody>
-                        <CardTitle>Card Title 3</CardTitle>
-                        <CardText>This is a description for the first card.</CardText>
-                    </CardBody>
-                </Card>
-            </Column>
-        </Row>
-    </Jumbotron>
+<Container Padding="Padding.Is2">
+    <Row>
+        <Column>
+            <Card>
+                @* <CardImage src="/img/1.jpg"/> *@
+                <CardBody>
+                    <CardTitle>Card Title 1</CardTitle>
+                    <CardText>This is a description for the first card.</CardText>
+                </CardBody>
+            </Card>
+        </Column>
+        <Column>
+            <Card>
+                @* <CardImage src="/img/2.jpg"/> *@
+                <CardBody>
+                    <CardTitle>Card Title 2</CardTitle>
+                    <CardText>This is a description for the first card.</CardText>
+                </CardBody>
+            </Card>
+        </Column>
+        <Column>
+            <Card>
+                @* <CardImage src="/img/3.jpg"/> *@
+                <CardBody>
+                    <CardTitle>Card Title 3</CardTitle>
+                    <CardText>This is a description for the first card.</CardText>
+                </CardBody>
+            </Card>
+        </Column>
+    </Row>
 
     <h2>Cost of your usage</h2>
 
-    <Jumbotron Class="jumbotron-layout">
-        <Row>
-            <Column>
-                <Card>
-                    <CardImage src="/img/graph.png"/>
-                    <CardBody>
-                        <CardTitle>Some cool graph</CardTitle>
-                        <CardText>This is a description for the first card.</CardText>
-                    </CardBody>
-                </Card>
-            </Column>
-            <Column>
-                <Card>
-                    <CardImage src="/img/graph.png"/>
-                    <CardBody>
-                        <CardTitle>Card Title 2</CardTitle>
-                        <CardText>This is a description for the first card.</CardText>
-                    </CardBody>
-                </Card>
-            </Column>
-        </Row>
-    </Jumbotron>
+    <Row>
+        <Column Size="ColumnSize.Is6">
+            <Card>
+                @* <CardImage src="/img/graph.png"/> *@
+                <CardBody>
+                    <CardTitle>Some cool graph</CardTitle>
+                    <CardText>This is a description for the first card.</CardText>
+                </CardBody>
+            </Card>
+        </Column>
+        <Column ColumnSize="ColumnSize.Is6">
+            <Card>
+                @* <CardImage src="/img/graph.png"/> *@
+                <CardBody>
+                    <CardTitle>Card Title 2</CardTitle>
+                    <CardText>This is a description for the first card.</CardText>
+                </CardBody>
+            </Card>
+        </Column>
+    </Row>
 </Container>

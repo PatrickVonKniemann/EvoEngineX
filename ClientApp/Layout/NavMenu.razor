@@ -7,11 +7,9 @@
      Breakpoint="Breakpoint.Desktop"
      NavigationBreakpoint="Breakpoint.Tablet"
      ThemeContrast="ThemeContrast.Dark">
-    <BarBrand>
+    <BarBrand Margin="Margin.Is3">
         <BarStart>
-            <BarLink To="/">
-                <img src="img/logo.png" alt="logo" class="nav-logo"/>
-            </BarLink>
+            <h1> Here will be cool LOGO... </h1>
         </BarStart>
     </BarBrand>
     <BarMenu>
@@ -46,6 +44,18 @@
 
 
 <style>
+
+    .b-bar-link {
+        width: fit-content; /* or a fixed width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .b-bar-icon {
+        width: fit-content; /* or a fixed width */
+        margin-left: auto;
+        margin-right: auto;
+    }
+
 
     .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
         color: @Theme.TextColorOptions.Primary;
