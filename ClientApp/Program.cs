@@ -13,31 +13,47 @@ builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.
 
 var theme = new Theme
 {
+    ButtonOptions = new ThemeButtonOptions
+    {
+        Padding = "0.5rem 1rem",
+        Margin = "0.5rem",
+        BoxShadowSize = "4px 4px 8px",
+        BoxShadowTransparency = 127,
+        HoverDarkenColor = 5f, // Slight darken effect on hover
+        HoverLightenColor = 10f, // Slight lighten effect on hover
+        ActiveDarkenColor = 10f, // Darken effect on active
+        ActiveLightenColor = 15f, // Lighten effect on active
+        LargeBorderRadius = ".3rem",
+        SmallBorderRadius = ".2rem",
+        GradientBlendPercentage = 25f, // More pronounced gradient for a better visual effect
+        DisabledOpacity = 0.65f,
+        Size = Size.Medium,
+    },
     ColorOptions = new ThemeColorOptions
     {
-        Primary = "#FF7979",
-        Secondary = "#CA5EFF",
+        Primary = "#673FD7",
+        Secondary = "#FD8D03",
         Success = "#CA5EFF",
-        Info = "#7885FF",
+        Info = "#5643CC",
         Link = "#6659FF",
         Danger = "#D21D04",
-        Dark = "#2F2E48",
-        Light = "#464667",
+        Dark = "#0A0116",
+        Light = "#455EB5",
     },
     BackgroundOptions = new ThemeBackgroundOptions
     {
-        Primary = "#42437E",
-        Secondary = "#37385F",
+        Primary = "#512087",
+        Secondary = "#0F0817",
         Success = "#FF7A79",
         Info = "#7885FF",
         Danger = "#D21D04",
-        Dark = "#2F2E48",
+        Dark = "#0A0116",
         Light = "#464667",
     },
     TextColorOptions = new ThemeTextColorOptions
     {
-        Primary = "#F9F9FC",
-        Secondary = "#9E9EB1",
+        Primary = "#FEFCFD",
+        Secondary = "#D2D1D6",
     }
 };
 

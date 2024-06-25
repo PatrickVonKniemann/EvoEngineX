@@ -9,12 +9,14 @@
                 <NavMenu/>
             </LayoutSiderContent>
         </LayoutSider>
-        <Layout >
+        <Layout>
             <LayoutHeader class="header-content" Fixed>
                 <Header></Header>
             </LayoutHeader>
             <LayoutContent Padding="Padding.Is3" class="layout-content">
-                @Body
+                <Container>
+                    @Body
+                </Container>
             </LayoutContent>
         </Layout>
     </Layout>
@@ -28,35 +30,82 @@
     }
 
 
-    .header-content,
+    .header-content {
+        background-color: @Theme.BackgroundOptions.Dark;
+    }
+
     .layout-content {
-        background-color: @Theme.BackgroundOptions.Secondary;
+        background-image: url('img/background.png'); /* Replace with your image path */
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+        text-align: center;
     }
 
     .layout-sider-content {
-        background-color: linear-gradient(135deg, @Theme.BackgroundOptions.Dark, #232137); /* Dark theme color */
         color: @Theme.TextColorOptions.Primary;
     }
 
-    .layout-content {
-        color: @Theme.TextColorOptions.Secondary;
-    }
 
     .main-layout {
         background-color: @Theme.BackgroundOptions.Primary;
     }
 
-    .jumbotron-layout {
-        background-color: @Theme.BackgroundOptions.Light;
-    }
-
     .glass {
         background: rgba(255, 255, 255, 0.1);
         border-radius: 15px;
-        text-align: center;
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
         backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
         border: 1px solid rgba(255, 255, 255, 0.3);
+        padding: 20px;
+        color: white;
     }
+
+    /* Dark class */
+    .dark-class {
+        background: @Theme.BackgroundOptions.Dark;
+        border-radius: 15px;
+        padding: 20px;
+        color: white;
+        margin: 10px;
+    }
+
+    .container {
+        text-align: center;
+        margin-left: 2em;
+        margin-right: 2em;
+        padding: 0.5em;
+    }
+
+
+    .button-custom {
+        background-image: linear-gradient(92.88deg, #455EB5 9.16%, #5643CC 43.89%, #673FD7 64.72%);
+        border-radius: 8px;
+        border-style: none;
+        box-sizing: border-box;
+        color: #FFFFFF;
+        cursor: pointer;
+        flex-shrink: 0;
+        height: 2rem;
+        padding: 0 1.6rem;
+        text-align: center;
+        text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+        transition: all .5s;
+        user-select: none;
+        -webkit-user-select: none;
+        touch-action: manipulation;
+    }
+
+    .button-custom:hover {
+        box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
+        transition-duration: .1s;
+    }
+    
+    .button-custom {
+        padding: 0 2.6rem;
+    }
+
+    
 
 </style>
