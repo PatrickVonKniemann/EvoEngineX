@@ -19,8 +19,9 @@ var theme = new Theme
         Secondary = "#CA5EFF",
         Success = "#CA5EFF",
         Info = "#7885FF",
+        Link = "#6659FF",
         Danger = "#D21D04",
-        Dark = "#313056",
+        Dark = "#2F2E48",
         Light = "#464667",
     },
     BackgroundOptions = new ThemeBackgroundOptions
@@ -36,7 +37,7 @@ var theme = new Theme
     TextColorOptions = new ThemeTextColorOptions
     {
         Primary = "#F9F9FC",
-        Secondary = "#9E9EB1"
+        Secondary = "#9E9EB1",
     }
 };
 

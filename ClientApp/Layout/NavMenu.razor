@@ -1,27 +1,96 @@
 ﻿@using Blazorise
 @using DomainModels
+@inject Theme Theme
+
+<Bar Mode="BarMode.VerticalInline"
+     CollapseMode="BarCollapseMode.Small"
+     Breakpoint="Breakpoint.Desktop"
+     NavigationBreakpoint="Breakpoint.Tablet"
+     ThemeContrast="ThemeContrast.Dark">
+    <BarBrand>
+        <BarStart>
+            <BarLink To="/">
+                <img src="img/logo.png" alt="logo" class="nav-logo"/>
+            </BarLink>
+        </BarStart>
+    </BarBrand>
+    <BarMenu>
+        <BarStart>
+            <BarItem>
+                <BarLink To="/" class="nav-link">
+                    <BarIcon IconName="IconName.Home" IconSize="IconSize.Small" Margin="Margin.Is3"/>
+                    <span class="nav-text">Home</span>
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="@Links.Codebases" class="nav-link">
+                    <BarIcon IconName="IconName.Code" IconSize="IconSize.Small" Margin="Margin.Is3"/>
+                    <span class="nav-text">Code</span>
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="@Links.CloudProfile" class="nav-link">
+                    <BarIcon IconName="IconName.Cloud" IconSize="IconSize.Small" Margin="Margin.Is3"/>
+                    <span class="nav-text">Cloud profiles</span>
+                </BarLink>
+            </BarItem>
+            <BarItem>
+                <BarLink To="@Links.UserProfile" class="nav-link">
+                    <BarIcon IconName="IconName.Settings" IconSize="IconSize.Small" Margin="Margin.Is3"/>
+                    <span class="nav-text">My profile</span>
+                </BarLink>
+            </BarItem>
+        </BarStart>
+    </BarMenu>
+</Bar>
 
 
-<div>
-    <a class="navbar-brand" href="">EvoEngineX logo</a>
-</div>
+<style>
 
-<NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-    <Icon Name="IconName.Home" IconSize="IconSize.Large" Margin="Margin.Is3"/>
-    <Span>Home</Span>
-</NavLink>
+    .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
+        color: @Theme.TextColorOptions.Primary;
+    }
 
-<NavLink class="nav-link" href="@Links.Codebases">
-    <Icon Name="IconName.Code" IconSize="IconSize.Large" Margin="Margin.Is3"/>
-    <Span >My codebases</Span>
-</NavLink>
+    .b-bar-vertical-inline.b-bar-dark .b-bar-link:hover,
+    .b-bar-vertical-popout.b-bar-dark .b-bar-link:hover,
+    .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
+        color: @Theme.TextColorOptions.Primary;
+    }
 
-<NavLink class="nav-link" href="@Links.CloudProfile">
-    <Icon Name="IconName.Cloud" IconSize="IconSize.Large" Margin="Margin.Is3"/>
-    <Span >Cloud profile</Span>
-</NavLink>
+    .b-bar-menu,
+    .b-bar-item,
+    .b-bar-start,
+    .b-bar-vertical-inline.b-bar-dark .b-bar-link.active,
+    .b-bar-vertical-popout.b-bar-dark .b-bar-link.active,
+    .b-bar-vertical-small.b-bar-dark .b-bar-link.active {
+        background-color: @Theme.BackgroundOptions.Dark;
+    }
 
-<NavLink class="nav-link" href="@Links.UserProfile">
-    <Icon Name="IconName.Settings" IconSize="IconSize.Large" Margin="Margin.Is3"/>
-    <Span >Settings</Span>
-</NavLink>
+    .b-bar-item {
+        color: @Theme.TextColorOptions.Secondary;
+        margin: 0.2em;
+    }
+
+    .b-bar-item:hover,
+    .b-bar-item.active .b-bar-link:active,
+    .b-bar-item.active .b-bar-link a {
+        background-color: @Theme.BackgroundOptions.Light;
+        border-left: 1px solid @Theme.ColorOptions.Link;
+    }
+
+    .b-bar-vertical-inline.b-bar-dark .b-bar-link.active,
+    .b-bar-vertical-popout.b-bar-dark .b-bar-link.active,
+    .b-bar-vertical-small.b-bar-dark .b-bar-link.active {
+        color: @Theme.TextColorOptions.Primary;
+        border-left: 5px solid @Theme.ColorOptions.Link;
+    }
+
+    .nav-link {
+        width: 100%;
+        margin-left: 5px;
+        display: flex;
+        align-items: center;
+        text-align: left;
+    }
+
+</style>
