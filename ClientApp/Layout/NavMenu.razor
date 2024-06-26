@@ -15,92 +15,29 @@
     <BarMenu>
         <BarStart>
             <BarItem>
-                <BarLink To="/" class="nav-link">
+                <BarLink To="/">
                     <BarIcon IconName="IconName.Home" IconSize="IconSize.Small" Margin="Margin.Is3"/>
-                    <span class="nav-text">Home</span>
+                    <span>Home</span>
                 </BarLink>
             </BarItem>
             <BarItem>
-                <BarLink To="@Links.Codebases" class="nav-link">
+                <BarLink To="@Links.Codebases">
                     <BarIcon IconName="IconName.Code" IconSize="IconSize.Small" Margin="Margin.Is3"/>
-                    <span class="nav-text">Code</span>
+                    <span>Code</span>
                 </BarLink>
             </BarItem>
             <BarItem>
-                <BarLink To="@Links.CloudProfile" class="nav-link">
+                <BarLink To="@Links.CloudProfile">
                     <BarIcon IconName="IconName.Cloud" IconSize="IconSize.Small" Margin="Margin.Is3"/>
-                    <span class="nav-text">Cloud profiles</span>
+                    <span>Cloud profiles</span>
                 </BarLink>
             </BarItem>
             <BarItem>
-                <BarLink To="@Links.UserProfile" class="nav-link">
+                <BarLink To="@Links.UserProfile">
                     <BarIcon IconName="IconName.Settings" IconSize="IconSize.Small" Margin="Margin.Is3"/>
-                    <span class="nav-text">My profile</span>
+                    <span>My profile</span>
                 </BarLink>
             </BarItem>
         </BarStart>
     </BarMenu>
 </Bar>
-
-
-<style>
-
-    .b-bar-link {
-        width: fit-content; /* or a fixed width */
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .b-bar-icon {
-        width: fit-content; /* or a fixed width */
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-
-    .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
-        color: @Theme.TextColorOptions.Primary;
-    }
-
-    .b-bar-vertical-inline.b-bar-dark .b-bar-link:hover,
-    .b-bar-vertical-popout.b-bar-dark .b-bar-link:hover,
-    .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
-        color: @Theme.TextColorOptions.Primary;
-    }
-
-    .b-bar-menu,
-    .b-bar-item,
-    .b-bar-start,
-    .b-bar-vertical-inline.b-bar-dark .b-bar-link.active,
-    .b-bar-vertical-popout.b-bar-dark .b-bar-link.active,
-    .b-bar-vertical-small.b-bar-dark .b-bar-link.active {
-        background-color: @Theme.BackgroundOptions.Dark;
-    }
-
-    .b-bar-item {
-        color: @Theme.TextColorOptions.Secondary;
-        margin: 0.2em;
-    }
-
-    .b-bar-item:hover,
-    .b-bar-item.active .b-bar-link:active,
-    .b-bar-item.active .b-bar-link a {
-        background-color: @Theme.BackgroundOptions.Light;
-        border-left: 1px solid @Theme.ColorOptions.Primary;
-    }
-
-    .b-bar-vertical-inline.b-bar-dark .b-bar-link.active,
-    .b-bar-vertical-popout.b-bar-dark .b-bar-link.active,
-    .b-bar-vertical-small.b-bar-dark .b-bar-link.active {
-        color: @Theme.TextColorOptions.Primary;
-        border-left: 5px solid @Theme.ColorOptions.Primary;
-    }
-
-    .nav-link {
-        width: 100%;
-        margin-left: 5px;
-        display: flex;
-        align-items: center;
-        text-align: left;
-    }
-
-</style>

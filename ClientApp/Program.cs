@@ -11,6 +11,13 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
+
+const string primaryColor = "#402E7A";
+const string secondaryColor = "#4C3BCF";
+const string infoColor = "#4B70F5";
+const string linkColor = "#3DC2EC";
+const string lightColor = "#8173AF";
+const string darkColor = "#150742";
 var theme = new Theme
 {
     ButtonOptions = new ThemeButtonOptions
@@ -31,24 +38,24 @@ var theme = new Theme
     },
     ColorOptions = new ThemeColorOptions
     {
-        Primary = "#673FD7",
-        Secondary = "#FD8D03",
+        Primary = primaryColor,
+        Secondary = secondaryColor,
         Success = "#CA5EFF",
-        Info = "#5643CC",
-        Link = "#6659FF",
+        Info = infoColor,
+        Link = linkColor,
         Danger = "#D21D04",
-        Dark = "#0A0116",
-        Light = "#455EB5",
+        Dark = darkColor,
+        Light = lightColor,
     },
     BackgroundOptions = new ThemeBackgroundOptions
     {
-        Primary = "#512087",
-        Secondary = "#0F0817",
+        Primary = primaryColor,
+        Secondary = secondaryColor,
         Success = "#FF7A79",
-        Info = "#7885FF",
+        Info = infoColor,
         Danger = "#D21D04",
-        Dark = "#0A0116",
-        Light = "#464667",
+        Dark = darkColor,
+        Light = lightColor,
     },
     TextColorOptions = new ThemeTextColorOptions
     {
