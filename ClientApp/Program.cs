@@ -1,6 +1,7 @@
 using Blazorise;
 using Blazorise.Bootstrap5;
 using Blazorise.Icons.FontAwesome;
+using Blazorise.Tailwind;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using ClientApp;
@@ -12,55 +13,38 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient { BaseAddress = new Uri(builder.HostEnvironment.BaseAddress) });
 
 
-const string primaryColor = "#402E7A";
-const string secondaryColor = "#4C3BCF";
-const string infoColor = "#4B70F5";
-const string linkColor = "#3DC2EC";
-const string lightColor = "#8173AF";
-const string darkColor = "#150742";
+// Background
+const string primaryColor = "#131313"; // Dark
+const string secondaryColor = "#1C1A1C"; // Light dark
+const string darkColor = "#000000"; //pure black
+const string infoColor = "#BB86FD"; // light purple
+
+// Buttons color
+const string primaryButtonColor = "#A45DE8"; // purple
+const string primaryButtonAccentColor = "#7F39FB"; // purple darker
+const string secondaryButtonColor = "#03DAC5"; // teal
+
 var theme = new Theme
 {
-    ButtonOptions = new ThemeButtonOptions
-    {
-        Padding = "0.5rem 1rem",
-        Margin = "0.5rem",
-        BoxShadowSize = "4px 4px 8px",
-        BoxShadowTransparency = 127,
-        HoverDarkenColor = 5f, // Slight darken effect on hover
-        HoverLightenColor = 10f, // Slight lighten effect on hover
-        ActiveDarkenColor = 10f, // Darken effect on active
-        ActiveLightenColor = 15f, // Lighten effect on active
-        LargeBorderRadius = ".3rem",
-        SmallBorderRadius = ".2rem",
-        GradientBlendPercentage = 25f, // More pronounced gradient for a better visual effect
-        DisabledOpacity = 0.65f,
-        Size = Size.Medium,
-    },
     ColorOptions = new ThemeColorOptions
     {
-        Primary = primaryColor,
-        Secondary = secondaryColor,
-        Success = "#CA5EFF",
-        Info = infoColor,
-        Link = linkColor,
-        Danger = "#D21D04",
-        Dark = darkColor,
-        Light = lightColor,
+        Primary = primaryButtonColor,
+        Secondary = secondaryButtonColor,
+        Dark = primaryButtonAccentColor,
     },
     BackgroundOptions = new ThemeBackgroundOptions
     {
         Primary = primaryColor,
         Secondary = secondaryColor,
-        Success = "#FF7A79",
-        Info = infoColor,
-        Danger = "#D21D04",
         Dark = darkColor,
-        Light = lightColor,
+        Info = infoColor,
     },
     TextColorOptions = new ThemeTextColorOptions
     {
-        Primary = "#FEFCFD",
-        Secondary = "#D2D1D6",
+        Primary = "#E1E1E1",
+        Secondary = "#666666",
+        Info = "#A77AE0",
+        Success = "#6200ED",
     }
 };
 
@@ -69,7 +53,8 @@ builder.Services.AddSingleton(theme);
 
 builder.Services
     .AddBlazorise()
-    .AddBootstrap5Providers()
+    .AddTailwindProviders()
+    // .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
 
 

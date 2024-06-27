@@ -22,108 +22,59 @@
     </Layout>
 </ThemeProvider>
 
-
-
 <style>
     body {
-        margin: 0;
         font-family: monospace;
     }
-    
+
     .b-layout-header {
-         background-color: @Theme.BackgroundOptions.Primary;
+        background-color: @Theme.BackgroundOptions.Primary;
     }
 
     .b-layout-content {
-         background-color: @Theme.TextColorOptions.Secondary; 
+        background-color: @Theme.BackgroundOptions.Secondary;
         text-align: center;
         color: @Theme.TextColorOptions.Primary;
     }
 
     .b-layout-sider {
-        /*background-color: linear-gradient(92.88deg, @InfoColorWithAlpha, @SecondaryColorWithAlpha )*/
+        background-color: @Theme.ColorOptions.Primary
     }
-
-    .glass {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 15px;
-        box-shadow: 0 2px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(10px);
-        -webkit-backdrop-filter: blur(10px);
-        border: 1px solid rgba(255, 255, 255, 0.3);
-        padding: 20px;
-    }
-
-    /* Dark class */
-    .dark-class {
-        border-radius: 15px;
-        padding: 20px;
-        margin: 10px;
-        /*background-color: @DarkColorWithAlphaLight;*/
-        box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
-        backdrop-filter: blur(2.3px);
-        -webkit-backdrop-filter: blur(2.3px);
-        /*border: 1px solid @DarkColorWithAlphaHeavy;*/
-    }
-
-    .container {
-        text-align: center;
-        margin-left: 2em;
-        margin-right: 2em;
-        padding: 0.5em;
-    }
-
 
     .button-custom {
-        /*background-image: linear-gradient(92.88deg, @InfoColorWithAlpha,  @SecondaryColorWithAlpha);*/
+        background-image: linear-gradient(92.88deg, @Theme.ColorOptions.Primary 9.16%, @Theme.ColorOptions.Dark 64.72%);
         border-radius: 8px;
         border-style: none;
         box-sizing: border-box;
+        color: @Theme.TextColorOptions.Primary;
         cursor: pointer;
         flex-shrink: 0;
         height: 2rem;
         padding: 0 1.6rem;
         text-align: center;
         text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
-        transition: all .5s;
-        user-select: none;
-        -webkit-user-select: none;
-        touch-action: manipulation;
+
     }
 
     .button-custom:hover {
-        /*box-shadow: @SecondaryColorWithAlphaLight, 0 1px 30px;*/
+        box-shadow: rgba(80, 63, 205, 0.5) 0 1px 30px;
         transition-duration: .1s;
     }
 
-    .button-custom {
-        padding: 0 2.6rem;
-    }
-
-    .b-bar-link {
-        width: fit-content;
-        margin-left: auto;
-        margin-right: auto;
-        display: flex;
-        align-items: center;
-        text-align: left;
-    }
-
-    .b-bar-icon {
-        width: fit-content; /* or a fixed width */
-        margin-left: auto;
-        margin-right: auto;
-    }
-
-
     .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
         color: @Theme.TextColorOptions.Primary;
+        background-color: @Theme.BackgroundOptions.Secondary;
+    }
+
+    .b-bar-brand .b-bar-brand-dark .b-bar-icon {
+        background-color: @Theme.BackgroundOptions.Dark;
     }
 
     .b-bar-vertical-inline.b-bar-dark .b-bar-link:hover,
     .b-bar-vertical-popout.b-bar-dark .b-bar-link:hover,
     .b-bar-vertical-small.b-bar-dark .b-bar-link:hover {
         color: @Theme.TextColorOptions.Primary;
+        background-color: @Theme.BackgroundOptions.Secondary;
     }
 
     .b-bar-menu,
@@ -135,43 +86,26 @@
         background-color: @Theme.BackgroundOptions.Dark;
     }
 
+
     .b-bar-item {
         color: @Theme.TextColorOptions.Secondary;
-        margin: 0.2em;
     }
 
     .b-bar-item:hover,
     .b-bar-item.active .b-bar-link:active,
     .b-bar-item.active .b-bar-link a {
-        background-color: @Theme.BackgroundOptions.Light;
-        border-left: 1px solid @Theme.ColorOptions.Secondary;
+        background-color: @Theme.BackgroundOptions.Primary;
+        border-left: 1px solid @Theme.ColorOptions.Dark;
     }
 
     .b-bar-vertical-inline.b-bar-dark .b-bar-link.active,
     .b-bar-vertical-popout.b-bar-dark .b-bar-link.active,
     .b-bar-vertical-small.b-bar-dark .b-bar-link.active {
         color: @Theme.TextColorOptions.Primary;
-        border-left: 5px solid @Theme.ColorOptions.Secondary;
+        border-left: 5px solid @Theme.ColorOptions.Dark;
     }
-    
+
+    .b-card-body {
+        background-color: @Theme.BackgroundOptions.Primary;
+    }
 </style>
-
-
-@code {
-
-    private string ToRgba(string hex, double alpha)
-    {
-        hex = hex.Replace("#", "");
-        var r = int.Parse(hex.Substring(0, 2), System.Globalization.NumberStyles.HexNumber);
-        var g = int.Parse(hex.Substring(2, 4), System.Globalization.NumberStyles.HexNumber);
-        var b = int.Parse(hex.Substring(4, 6), System.Globalization.NumberStyles.HexNumber);
-        return $"rgba({r}, {g}, {b}, {alpha})";
-    }
-
-    private string InfoColorWithAlpha => ToRgba(Theme.ColorOptions.Info, 9.16);
-    private string SecondaryColorWithAlphaLight => ToRgba(Theme.ColorOptions.Secondary, 0.5);
-    private string SecondaryColorWithAlpha => ToRgba(Theme.ColorOptions.Secondary, 64.72);
-    private string DarkColorWithAlphaLight => ToRgba(Theme.ColorOptions.Dark, 0.3);
-    private string DarkColorWithAlphaHeavy => ToRgba(Theme.ColorOptions.Dark, 0.9);
-
-}
