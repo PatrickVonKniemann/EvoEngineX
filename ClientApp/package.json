@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "build:css": "postcss wwwroot/css/TailwindInput.css -o wwwroot/css/TailwindOutput.css"
+    "build:css": "npx tailwindcss -i wwwroot/css/TailwindInput.css -o wwwroot/css/TailwindOutput.css --watch"
   },
   "dependencies": {
     "autoprefixer": "^10.4.19",

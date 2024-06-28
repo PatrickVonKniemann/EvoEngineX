@@ -11,58 +11,34 @@
     </div>
 </div>
 
-
-@{
-// Background
-const string primaryBackgroundColor = "#131313"; // Dark
-const string secondaryBackgroundColor = "#1C1A1C"; // Light dark
-const string darkBackgroundColor = "#000000"; //pure black
-const string infoBackgroundColor = "#BB86FD"; // light purple
-
-// Buttons color
-const string purple = "#A45DE8"; // purple
-const string purpleLight = "#BC84F1"; // purple light
-const string purpleAccentDark = "#7F39FB"; // purple darker
-const string purpleAccentDarkWithOpacity = "#503FCD7F"; // purple darker
-const string teal = "#03DAC5"; // teal
-const string tealWithAccent = "#5AE3D4"; // teal
-const string tealWithDarkAccent = "#00C2AE"; // teal
-
-// Text color
-const string primaryTextColor = "#E1E1E1";
-const string secondaryTextColor = "#666666";
-const string infoTextColor = "#A77AE0";
-const string successTextColor = "#6200ED";
-}
-
 <style>
     body {
         font-family: monospace;
     }
 
     .primary-gradient {
-        background: linear-gradient(92.88deg, @purple 9.16%, @purpleAccentDark 64.72%);
+        background: linear-gradient(92.88deg, var(--color-primary) 9.16%, var(--color-primary-dark) 64.72%);
         color: White;
         transition: all .5s;
         text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
     }
 
     .primary-gradient:hover {
-        background: linear-gradient(92.88deg, @purple 9.16%, @purpleLight 64.72%);
-        box-shadow: @purpleAccentDarkWithOpacity 0 1px 30px;
+        background: linear-gradient(92.88deg, var(--color-primary) 9.16%, var(--color-primary-light) 64.72%);
+        box-shadow: var(--color-primary-darker) 0 1px 30px;
         transition-duration: .1s;
     }
 
     .secondary-gradient {
-        background: linear-gradient(92.88deg, @teal 30.16%, @tealWithDarkAccent  64.72%);
+        background: linear-gradient(92.88deg, var(--color-secondary) 30.16%, var(--color-secondary-dark)  64.72%);
         color: white;
         transition: all .5s;
         text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
     }
 
     .secondary-gradient:hover {
-        background: linear-gradient(92.88deg, @teal 9.16%, @tealWithAccent  64.72%);
-        box-shadow: @purpleAccentDarkWithOpacity 0 1px 30px;
+        background: linear-gradient(92.88deg, var(--color-secondary) 9.16%, var(--color-secondary-light) 64.72%);
+        box-shadow: var(--color-primary-darker) 0 1px 30px;
         transition-duration: .1s;
     }
 
