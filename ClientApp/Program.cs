@@ -21,9 +21,12 @@ const string infoBackgroundColor = "#BB86FD"; // light purple
 
 // Buttons color
 const string purple = "#A45DE8"; // purple
+const string purpleLight = "#BC84F1"; // purple light
 const string purpleAccentDark = "#7F39FB"; // purple darker
 const string purpleAccentDarkWithOpacity = "#503FCD7F"; // purple darker
 const string teal = "#03DAC5"; // teal
+const string tealWithAccent = "#5AE3D4"; // teal
+const string tealWithDarkAccent = "#00C2AE"; // teal
 
 // Text color
 const string primaryTextColor = "#E1E1E1";
@@ -41,7 +44,10 @@ var theme = new Theme
         Primary = purple,
         Secondary = teal,
         Dark = purpleAccentDark,
-        Success = purpleAccentDarkWithOpacity
+        Success = purpleAccentDarkWithOpacity,
+        Light = purpleLight,
+        Info = tealWithAccent,
+        Link = tealWithDarkAccent
     },
     BackgroundOptions = new ThemeBackgroundOptions
     {
@@ -76,6 +82,10 @@ var theme = new Theme
             }
         }
     },
+    BodyOptions = new ThemeBodyOptions
+    {
+        BackgroundColor = primaryBackgroundColor
+    }
 };
 
 builder.Services.AddSingleton(theme);
@@ -84,7 +94,6 @@ builder.Services.AddSingleton(theme);
 builder.Services
     .AddBlazorise()
     .AddTailwindProviders()
-    // .AddBootstrap5Providers()
     .AddFontAwesomeIcons();
 
 
