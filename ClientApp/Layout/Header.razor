@@ -1,4 +1,5 @@
 ﻿@using DomainModels
+@using ClientApp.Components
 
 <div class="flex justify-between p-4">
     <div class="left-content flex items-center">
@@ -6,8 +7,7 @@
         <span>Search</span>
     </div>
     <div class="right-content">
-        <a href="@Links.SignUp" class="primary-gradient text-white font-bold py-3 px-5 rounded-lg mr-3 mt-2">
-            Sign Up
-        </a>
+        <GradientButton ButtonType=@GradientButtonType.primary ButtonText="Sign Up" Link=@Links.SignUp />
+       
     </div>
 </div>

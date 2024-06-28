@@ -1,0 +1,14 @@
+@using DomainModels
+
+
+<a href="@Link" class="@ButtonType-gradient text-white font-bold py-3 px-5 rounded-lg mr-3 mt-2">
+    @ButtonText
+</a>
+
+@code {
+    [Parameter] public GradientButtonType ButtonType { get; set; }
+
+    [Parameter] public string ButtonText { get; set; }
+
+    [Parameter] public string Link { get; set; }
+}
