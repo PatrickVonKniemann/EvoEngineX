@@ -1,0 +1,54 @@
+body {
+    font-family: monospace;
+}
+
+
+.side-highlight:hover {
+    border-left: 5px solid var(--color-primary-dark);
+}
+
+.side-highlight:active {
+    border-left: 5px solid var(--color-primary-dark);
+}
+
+.bg-primary {
+    background: var(--color-background-primary);
+}
+
+.bg-secondary {
+    background: var(--color-background-secondary);
+}
+
+.bg-dark {
+    background: var(--color-background-dark);
+}
+
+.bg-info {
+    background: var(--color-background-info);
+}
+
+.primary-gradient {
+    background: linear-gradient(92.88deg, var(--color-primary) 9.16%, var(--color-primary-dark) 64.72%);
+    color: White;
+    transition: all .5s;
+    text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+}
+
+.primary-gradient:hover {
+    background: linear-gradient(92.88deg, var(--color-primary) 9.16%, var(--color-primary) 64.72%);
+    box-shadow: var(--color-primary) 0 1px 8px;
+    transition-duration: .1s;
+}
+
+.secondary-gradient {
+    background: linear-gradient(92.88deg, var(--color-secondary) 30.16%, var(--color-secondary-dark) 64.72%);
+    color: white;
+    transition: all .5s;
+    text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+}
+
+.secondary-gradient:hover {
+    background: linear-gradient(92.88deg, var(--color-secondary) 9.16%, var(--color-secondary-light) 64.72%);
+    box-shadow: var(--color-primary-darker) 0 1px 30px;
+    transition-duration: .1s;
+}

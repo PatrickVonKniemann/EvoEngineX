@@ -1,6 +1,7 @@
 @using DomainModels
+@using ClientApp.Components
 
-<div class="flex flex-col h-screen bg-gray-800 text-white">
+<div class="bg-primary flex flex-col h-screen text-white">
     <!-- Brand -->
     <div class="flex items-center p-4">
         <i class="fas fa-infinity fa-2x mr-3"></i>
@@ -9,30 +10,10 @@
     <!-- Menu -->
     <nav class="flex-1 p-4">
         <ul>
-            <li class="mb-4">
-                <a href="/" class="flex items-center p-2 rounded hover:bg-gray-700">
-                    <i class="fas fa-home fa-sm mr-3"></i>
-                    <span>Home</span>
-                </a>
-            </li>
-            <li class="mb-4">
-                <a href="@Links.Codebases" class="flex items-center p-2 rounded hover:bg-gray-700">
-                    <i class="fas fa-code fa-sm mr-3"></i>
-                    <span>Code</span>
-                </a>
-            </li>
-            <li class="mb-4">
-                <a href="@Links.CloudProfile" class="flex items-center p-2 rounded hover:bg-gray-700">
-                    <i class="fas fa-cloud fa-sm mr-3"></i>
-                    <span>Cloud profiles</span>
-                </a>
-            </li>
-            <li class="mb-4">
-                <a href="@Links.UserProfile" class="flex items-center p-2 rounded hover:bg-gray-700">
-                    <i class="fas fa-cog fa-sm mr-3"></i>
-                    <span>My profile</span>
-                </a>
-            </li>
+            <MenuItem Icon="fa-home" ButtonText="Home" Link="/"/>
+            <MenuItem Icon="fa-code" ButtonText="Code" Link=@Links.Codebases/>
+            <MenuItem Icon="fa-cloud" ButtonText="Cloud profiles" Link=@Links.CloudProfile/>
+            <MenuItem Icon="fa-cog" ButtonText="Home" Link=@Links.UserProfile/>
         </ul>
     </nav>
 </div>

@@ -1,62 +1,9 @@
 ﻿@page "/"
+@using ClientApp.Components
 <PageTitle>Home</PageTitle>
-
-
-<Container>
-    <Row>
-        <h1>EvoEngineX</h1>
-        <h2 class="text-secondary">Write, run and analyze... </h2>
-    </Row>
-
-    <CardDeck>
-
-        <Card>
-            <CardBody>
-                <CardTitle>Card Title 1</CardTitle>
-                <CardText>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Autem consequuntur culpa cumque distinctio, dolorum eum fugiat harum in magnam, nesciunt non odio quae quisquam ratione similique totam ullam, ut voluptatum.</CardText>
-                <Button Class="primary-gradient">Primary</Button>
-            </CardBody>
-        </Card>
-
-
-        <Card>
-            <CardBody>
-                <CardTitle>Card Title 2</CardTitle>
-                <CardText>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Enim harum iusto molestiae nulla odio officiis quis repellendus sint sunt vero. Beatae facere iste molestiae numquam quia quis ullam veniam voluptatum.</CardText>
-                <Button Class="secondary-gradient"> Secondary</Button>
-            </CardBody>
-        </Card>
-
-
-        <Card>
-            <CardBody>
-                <CardTitle>Card Title 3</CardTitle>
-                <CardText>Lorem ipsum dolor sit amet, consectetur adipisicing elit. Doloremque dolores eaque iure pariatur perspiciatis porro quidem. Cupiditate doloremque ex laboriosam laudantium natus officiis, perferendis quasi qui, reprehenderit, sequi sunt vitae.</CardText>
-                <Button Color="Color.Default">Default</Button>
-            </CardBody>
-        </Card>
-
-    </CardDeck>
-
-    <h2>Cost of your usage</h2>
-
-    <Row>
-
-        <Card>
-            @* <CardImage src="/img/graph.png"/> *@
-            <CardBody>
-                <CardTitle>Some cool graph</CardTitle>
-                <CardText>This is a description for the first card.</CardText>
-            </CardBody>
-        </Card>
-
-        <Card>
-            @* <CardImage src="/img/graph.png"/> *@
-            <CardBody>
-                <CardTitle>Card Title 2</CardTitle>
-                <CardText>This is a description for the first card.</CardText>
-            </CardBody>
-        </Card>
-
-    </Row>
-</Container>
+<div class="grid grid-cols-3">
+    @for (int i = 0; i < 4; i++)
+    {
+        <Card></Card>
+    }
+</div>

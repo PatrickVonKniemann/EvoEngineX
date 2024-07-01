@@ -1,0 +1,14 @@
+<li class="mb-4">
+    <a href="@Link" class="flex items-center p-2 rounded hover:bg-gray-700 side-highlight">
+        <i class="fas @Icon fa-sm mr-3"></i>
+        <span>@ButtonText</span>
+    </a>
+</li>
+
+@code {
+    [Parameter] public required string ButtonText { get; set; }
+    
+    [Parameter] public required string Icon { get; set; }
+
+    [Parameter] public required string Link { get; set; }
+}

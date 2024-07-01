@@ -1,45 +1,14 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="flex h-screen">
+<div class="flex">
     <!-- Sidebar -->
     <Sider/>
 
     <!-- Main Content -->
-    <div class="flex-1 p-4 bg-gray-100">
+    <div class="bg-gray-100">
         <Header></Header>
-        @Body
+        <div class="flex mt-3">
+            @Body
+        </div>
     </div>
 </div>
-
-<style>
-    body {
-        font-family: monospace;
-    }
-
-    .primary-gradient {
-        background: linear-gradient(92.88deg, var(--color-primary) 9.16%, var(--color-primary-dark) 64.72%);
-        color: White;
-        transition: all .5s;
-        text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
-    }
-
-    .primary-gradient:hover {
-        background: linear-gradient(92.88deg, var(--color-primary) 9.16%, var(--color-primary-light) 64.72%);
-        box-shadow: var(--color-primary-darker) 0 1px 30px;
-        transition-duration: .1s;
-    }
-
-    .secondary-gradient {
-        background: linear-gradient(92.88deg, var(--color-secondary) 30.16%, var(--color-secondary-dark)  64.72%);
-        color: white;
-        transition: all .5s;
-        text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
-    }
-
-    .secondary-gradient:hover {
-        background: linear-gradient(92.88deg, var(--color-secondary) 9.16%, var(--color-secondary-light) 64.72%);
-        box-shadow: var(--color-primary-darker) 0 1px 30px;
-        transition-duration: .1s;
-    }
-
-</style>

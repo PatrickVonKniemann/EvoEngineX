@@ -22,9 +22,9 @@ module.exports = {
                 },
                 background: {
                     primary: '#131313',
-                    secondaryBackgroundColor: '#1C1A1C',
-                    darkBackgroundColor: '#131313',
-                    infoBackgroundColor: '#BB86FD',
+                    secondary: '#1C1A1C',
+                    dark: '#131313',
+                    info: '#BB86FD',
                 }
             }
         }
@@ -41,9 +41,9 @@ module.exports = {
                     '--color-secondary-light': theme('colors.secondary.light'),
                     '--color-secondary-dark': theme('colors.secondary.dark'),
                     '--color-background-primary': theme('colors.background.primary'),
-                    '--color-background-secondary': theme('colors.background.secondaryBackgroundColor'),
-                    '--color-background-dark': theme('colors.background.darkBackgroundColor'),
-                    '--color-background-info': theme('colors.background.infoBackgroundColor'),
+                    '--color-background-secondary': theme('colors.background.secondary'),
+                    '--color-background-dark': theme('colors.background.dark'),
+                    '--color-background-info': theme('colors.background.info'),
                 },
             });
         },
