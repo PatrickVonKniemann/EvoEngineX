@@ -1,33 +1,13 @@
 ﻿@inherits LayoutComponentBase
 
 <div class="flex h-screen w-screen overflow-y-hidden">
-
     <Sider/>
-    <div class="flex flex-auto flex-col">
+    <div class="flex-auto flex-col">
         <Header></Header>
-
-        <div class="flex flex-auto flex-row bg-gray-100">
-            <div class="flex h-screen flex-auto overflow-y-auto">
-                <div class="grid w-full">
+        <div class="bg-gray-100">
+            <div class="h-screen overflow-y-auto">
                     @Body
-                </div>
             </div>
         </div>
     </div>
 </div>
-
-@* <div class="flex"> *@
-@*     <!-- Sidebar --> *@
-@*     <Sider/> *@
-@* *@
-@*     <!-- Main Content --> *@
-@*     <div class="bg-gray-100 h-fit"> *@
-@*         <Header></Header> *@
-@* *@
-@*         <div class="flex mt-3 h-full overflow-x-scroll"> *@
-@*             <div class=""> *@
-@*                 @Body *@
-@*             </div> *@
-@*         </div> *@
-@*     </div> *@
-@* </div> *@
