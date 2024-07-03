@@ -1,19 +1,21 @@
 @using DomainModels
 @using ClientApp.Components
 
-<div class="bg-primary flex flex-col text-white">
-    <!-- Brand -->
-    <div class="flex items-center p-4">
-        <i class="fas fa-infinity fa-2x mr-3"></i>
-        <span class="text-xl font-bold">EvoEngineX</span>
+<div class="bg-primary">
+    <div class=" flex flex-col text-white">
+        <!-- Brand -->
+        <div class="flex items-center p-4">
+            <i class="fas fa-infinity fa-2x mr-3"></i>
+            <span class="text-xl font-bold">EvoEngineX</span>
+        </div>
+        <!-- Menu -->
+        <nav class="flex-1 p-4">
+            <ul>
+                <MenuItem Icon="fa-home" ButtonText="Home" Link="/"/>
+                <MenuItem Icon="fa-code" ButtonText="Code" Link=@Links.Codebases/>
+                <MenuItem Icon="fa-cloud" ButtonText="Cloud profiles" Link=@Links.CloudProfile/>
+                <MenuItem Icon="fa-cog" ButtonText="Home" Link=@Links.UserProfile/>
+            </ul>
+        </nav>
     </div>
-    <!-- Menu -->
-    <nav class="flex-1 p-4">
-        <ul>
-            <MenuItem Icon="fa-home" ButtonText="Home" Link="/"/>
-            <MenuItem Icon="fa-code" ButtonText="Code" Link=@Links.Codebases/>
-            <MenuItem Icon="fa-cloud" ButtonText="Cloud profiles" Link=@Links.CloudProfile/>
-            <MenuItem Icon="fa-cog" ButtonText="Home" Link=@Links.UserProfile/>
-        </ul>
-    </nav>
 </div>
