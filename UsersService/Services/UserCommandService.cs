@@ -1,4 +1,5 @@
 using AutoMapper;
+using DomainEntities.Users;
 using DomainEntities.Users.Request;
 using DomainEntities.Users.Response;
 
@@ -6,12 +7,12 @@ namespace UsersService.Services;
 
 public class UserCommandService : IUserCommandService
 {
-    
     private readonly ILogger<UserCommandService> _logger;
     private readonly IMapper _mapper;
-    private readonly List<ReadUserResponse> _users = new()
+
+    private readonly List<User> _users = new()
     {
-        new ReadUserResponse
+        new User
         {
             Id = Guid.NewGuid(),
             UserName = "john_doe",
@@ -19,7 +20,7 @@ public class UserCommandService : IUserCommandService
             Name = "John Doe",
             Language = "English"
         },
-        new ReadUserResponse
+        new User
         {
             Id = Guid.NewGuid(),
             UserName = "jane_smith",
@@ -27,7 +28,7 @@ public class UserCommandService : IUserCommandService
             Name = "Jane Smith",
             Language = "English"
         },
-        new ReadUserResponse
+        new User
         {
             Id = Guid.NewGuid(),
             UserName = "maria_garcia",
@@ -49,17 +50,8 @@ public class UserCommandService : IUserCommandService
 
     public CreateUserResponse Add(CreateUserRequest entityRequest)
     {
-        var newUser = new ReadUserResponse
-        {
-            Id = Guid.NewGuid(),
-            UserName = entityRequest.UserName,
-            Email = entityRequest.Email,
-            Name = entityRequest.Name,
-            Language = entityRequest.Language
-        };
-
-        _users.Add(newUser);
-        return _mapper.Map<CreateUserResponse>(newUser);
+        _users.Add(_mapper.Map<User>(entityRequest));
+        return _mapper.Map<CreateUserResponse>(entityRequest);
     }
 
     public UpdateUserResponse Update(Guid entityId, UpdateUserRequest entityRequest)
