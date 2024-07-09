@@ -7,10 +7,18 @@
         <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
 
+
+    <PropertyGroup>
+        <GenerateDocumentationFile>true</GenerateDocumentationFile>
+        <NoWarn>CS1591</NoWarn>
+    </PropertyGroup>
+
+
     <ItemGroup>
         <PackageReference Include="FastEndpoints" Version="5.27.0.1-beta" />
+        <PackageReference Include="FastEndpoints.Swagger" Version="5.27.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.6.2" />
     </ItemGroup>
 
     <ItemGroup>

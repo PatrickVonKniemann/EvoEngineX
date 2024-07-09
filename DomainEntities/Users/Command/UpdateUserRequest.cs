@@ -1,5 +1,4 @@
-﻿
-namespace DomainEntities.Users.Request;
+﻿namespace DomainEntities.Users.Command;
 
 /// <summary>
 ///  User data transfer object.

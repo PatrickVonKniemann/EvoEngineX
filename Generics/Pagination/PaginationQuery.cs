@@ -1,3 +1,5 @@
+using FastEndpoints;
+
 namespace Generics.Pagination;
 
 /// <summary>
@@ -5,10 +7,9 @@ namespace Generics.Pagination;
 /// </summary>
 public class PaginationQuery
 {
-    public int PageNumber { get; set; } = 1;
-    public int PageSize { get; set; }
-    public SortingQuery SortingQuery { get; set; } = new();
-    public Dictionary<string, string> FilterParams { get; set; } = new();
-    public FilterCondition FilterCondition { get; set; } = FilterCondition.OR;
+    [QueryParam] public int PageNumber { get; set; } = 1;
+    [QueryParam] public int PageSize { get; set; }
+    [QueryParam] public SortingQuery SortingQuery { get; set; } = new();
+    [QueryParam] public Dictionary<string, string> FilterParams { get; set; } = new();
+    [QueryParam] public FilterCondition FilterCondition { get; set; } = FilterCondition.OR;
 }
-

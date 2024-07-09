@@ -13,7 +13,7 @@ public interface IGenericEntityQueryService<out TReadResponse, out TListResponse
     /// Get all
     /// </summary>
     /// <returns></returns>
-    TListResponse? GetAll(PaginationQuery? paginationQuery);
+    TListResponse GetAll(PaginationQuery paginationQuery);
 
     /// <summary>
     /// Get by id

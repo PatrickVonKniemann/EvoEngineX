@@ -1,59 +1,28 @@
 using AutoMapper;
+using DomainEntities.Users.Query;
 using DomainEntities.Users.Response;
 using Generics.BaseEntities;
 using Generics.Pagination;
+using UsersService.Database;
 
 namespace UsersService.Services;
 
 public class UserQueryService : IUserQueryService
 {
     private readonly IMapper _mapper;
-    private readonly List<ReadUserResponse> _users = new()
-    {
-        new ReadUserResponse
-        {
-            Id = Guid.NewGuid(),
-            UserName = "john_doe",
-            Email = "john.doe@example.com",
-            Name = "John Doe",
-            Language = "English"
-        },
-        new ReadUserResponse
-        {
-            Id = Guid.NewGuid(),
-            UserName = "jane_smith",
-            Email = "jane.smith@example.com",
-            Name = "Jane Smith",
-            Language = "English"
-        },
-        new ReadUserResponse
-        {
-            Id = Guid.NewGuid(),
-            UserName = "maria_garcia",
-            Email = "maria.garcia@example.com",
-            Name = "Maria Garcia",
-            Language = "Spanish"
-        }
-    };
+    private readonly IUserRepository _userRepository;
 
-    public UserQueryService(IMapper mapper)
+    public UserQueryService(IMapper mapper, IUserRepository userRepository)
     {
         _mapper = mapper;
+        _userRepository = userRepository;
     }
 
-    public ReadUserListResponse? GetAll(PaginationQuery? paginationQuery)
+    public ReadUserListResponse GetAll(PaginationQuery paginationQuery)
     {
-        if (paginationQuery == null)
-        {
-            paginationQuery = new PaginationQuery();
-        }
+        paginationQuery ??= new PaginationQuery();
 
-        var paginatedUsers = _users
-            .Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize)
-            .Take(paginationQuery.PageSize)
-            .ToList();
-
-        var totalItems = _users.Count;
+        var (paginatedUsers, totalCount) = _userRepository.GetAll(paginationQuery);
 
         return new ReadUserListResponse
         {
@@ -65,14 +34,14 @@ public class UserQueryService : IUserQueryService
             {
                 PageNumber = paginationQuery.PageNumber,
                 PageSize = paginationQuery.PageSize,
-                ItemsCount = totalItems
+                ItemsCount = totalCount
             }
         };
     }
-
+    
     public ReadUserResponse GetById(Guid entityId)
     {
-        var user = _users.FirstOrDefault(u => u.Id == entityId);
+        var user = _userRepository.GetById(entityId);
         return _mapper.Map<ReadUserResponse>(user);
     }
 }

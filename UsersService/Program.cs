@@ -1,28 +1,40 @@
 using DomainEntities.Users;
 using FastEndpoints;
+using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
+using UsersService.Api.Examples;
+using UsersService.Database;
 using UsersService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddScoped<IUserCommandService, UserCommandService>();
-builder.Services.AddSwaggerGen();
 builder.Services.AddFastEndpoints();
-builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerDocument(settings =>
+{
+    settings.Title = "My API";
+    settings.Version = "v1";
+});
 
+builder.Services.AddScoped<IUserCommandService, UserCommandService>();
+builder.Services.AddScoped<IUserQueryService, UserQueryService>();
+builder.Services.AddScoped<IUserRepository, UserRepository>();
+
+builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.UseFastEndpoints();
+
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseOpenApi();
+    app.UseSwaggerUi();
 }
 
 app.UseHttpsRedirection();
-app.UseFastEndpoints();
 
 await app.RunAsync();

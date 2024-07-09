@@ -1,5 +1,5 @@
 using AutoMapper;
-using DomainEntities.Users.Request;
+using DomainEntities.Users.Command;
 using DomainEntities.Users.Response;
 
 namespace DomainEntities.Users;
