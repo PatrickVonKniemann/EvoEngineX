@@ -9,36 +9,38 @@ namespace UsersService.Services;
 
 public class UserQueryService : IUserQueryService
 {
+    private readonly ILogger<UserQueryService> _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
 
-    public UserQueryService(IMapper mapper, IUserRepository userRepository)
+    public UserQueryService(IMapper mapper, IUserRepository userRepository, ILogger<UserQueryService> logger)
     {
         _mapper = mapper;
         _userRepository = userRepository;
+        _logger = logger;
     }
 
     public ReadUserListResponse GetAll(PaginationQuery paginationQuery)
     {
-        paginationQuery ??= new PaginationQuery();
+        _logger.LogInformation($"{nameof(UserQueryService)} {nameof(GetAll)}");
 
-        var (paginatedUsers, totalCount) = _userRepository.GetAll(paginationQuery);
+        var users = _userRepository.GetAll(paginationQuery);
 
         return new ReadUserListResponse
         {
             Items = new ItemWrapper<UserListResponseItem>
             {
-                Values = _mapper.Map<List<UserListResponseItem>>(paginatedUsers)
+                Values = _mapper.Map<List<UserListResponseItem>>(users)
             },
             Pagination = new PaginationResponse
             {
                 PageNumber = paginationQuery.PageNumber,
                 PageSize = paginationQuery.PageSize,
-                ItemsCount = totalCount
+                ItemsCount = users.Count
             }
         };
     }
-    
+
     public ReadUserResponse GetById(Guid entityId)
     {
         var user = _userRepository.GetById(entityId);

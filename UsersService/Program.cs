@@ -20,6 +20,21 @@ builder.Services
         };
     });
 
+// Configure logging explicitly
+builder.Logging.ClearProviders();
+builder.Logging.AddConsole();
+builder.Services.AddLogging(); // Ensure logging is added first
+// Add CORS services
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(corsPolicyBuilder =>
+    {
+        corsPolicyBuilder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+
 builder.Services.AddScoped<IUserCommandService, UserCommandService>();
 builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
@@ -28,16 +43,8 @@ builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 app.UseFastEndpoints()
     .UseSwaggerGen();
-//
-// if (app.Environment.IsDevelopment())
-// {
-//     app.UseOpenApi();
-//     app.UseSwaggerUi();
-//     app.UseSwaggerGen();
-// }
 
 app.UseHttpsRedirection();
 

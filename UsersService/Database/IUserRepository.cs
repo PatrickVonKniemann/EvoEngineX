@@ -12,5 +12,5 @@ public interface IUserRepository
 
     // Query-side operations
     User GetById(Guid userId);
-    (List<User> users, int totalCount) GetAll(PaginationQuery paginationQuery);
+    List<User> GetAll(PaginationQuery paginationQuery);
 }

@@ -1,9 +1,13 @@
+using System.Linq.Expressions;
+using System.Reflection;
 using DomainEntities.Users;
+using DomainEntities.Users.Query;
+using Generics.BaseEntities;
 using Generics.Pagination;
 
 namespace UsersService.Database;
 
-public class UserRepository : IUserRepository
+public class UserRepository : BaseRepository<User>, IUserRepository
 {
     private readonly List<User> _users = new()
     {
@@ -30,9 +34,25 @@ public class UserRepository : IUserRepository
             Email = "maria.garcia@example.com",
             Name = "Maria Garcia",
             Language = "Spanish"
+        },
+        new User
+        {
+            Id = Guid.NewGuid(),
+            UserName = "maria_garcia2",
+            Email = "maria2.garcia@example.com",
+            Name = "Maria2 Garcia",
+            Language = "Spanish"
         }
     };
 
+    public List<User> GetAll(PaginationQuery paginationQuery)
+    {
+        var query = _users.AsQueryable();
+
+        // Use the base repository methods to apply filtering, sorting, and pagination
+        return base.GetAll(query, paginationQuery);
+    }
+    
     // Command-side operations
     public User Add(User user)
     {
@@ -67,14 +87,6 @@ public class UserRepository : IUserRepository
         return _users.FirstOrDefault(u => u.Id == userId);
     }
 
-    public (List<User> users, int totalCount) GetAll(PaginationQuery paginationQuery)
-    {
-        var totalCount = _users.Count;
-        var users = _users
-            .Skip((paginationQuery.PageNumber - 1) * paginationQuery.PageSize)
-            .Take(paginationQuery.PageSize)
-            .ToList();
-
-        return (users, totalCount);
-    }
+    
+   
 }

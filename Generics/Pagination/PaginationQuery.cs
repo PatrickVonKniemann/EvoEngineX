@@ -7,9 +7,9 @@ namespace Generics.Pagination;
 /// </summary>
 public class PaginationQuery
 {
-    [QueryParam] public int PageNumber { get; set; } = 1;
-    [QueryParam] public int PageSize { get; set; }
-    [QueryParam] public SortingQuery SortingQuery { get; set; } = new();
-    [QueryParam] public Dictionary<string, string> FilterParams { get; set; } = new();
-    [QueryParam] public FilterCondition FilterCondition { get; set; } = FilterCondition.OR;
+    public int PageNumber { get; set; } = 1;
+    public int PageSize { get; set; } = 10;
+    public SortingQuery SortingQuery { get; set; } = new();
+    public Dictionary<string, string> FilterParams { get; set; } = new();
+    public FilterCondition FilterCondition { get; set; } = FilterCondition.OR;
 }

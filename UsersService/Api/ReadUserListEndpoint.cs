@@ -27,6 +27,13 @@ public class ReadUserListEndpoint : Endpoint<ReadUserListRequest, ReadUserListRe
     public override async Task HandleAsync(ReadUserListRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadUserListEndpoint));
+        
+        if (req.PaginationQuery == null)
+        {
+            ThrowError("PaginationQuery is invalid or null");
+            return;
+        }
+
         var response = _userQueryService.GetAll(req.PaginationQuery);
 
         await SendAsync(response);
