@@ -5,5 +5,5 @@ namespace DomainEntities.Users.Query;
 
 public class ReadUserListRequest
 {
-    public required PaginationQuery PaginationQuery;
+    public required PaginationQuery PaginationQuery { get; set; }
 }
