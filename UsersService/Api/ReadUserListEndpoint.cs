@@ -22,17 +22,6 @@ public class ReadUserListEndpoint : Endpoint<ReadUserListRequest, ReadUserListRe
         Verbs(Http.GET);
         Routes("users");
         AllowAnonymous();
-
-        Options(opt => opt
-            .WithTags("User Management")
-            .WithDescription("Retrieve a paginated list of users")
-            .WithSummary("Get users list")
-        );
-        
-        Summary(s =>
-        {
-            s.RequestParam(r => r.PaginationQuery, "overriden paginationQuery description");
-        });
     }
 
     public override async Task HandleAsync(ReadUserListRequest req, CancellationToken ct)

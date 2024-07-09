@@ -3,7 +3,6 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
-using UsersService.Api.Examples;
 using UsersService.Database;
 using UsersService.Services;
 
@@ -33,6 +32,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseOpenApi();
     app.UseSwaggerUi();
+    app.UseSwaggerGen();
 }
 
 app.UseHttpsRedirection();
