@@ -1,3 +1,4 @@
+using Common;
 using DomainEntities.Users;
 using FastEndpoints;
 using FastEndpoints.Swagger;
@@ -42,7 +43,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
 
 var app = builder.Build();
-
+app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware
 app.UseFastEndpoints()
     .UseSwaggerGen();
 

@@ -1,6 +1,6 @@
 @UsersService_HostAddress = http://localhost:5127
 
-GET {{UsersService_HostAddress}}/users/
+GET {{UsersService_HostAddress}}/users?paginationQuery=%7B%0A%20%20%22pageNumber%22%3A%201%2C%0A%20%20%22pageSize%22%3A%2010%2C%0A%20%20%22filterParams%22%3A%20%7B%0A%20%20%20%20%22Language%22%3A%20%22Spanish%22%0A%20%20%7D%0A%7D
 Accept: application/json
 
 ###

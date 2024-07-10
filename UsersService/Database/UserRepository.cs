@@ -48,8 +48,6 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     public List<User> GetAll(PaginationQuery paginationQuery)
     {
         var query = _users.AsQueryable();
-
-        // Use the base repository methods to apply filtering, sorting, and pagination
         return base.GetAll(query, paginationQuery);
     }
     
