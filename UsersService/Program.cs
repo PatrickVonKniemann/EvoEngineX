@@ -49,3 +49,11 @@ app.UseFastEndpoints()
 app.UseHttpsRedirection();
 
 await app.RunAsync();
+
+/// <summary>
+/// This class is used to start the API,
+/// Partial class is used to add the entry point for CustomWebApplicationFactory
+/// </summary>
+public partial class Program
+{
+}
