@@ -1,8 +1,5 @@
 using DomainEntities.Users;
 using Generics.Pagination;
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace UsersService.Database
 {

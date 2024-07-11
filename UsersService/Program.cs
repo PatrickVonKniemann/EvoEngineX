@@ -2,8 +2,6 @@ using Common;
 using DomainEntities.Users;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.Extensions.DependencyInjection;
 using UsersService.Database;
 using UsersService.Services;
 
@@ -17,7 +15,7 @@ builder.Services
         o.DocumentSettings = s =>
         {
             s.Title = "My API";
-            s.Version = "v1";
+            s.Version = "v0.0.1";
         };
     });
 
@@ -25,6 +23,7 @@ builder.Services
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
 builder.Services.AddLogging(); // Ensure logging is added first
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {

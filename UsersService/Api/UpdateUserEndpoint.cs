@@ -1,5 +1,4 @@
 using DomainEntities.Users.Command;
-using DomainEntities.Users.Response;
 using FastEndpoints;
 using UsersService.Services;
 
