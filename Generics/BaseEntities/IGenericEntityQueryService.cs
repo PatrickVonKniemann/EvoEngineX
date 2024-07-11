@@ -7,18 +7,18 @@ namespace Generics.BaseEntities;
 /// </summary>
 /// <typeparam name="TListResponse"></typeparam>
 /// <typeparam name="TReadResponse"></typeparam>
-public interface IGenericEntityQueryService<out TReadResponse, out TListResponse>
+public interface IGenericEntityQueryService<TReadResponse, TListResponse>
 {
     /// <summary>
     /// Get all
     /// </summary>
     /// <returns></returns>
-    TListResponse GetAll(PaginationQuery paginationQuery);
+    Task<TListResponse> GetAllAsync(PaginationQuery paginationQuery);
 
     /// <summary>
     /// Get by id
     /// </summary>
     /// <param name="entityId"></param>
     /// <returns></returns>
-    TReadResponse GetById(Guid entityId);
+    Task<TReadResponse> GetByIdAsync(Guid entityId);
 }

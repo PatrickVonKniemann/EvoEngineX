@@ -5,16 +5,10 @@ using UsersService.Services;
 
 namespace UsersService.Api;
 
-public class CreateUserEndpoint : Endpoint<CreateUserRequest, CreateUserResponse>
+public class CreateUserEndpoint(ILogger<CreateUserEndpoint> logger, IUserCommandService userCommandService)
+    : Endpoint<CreateUserRequest, CreateUserResponse>
 {
-    public new ILogger<CreateUserEndpoint> Logger { get; }
-    private readonly IUserCommandService _userCommandService;
-
-    public CreateUserEndpoint(ILogger<CreateUserEndpoint> logger, IUserCommandService userCommandService)
-    {
-        Logger = logger;
-        _userCommandService = userCommandService;
-    }
+    private new ILogger<CreateUserEndpoint> Logger { get; } = logger;
 
     public override void Configure()
     {
@@ -26,8 +20,7 @@ public class CreateUserEndpoint : Endpoint<CreateUserRequest, CreateUserResponse
     public override async Task HandleAsync(CreateUserRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(CreateUserEndpoint));
-        var response = _userCommandService.Add(req);
-
-        await SendAsync(response);
+        var response = userCommandService.AddAsync(req);
+        await SendAsync(await response, cancellation: ct);
     }
 }

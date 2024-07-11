@@ -1,16 +1,20 @@
 using DomainEntities.Users;
 using Generics.Pagination;
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace UsersService.Database;
-
-public interface IUserRepository
+namespace UsersService.Database
 {
-    // Command-side operations
-    User? Add(User? user);
-    User Update(Guid userId, User updatedUser);
-    void Delete(Guid userId);
+    public interface IUserRepository
+    {
+        // Command-side operations
+        Task<User?> AddAsync(User? user);
+        Task<User> UpdateAsync(Guid userId, User updatedUser);
+        Task DeleteAsync(Guid userId);
 
-    // Query-side operations
-    User? GetById(Guid userId);
-    List<User?> GetAll(PaginationQuery paginationQuery);
+        // Query-side operations
+        Task<User?> GetByIdAsync(Guid userId);
+        Task<List<User?>> GetAllAsync(PaginationQuery paginationQuery);
+    }
 }

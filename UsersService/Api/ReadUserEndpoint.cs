@@ -5,16 +5,10 @@ using UsersService.Services;
 
 namespace UsersService.Api;
 
-public class ReadUserEndpoint : Endpoint<ReadUserRequest, ReadUserResponse>
+public class ReadUserEndpoint(ILogger<ReadUserEndpoint> logger, IUserQueryService userQueryService)
+    : Endpoint<ReadUserRequest, ReadUserResponse>
 {
-    public new ILogger<ReadUserEndpoint> Logger { get; }
-    private readonly IUserQueryService _userQueryService;
-
-    public ReadUserEndpoint(ILogger<ReadUserEndpoint> logger, IUserQueryService userQueryService)
-    {
-        Logger = logger;
-        _userQueryService = userQueryService;
-    }
+    private new ILogger<ReadUserEndpoint> Logger { get; } = logger;
 
     public override void Configure()
     {
@@ -26,8 +20,7 @@ public class ReadUserEndpoint : Endpoint<ReadUserRequest, ReadUserResponse>
     public override async Task HandleAsync(ReadUserRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadUserEndpoint));
-        var response = _userQueryService.GetById(req.Id);
-
-        await SendAsync(response);
+        var response = userQueryService.GetByIdAsync(req.Id);
+        await SendAsync(await response, cancellation: ct);
     }
 }

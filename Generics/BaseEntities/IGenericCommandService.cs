@@ -7,26 +7,10 @@ namespace Generics.BaseEntities;
 /// <typeparam name="TEntityUpdateRequest"></typeparam>
 /// <typeparam name="TEntityUpdateReadResponse"></typeparam>
 /// <typeparam name="TEntityCreateReadResponse"></typeparam>
-public interface IGenericCommandService<in TEntityCreateRequest, in TEntityUpdateRequest, out TEntityCreateReadResponse,
-    out TEntityUpdateReadResponse>
+public interface IGenericCommandService<in TEntityCreateRequest, in TEntityUpdateRequest, TEntityCreateReadResponse,
+    TEntityUpdateReadResponse>
 {
-    /// <summary>
-    /// Add entity
-    /// </summary>
-    /// <returns></returns>
-    TEntityCreateReadResponse Add(TEntityCreateRequest entityCreateDto);
-
-    /// <summary>
-    /// Update entity by id
-    /// </summary>
-    /// <param name="entityId"></param>
-    /// <param name="entityUpdateDto"></param>
-    /// <returns></returns>
-    TEntityUpdateReadResponse Update(Guid entityId, TEntityUpdateRequest entityUpdateDto);
-
-    /// <summary>
-    /// Delete entity by id
-    /// </summary>
-    /// <param name="entityId"></param>
-    void Delete(Guid entityId);
+    Task<TEntityCreateReadResponse> AddAsync(TEntityCreateRequest entityCreateDto);
+    Task<TEntityUpdateReadResponse> UpdateAsync(Guid entityId, TEntityUpdateRequest entityUpdateDto);
+    Task DeleteAsync(Guid entityId);
 }

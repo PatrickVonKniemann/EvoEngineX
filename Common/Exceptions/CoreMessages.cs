@@ -110,6 +110,8 @@ public static class CoreMessages
         "User '{0}' has wrong company assigned, active company is not in user's list.";
 
     public const string NoValidToken = "There is no valid token of requested bearer.";
+    public const string UserDoesntExists = "There is no available user with ID '{0}'.";
+    
     public const string UserAccountNotExists = "There is no available account for user '{0}'.";
 
     public const string UserAccountTypeDifferent =

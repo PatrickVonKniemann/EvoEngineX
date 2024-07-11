@@ -5,16 +5,10 @@ using UsersService.Services;
 
 namespace UsersService.Api;
 
-public class UpdateUserEndpoint : Endpoint<UpdateUserRequest, UpdateUserResponse>
+public class UpdateUserEndpoint(ILogger<UpdateUserEndpoint> logger, IUserCommandService userCommandService)
+    : Endpoint<UpdateUserRequest, UpdateUserResponse>
 {
-    public new ILogger<UpdateUserEndpoint> Logger { get; }
-    private readonly IUserCommandService _userCommandService;
-
-    public UpdateUserEndpoint(ILogger<UpdateUserEndpoint> logger, IUserCommandService userCommandService)
-    {
-        Logger = logger;
-        _userCommandService = userCommandService;
-    }
+    private new ILogger<UpdateUserEndpoint> Logger { get; } = logger;
 
     public override void Configure()
     {
@@ -26,8 +20,7 @@ public class UpdateUserEndpoint : Endpoint<UpdateUserRequest, UpdateUserResponse
     public override async Task HandleAsync(UpdateUserRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(UpdateUserEndpoint));
-        var response = _userCommandService.Update(req.Id, req);
-
-        await SendAsync(response);
+        var response = userCommandService.UpdateAsync(req.Id, req);
+        await SendAsync(await response, cancellation: ct);
     }
 }

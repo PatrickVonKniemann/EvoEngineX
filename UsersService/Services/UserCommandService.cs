@@ -11,6 +11,7 @@ public class UserCommandService : IUserCommandService
     private readonly ILogger<UserCommandService> _logger;
     private readonly IMapper _mapper;
     private readonly IUserRepository _userRepository;
+
     public UserCommandService(
         ILogger<UserCommandService> logger,
         IMapper mapper, IUserRepository userRepository)
@@ -20,23 +21,23 @@ public class UserCommandService : IUserCommandService
         _userRepository = userRepository;
     }
 
-    public CreateUserResponse Add(CreateUserRequest entityRequest)
+    public async Task<CreateUserResponse> AddAsync(CreateUserRequest entityRequest)
     {
-        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(Add)}");
-        _userRepository.Add(_mapper.Map<User>(entityRequest));
-        return _mapper.Map<CreateUserResponse>(entityRequest);
+        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(AddAsync)}");
+        var user = await _userRepository.AddAsync(_mapper.Map<User>(entityRequest));
+        return _mapper.Map<CreateUserResponse>(user);
     }
 
-    public UpdateUserResponse Update(Guid entityId, UpdateUserRequest entityRequest)
+    public async Task<UpdateUserResponse> UpdateAsync(Guid entityId, UpdateUserRequest entityRequest)
     {
-        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(Update)}");
-        var updatedUser = _userRepository.Update(entityId, _mapper.Map<User>(entityRequest));
+        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(UpdateAsync)}");
+        var updatedUser = await _userRepository.UpdateAsync(entityId, _mapper.Map<User>(entityRequest));
         return _mapper.Map<UpdateUserResponse>(updatedUser);
     }
 
-    public void Delete(Guid entityId)
+    public async Task DeleteAsync(Guid entityId)
     {
-        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(Delete)}");
-        _userRepository.Delete(entityId);
+        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(DeleteAsync)}");
+        await _userRepository.DeleteAsync(entityId);
     }
 }

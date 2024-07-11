@@ -1,21 +1,13 @@
 using DomainEntities.Users.Query;
-using DomainEntities.Users.Response;
 using FastEndpoints;
-using Generics.Pagination;
 using UsersService.Services;
 
 namespace UsersService.Api;
 
-public class ReadUserListEndpoint : Endpoint<ReadUserListRequest, ReadUserListResponse>
+public class ReadUserListEndpoint(ILogger<ReadUserListEndpoint> logger, IUserQueryService userQueryService)
+    : Endpoint<ReadUserListRequest, ReadUserListResponse>
 {
-    public new ILogger<ReadUserListEndpoint> Logger { get; }
-    private readonly IUserQueryService _userQueryService;
-
-    public ReadUserListEndpoint(ILogger<ReadUserListEndpoint> logger, IUserQueryService userQueryService)
-    {
-        Logger = logger;
-        _userQueryService = userQueryService;
-    }
+    private new ILogger<ReadUserListEndpoint> Logger { get; } = logger;
 
     public override void Configure()
     {
@@ -34,8 +26,7 @@ public class ReadUserListEndpoint : Endpoint<ReadUserListRequest, ReadUserListRe
             return;
         }
 
-        var response = _userQueryService.GetAll(req.PaginationQuery);
-
-        await SendAsync(response);
+        var response = userQueryService.GetAllAsync(req.PaginationQuery);
+        await SendAsync(await response, cancellation: ct);
     }
 }
