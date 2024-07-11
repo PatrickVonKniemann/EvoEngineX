@@ -1,7 +1,4 @@
-using System.Linq.Expressions;
-using System.Reflection;
 using DomainEntities.Users;
-using DomainEntities.Users.Query;
 using Generics.BaseEntities;
 using Generics.Pagination;
 
@@ -9,7 +6,7 @@ namespace UsersService.Database;
 
 public class UserRepository : BaseRepository<User>, IUserRepository
 {
-    private readonly List<User> _users = new()
+    private readonly List<User?> _users = new()
     {
         new User
         {
@@ -45,14 +42,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         }
     };
 
-    public List<User> GetAll(PaginationQuery paginationQuery)
+    public List<User?> GetAll(PaginationQuery paginationQuery)
     {
         var query = _users.AsQueryable();
         return base.GetAll(query, paginationQuery);
     }
     
     // Command-side operations
-    public User Add(User user)
+    public User Add(User? user)
     {
         user.Id = Guid.NewGuid();
         _users.Add(user);
@@ -80,7 +77,7 @@ public class UserRepository : BaseRepository<User>, IUserRepository
     }
 
     // Query-side operations
-    public User GetById(Guid userId)
+    public User? GetById(Guid userId)
     {
         return _users.FirstOrDefault(u => u.Id == userId);
     }

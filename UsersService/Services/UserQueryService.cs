@@ -1,4 +1,5 @@
 using AutoMapper;
+using DomainEntities.Users;
 using DomainEntities.Users.Query;
 using DomainEntities.Users.Response;
 using Generics.BaseEntities;
