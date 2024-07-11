@@ -13,7 +13,7 @@ public class ReadUserEndpoint(ILogger<ReadUserEndpoint> logger, IUserQueryServic
     public override void Configure()
     {
         Verbs(Http.GET);
-        Routes("user/{ID}");
+        Routes("users/{ID}");
         AllowAnonymous();
     }
 

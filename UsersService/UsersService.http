@@ -1,6 +1,45 @@
 @UsersService_HostAddress = http://localhost:5127
 
-GET {{UsersService_HostAddress}}/users?paginationQuery=%7B%0A%20%20%22pageNumber%22%3A%201%2C%0A%20%20%22pageSize%22%3A%2010%2C%0A%20%20%22filterParams%22%3A%20%7B%0A%20%20%20%20%22Language%22%3A%20%22Spanish%22%0A%20%20%7D%0A%7D
+GET {{UsersService_HostAddress}}/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "paginationQuery": {
+    "pageNumber": 1,
+    "pageSize": 10,
+    "filterParams": {
+      "Language": "Spanish"
+    }
+  }
+}
+
+###
+
+POST {{UsersService_HostAddress}}/users
+Content-Type: application/json
+Accept: application/json
+
+{
+  "UserName": "jdoe",
+  "Email": "jdoe@example.com",
+  "Name": "John Doe",
+  "Language": "English"
+}
+
+###
+
+GET {{UsersService_HostAddress}}/users/123e4567-e89b-12d3-a456-426614174000
 Accept: application/json
 
 ###
+
+PATCH {{UsersService_HostAddress}}/users/123e4567-e89b-12d3-a456-42661417400
+Content-Type: application/json
+Accept: application/json
+
+{
+  "Email": "updatedemail@example.com",
+  "Name": "Updated Name",
+  "Language": "Updated Language"
+}

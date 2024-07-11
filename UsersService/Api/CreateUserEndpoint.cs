@@ -13,7 +13,7 @@ public class CreateUserEndpoint(ILogger<CreateUserEndpoint> logger, IUserCommand
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("user");
+        Routes("users");
         AllowAnonymous();
     }
 

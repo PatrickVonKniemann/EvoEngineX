@@ -11,7 +11,7 @@ namespace UsersService.Database
         {
             new User
             {
-                Id = Guid.NewGuid(),
+                Id = Guid.Parse("123e4567-e89b-12d3-a456-426614174000"),
                 UserName = "john_doe",
                 Email = "john.doe@example.com",
                 Name = "John Doe",
