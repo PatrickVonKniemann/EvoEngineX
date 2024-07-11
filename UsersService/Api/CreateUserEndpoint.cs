@@ -19,7 +19,7 @@ public class CreateUserEndpoint : Endpoint<CreateUserRequest, CreateUserResponse
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("users");
+        Routes("user");
         AllowAnonymous();
     }
 

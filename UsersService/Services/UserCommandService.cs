@@ -22,18 +22,21 @@ public class UserCommandService : IUserCommandService
 
     public CreateUserResponse Add(CreateUserRequest entityRequest)
     {
+        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(Add)}");
         _userRepository.Add(_mapper.Map<User>(entityRequest));
         return _mapper.Map<CreateUserResponse>(entityRequest);
     }
 
     public UpdateUserResponse Update(Guid entityId, UpdateUserRequest entityRequest)
     {
+        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(Update)}");
         var updatedUser = _userRepository.Update(entityId, _mapper.Map<User>(entityRequest));
         return _mapper.Map<UpdateUserResponse>(updatedUser);
     }
 
     public void Delete(Guid entityId)
     {
+        _logger.LogInformation($"{nameof(UserCommandService)} {nameof(Delete)}");
         _userRepository.Delete(entityId);
     }
 }
