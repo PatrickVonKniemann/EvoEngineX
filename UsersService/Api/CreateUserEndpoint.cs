@@ -2,6 +2,7 @@ using DomainEntities.Users.Command;
 using DomainEntities.Users.Response;
 using FastEndpoints;
 using UsersService.Services;
+using UsersService.Validators;
 
 namespace UsersService.Api;
 
@@ -15,12 +16,13 @@ public class CreateUserEndpoint(ILogger<CreateUserEndpoint> logger, IUserCommand
         Verbs(Http.POST);
         Routes("users/add");
         AllowAnonymous();
+        Validator<CreateUserRequestValidator>();
     }
 
     public override async Task HandleAsync(CreateUserRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(CreateUserEndpoint));
-        var response = userCommandService.AddAsync(req);
-        await SendAsync(await response, cancellation: ct);
+        var createUserResponse = userCommandService.AddAsync(req);
+        await SendAsync(await createUserResponse, cancellation: ct);
     }
 }

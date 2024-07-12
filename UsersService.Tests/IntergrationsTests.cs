@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text;
 using System.Text.Json;
 using DomainEntities.Users.Query;
@@ -10,13 +11,54 @@ namespace UsersService.Tests
     public class UserServiceTests(CustomWebApplicationFactory<Program> factory)
         : IClassFixture<CustomWebApplicationFactory<Program>>
     {
-        // private readonly HttpClient _client = new() { BaseAddress = new Uri("http://localhost:5127") };
-        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
         private readonly HttpClient _client = factory.CreateClient();
-        private readonly CustomWebApplicationFactory<Program> _factory = factory;
+        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
+
+        #region Add User Tests
 
         [Fact]
-        public async Task GetUsers_ShouldReturnUsers()
+        public async Task AddUser_Success_ShouldReturnSuccess()
+        {
+            // Arrange
+            var user = new
+            {
+                UserName = "jdoe",
+                Email = "jdoe@example.com",
+                Name = "John Doe",
+                Language = "English"
+            };
+            var content = CreateJsonContent(user);
+
+            // Act
+            var response = await _client.PostAsync("/users/add", content);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            responseContent.Should().Contain("jdoe");
+        }
+
+        [Fact]
+        public async Task AddUserWithInvalidData_Fail_ShouldReturnBadRequest()
+        {
+            // Arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
+            var user = new { };
+            var content = CreateJsonContent(user);
+
+            // Act
+            var response = await _client.PostAsync("/users/add", content);
+
+            // Assert
+            response.StatusCode.Should().Be(expectedStatusCode);
+        }
+
+        #endregion
+
+        #region Get User Tests
+
+        [Fact]
+        public async Task GetUsers_Success_ShouldReturnUsers()
         {
             // Arrange
             var requestContent = new ReadUserListRequest
@@ -31,58 +73,56 @@ namespace UsersService.Tests
                     }
                 }
             };
-            var serializeRequest = new StringContent(JsonSerializer.Serialize(requestContent), Encoding.UTF8,
-                "application/json");
+            var content = CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/users", serializeRequest);
-
-            // Assert
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().NotBeNullOrEmpty();
-        }
-
-        [Fact]
-        public async Task CreateUser_ShouldReturnSuccess()
-        {
-            // Arrange
-            var user = new
-            {
-                UserName = "jdoe",
-                Email = "jdoe@example.com",
-                Name = "John Doe",
-                Language = "English"
-            };
-            var content = new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
-
-            // Act
-            var response = await _client.PostAsync("/users/add", content);
+            var response = await _client.PostAsync("/users", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().Contain("jdoe");
+            responseContent.Should().NotBeNullOrEmpty();
         }
 
         [Fact]
-        public async Task GetUserById_ShouldReturnUser()
+        public async Task GetUserById_Success_ShouldReturnUser()
         {
             // Arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
+            var userToSearch = _commonId;
 
             // Act
-            var response = await _client.GetAsync($"/users/{_commonId}");
+            var response = await _client.GetAsync($"/users/{userToSearch}");
 
             // Assert
-            response.EnsureSuccessStatusCode();
-            var content = await response.Content.ReadAsStringAsync();
-            content.Should().NotBeNullOrEmpty();
+            var responseContent = await response.Content.ReadAsStringAsync();
+            responseContent.Should().NotBeNullOrEmpty();
+            response.StatusCode.Should().Be(expectedStatusCode);
         }
 
         [Fact]
-        public async Task UpdateUser_ShouldReturnSuccess()
+        public async Task GetUserById_Fail_ShouldReturnDbEntityNotFound()
         {
             // Arrange
+            var nonExistingId = Guid.NewGuid();
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
+
+            // Act
+            var response = await _client.GetAsync($"/users/{nonExistingId}");
+
+            // Assert
+            response.StatusCode.Should().Be(expectedStatusCode);
+        }
+
+        #endregion
+
+        #region Update User Tests
+
+        [Fact]
+        public async Task UpdateUser_Success_ShouldReturnSuccess()
+        {
+            // Arrange
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var userToUpdateId = _commonId;
             var userToUpdate = new
             {
@@ -90,15 +130,60 @@ namespace UsersService.Tests
                 Name = "Updated Name",
                 Language = "Updated Language"
             };
-            var content = new StringContent(JsonSerializer.Serialize(userToUpdate), Encoding.UTF8, "application/json");
+            var content = CreateJsonContent(userToUpdate);
 
             // Act
             var response = await _client.PatchAsync($"/users/{userToUpdateId}", content);
 
             // Assert
-            response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             responseContent.Should().Contain("updatedemail@example.com");
+            response.StatusCode.Should().Be(expectedStatusCode);
         }
+
+        #endregion
+
+        #region Delete User Tests
+
+        [Fact]
+        public async Task DeleteUser_Success_ShouldReturnEmptyContent()
+        {
+            // Arrange
+            var userToDeleteId = _commonId;
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
+
+            // Act
+            var response = await _client.DeleteAsync($"/users/{userToDeleteId}");
+
+            // Assert
+            var responseContent = await response.Content.ReadAsStringAsync();
+            responseContent.Should().BeEmpty();
+            response.StatusCode.Should().Be(expectedStatusCode);
+        }
+
+        [Fact]
+        public async Task DeleteUser_Fail_ShouldReturnDbEntityNotFound()
+        {
+            // Arrange
+            var nonExistingId = Guid.NewGuid();
+            const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
+
+            // Act
+            var response = await _client.DeleteAsync($"/users/{nonExistingId}");
+
+            // Assert
+            response.StatusCode.Should().Be(expectedStatusCode);
+        }
+
+        #endregion
+
+        #region Helper Methods
+
+        private static StringContent CreateJsonContent(object obj)
+        {
+            return new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
+        }
+
+        #endregion
     }
 }

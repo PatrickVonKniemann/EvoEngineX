@@ -27,9 +27,14 @@ Accept: application/json
   "Language": "English"
 }
 
-###
+### Get existing id
 
 GET {{UsersService_HostAddress}}/users/123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
+### Get non existing id not found
+
+GET {{UsersService_HostAddress}}/users/123e4567-e89b-12d3-a456-426614174001
 Accept: application/json
 
 ###

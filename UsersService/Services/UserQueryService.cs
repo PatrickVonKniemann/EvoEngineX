@@ -1,4 +1,5 @@
 using AutoMapper;
+using Common.Exceptions;
 using DomainEntities.Users.Query;
 using DomainEntities.Users.Response;
 using Generics.BaseEntities;
@@ -35,6 +36,10 @@ namespace UsersService.Services
         public async Task<ReadUserResponse> GetByIdAsync(Guid entityId)
         {
             var user = await userRepository.GetByIdAsync(entityId);
+            if (user == null)
+            {
+                throw new DbEntityNotFoundException("User", entityId);
+            }
             return mapper.Map<ReadUserResponse>(user);
         }
     }
