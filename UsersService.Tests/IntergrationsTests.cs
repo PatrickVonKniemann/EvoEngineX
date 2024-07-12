@@ -7,18 +7,13 @@ using Xunit;
 
 namespace UsersService.Tests
 {
-    public class UserServiceTests : IClassFixture<CustomWebApplicationFactory<Program>>
+    public class UserServiceTests(CustomWebApplicationFactory<Program> factory)
+        : IClassFixture<CustomWebApplicationFactory<Program>>
     {
         // private readonly HttpClient _client = new() { BaseAddress = new Uri("http://localhost:5127") };
         private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
-        private readonly HttpClient _client;
-        private readonly CustomWebApplicationFactory<Program> _factory;
-
-        public UserServiceTests(CustomWebApplicationFactory<Program> factory)
-        {
-            _factory = factory;
-            _client = factory.CreateClient();
-        }
+        private readonly HttpClient _client = factory.CreateClient();
+        private readonly CustomWebApplicationFactory<Program> _factory = factory;
 
         [Fact]
         public async Task GetUsers_ShouldReturnUsers()
@@ -88,16 +83,17 @@ namespace UsersService.Tests
         public async Task UpdateUser_ShouldReturnSuccess()
         {
             // Arrange
-            var user = new
+            var userToUpdateId = _commonId;
+            var userToUpdate = new
             {
                 Email = "updatedemail@example.com",
                 Name = "Updated Name",
                 Language = "Updated Language"
             };
-            var content = new StringContent(JsonSerializer.Serialize(user), Encoding.UTF8, "application/json");
+            var content = new StringContent(JsonSerializer.Serialize(userToUpdate), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PatchAsync($"/users/{_commonId}", content);
+            var response = await _client.PatchAsync($"/users/{userToUpdateId}", content);
 
             // Assert
             response.EnsureSuccessStatusCode();

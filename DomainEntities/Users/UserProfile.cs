@@ -14,9 +14,15 @@ public class UserProfile : Profile
         CreateMap<CreateUserResponse, ReadUserResponse>().ReverseMap();
         CreateMap<User, CreateUserResponse>().ReverseMap();
         CreateMap<CreateUserRequest, CreateUserResponse>().ReverseMap();
-        
-        CreateMap<User, UserListResponseItem>().ReverseMap();
-        CreateMap<User, UpdateUserRequest>().ReverseMap();
         CreateMap<User, CreateUserRequest>().ReverseMap();
+
+        // Read
+        CreateMap<User, UserListResponseItem>().ReverseMap();
+
+        // Update
+        CreateMap<User, UpdateUserRequest>().ReverseMap();
+        CreateMap<User, UpdateUserResponse>().ReverseMap();
+        
+
     }
 }

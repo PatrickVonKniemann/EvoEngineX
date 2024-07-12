@@ -1,6 +1,6 @@
 @UsersService_HostAddress = http://localhost:5127
 
-GET {{UsersService_HostAddress}}/users
+POST {{UsersService_HostAddress}}/users
 Content-Type: application/json
 Accept: application/json
 
@@ -34,7 +34,7 @@ Accept: application/json
 
 ###
 
-PATCH {{UsersService_HostAddress}}/users/123e4567-e89b-12d3-a456-42661417400
+PATCH {{UsersService_HostAddress}}/users/c906787c-1ae0-45cc-a1d4-736e724b194f
 Content-Type: application/json
 Accept: application/json
 

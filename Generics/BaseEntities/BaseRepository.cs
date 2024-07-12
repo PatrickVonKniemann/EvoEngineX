@@ -5,6 +5,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading.Tasks;
+using Common.Exceptions;
 
 namespace Generics.BaseEntities
 {
@@ -32,7 +33,7 @@ namespace Generics.BaseEntities
         {
             if (paginationQuery != null && paginationQuery.PageNumber <= 0)
             {
-                throw new ArgumentException("CoreMessages.PagingWrongPage");
+                throw new ArgumentException(CoreMessages.PagingWrongPage);
             }
 
             if (paginationQuery != null && !string.IsNullOrEmpty(paginationQuery.SortingQuery.SortParam))
@@ -53,7 +54,7 @@ namespace Generics.BaseEntities
             if (!isSortParamProvided) return;
 
             if (!_propertyNames.Contains(sortingQuery.SortParam))
-                throw new ArgumentException("Sort Params doesn't match");
+                throw new ArgumentException(CoreMessages.SortParametersDoesntMatch);
         }
 
         private void ValidateFilterParameter(Dictionary<string, string> filterParams)
@@ -63,7 +64,7 @@ namespace Generics.BaseEntities
             if (!isFilterParamAndValueProvided) return;
 
             if (filterParams.Any(param => !_propertyNames.Contains(param.Key)))
-                throw new ArgumentException("Filter Params doesn't match");
+                throw new ArgumentException(CoreMessages.FilterParametersDoesntMatch);
         }
 
         private IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, PaginationQuery paginationQuery)

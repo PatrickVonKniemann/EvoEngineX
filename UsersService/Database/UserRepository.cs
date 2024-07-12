@@ -7,16 +7,17 @@ namespace UsersService.Database
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {
-        private readonly List<User?> _users = new()
-        {
+        private readonly List<User?> _users =
+        [
             new User
             {
-                Id = Guid.Parse("123e4567-e89b-12d3-a456-426614174000"),
+                Id = new Guid("123e4567-e89b-12d3-a456-426614174000"),
                 UserName = "john_doe",
                 Email = "john.doe@example.com",
                 Name = "John Doe",
                 Language = "English"
             },
+
             new User
             {
                 Id = Guid.NewGuid(),
@@ -25,6 +26,7 @@ namespace UsersService.Database
                 Name = "Jane Smith",
                 Language = "English"
             },
+
             new User
             {
                 Id = Guid.NewGuid(),
@@ -33,6 +35,7 @@ namespace UsersService.Database
                 Name = "Maria Garcia",
                 Language = "Spanish"
             },
+
             new User
             {
                 Id = Guid.NewGuid(),
@@ -41,7 +44,7 @@ namespace UsersService.Database
                 Name = "Maria2 Garcia",
                 Language = "Spanish"
             }
-        };
+        ];
 
         public async Task<List<User?>> GetAllAsync(PaginationQuery paginationQuery)
         {
@@ -60,7 +63,7 @@ namespace UsersService.Database
         public async Task<User> UpdateAsync(Guid userId, User updatedUser)
         {
             var user = _users.FirstOrDefault(u => u.Id == userId);
-            if (user == null) throw new Exception(CoreMessages.EntityNotFound);
+            if (user == null) throw new DbEntityNotFoundException("User", userId);
 
             user.UserName = updatedUser.UserName;
             user.Email = updatedUser.Email;
@@ -72,7 +75,7 @@ namespace UsersService.Database
         public async Task DeleteAsync(Guid userId)
         {
             var user = _users.FirstOrDefault(u => u.Id == userId);
-            if (user == null) throw new Exception(CoreMessages.UserDoesntExists);
+            if (user == null) throw new DbEntityNotFoundException("User", userId);
 
             _ = await Task.Run(() => _users.Remove(user));
         }
