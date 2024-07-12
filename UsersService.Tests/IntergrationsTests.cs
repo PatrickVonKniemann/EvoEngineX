@@ -7,11 +7,18 @@ using Xunit;
 
 namespace UsersService.Tests
 {
-    public class UserServiceTests
+    public class UserServiceTests : IClassFixture<CustomWebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client = new() { BaseAddress = new Uri("http://localhost:5127") };
+        // private readonly HttpClient _client = new() { BaseAddress = new Uri("http://localhost:5127") };
         private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
+        private readonly HttpClient _client;
+        private readonly CustomWebApplicationFactory<Program> _factory;
 
+        public UserServiceTests(CustomWebApplicationFactory<Program> factory)
+        {
+            _factory = factory;
+            _client = factory.CreateClient();
+        }
 
         [Fact]
         public async Task GetUsers_ShouldReturnUsers()
@@ -29,7 +36,8 @@ namespace UsersService.Tests
                     }
                 }
             };
-            var serializeRequest = new StringContent(JsonSerializer.Serialize(requestContent), Encoding.UTF8, "application/json");
+            var serializeRequest = new StringContent(JsonSerializer.Serialize(requestContent), Encoding.UTF8,
+                "application/json");
 
             // Act
             var response = await _client.PostAsync("/users", serializeRequest);
