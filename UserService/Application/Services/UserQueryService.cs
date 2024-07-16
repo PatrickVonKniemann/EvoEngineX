@@ -3,10 +3,9 @@ using Common.Exceptions;
 using DomainEntities.UserDto.Query;
 using Generics.BaseEntities;
 using Generics.Pagination;
-using UserService.Database;
+using UserService.Infrastructure.Database;
 
-
-namespace UserService.Services
+namespace UserService.Application.Services
 {
     public class UserQueryService(IMapper mapper, IUserRepository userRepository, ILogger<UserQueryService> logger)
         : IUserQueryService

@@ -1,6 +1,6 @@
 using DomainEntities.UserDto.Command;
 using FastEndpoints;
-using UserService.Services;
+using UserService.Application.Services;
 
 namespace UserService.Api;
 

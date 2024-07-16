@@ -1,4 +1,4 @@
-﻿namespace DomainEntities.CodeRunDtos.Query;
+﻿namespace DomainEntities.CodeRunDto.Query;
 
 /// <summary>
 ///  User data transfer object.

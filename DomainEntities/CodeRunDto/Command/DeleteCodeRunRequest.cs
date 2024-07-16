@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DomainEntities.CodeRunDtos.Command;
+namespace DomainEntities.CodeRunDto.Command;
 
 /// <summary>
 ///  User data transfer object.

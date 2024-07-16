@@ -1,8 +1,7 @@
 using DomainEntities.UserDto.Command;
-
-namespace UserService.Validators;
-
 using FluentValidation;
+
+namespace UserService.Application.Validators;
 
 public class CreateUserRequestValidator : AbstractValidator<CreateUserRequest>
 {

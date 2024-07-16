@@ -1,9 +1,9 @@
+using CodeRunService.Application.Services;
+using CodeRunService.Infrastructure.Database;
 using Common;
-using DomainEntities.CodeRun;
+using DomainEntities.CodeRunDto;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using CodeRunService.Database;
-using CodeRunService.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,7 +14,7 @@ builder.Services
     {
         o.DocumentSettings = s =>
         {
-            s.Title = "CodeRunDto API";
+            s.Title = "Code Run Service API";
             s.Version = "v0.0.1";
         };
     });

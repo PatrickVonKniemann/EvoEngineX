@@ -1,7 +1,6 @@
 using DomainEntities.UserDto.Query;
-using DomainEntities.UserDtos.Query;
 using FastEndpoints;
-using UserService.Services;
+using UserService.Application.Services;
 
 namespace UserService.Api;
 

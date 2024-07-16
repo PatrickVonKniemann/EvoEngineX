@@ -1,8 +1,8 @@
 using DomainEntities.UserDto.Query;
 using Generics.BaseEntities;
 
-namespace DomainEntities.CodeRunDtos.Query;
+namespace DomainEntities.CodeRunDto.Query;
 
-public class ReadCodeRunListResponse :  ListResponseDtoBase<UserListResponseItem>
+public class ReadCodeRunListResponse :  ListResponseDtoBase<CodeRunListResponseItem>
 {
 }

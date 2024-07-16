@@ -1,7 +1,7 @@
 using DomainEntities;
 using Generics.Pagination;
 
-namespace UserService.Database
+namespace UserService.Infrastructure.Database
 {
     public interface IUserRepository
     {

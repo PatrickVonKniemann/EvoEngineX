@@ -1,9 +1,9 @@
-using Generics.BaseEntities;
-using Generics.Pagination;
 using Common.Exceptions;
 using DomainEntities;
+using Generics.BaseEntities;
+using Generics.Pagination;
 
-namespace UserService.Database
+namespace UserService.Infrastructure.Database
 {
     public class UserRepository : BaseRepository<User>, IUserRepository
     {

@@ -1,4 +1,4 @@
-namespace DomainEntities.CodeRunDtos.Query;
+namespace DomainEntities.CodeRunDto.Query;
 
 /// <summary>
 /// Item of user list
@@ -6,12 +6,4 @@ namespace DomainEntities.CodeRunDtos.Query;
 public class CodeRunListResponseItem
 {
     public Guid Id { get; set; }
-
-    public string UserName { get; set; } = string.Empty;
-
-    public string Email { get; set; } = string.Empty;
-
-    public string Name { get; set; } = string.Empty;
-
-
 }

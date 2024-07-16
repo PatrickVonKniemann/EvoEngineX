@@ -1,8 +1,8 @@
 using AutoMapper;
-using DomainEntities.CodeRunDtos.Command;
-using DomainEntities.CodeRunDtos.Query;
+using DomainEntities.CodeRunDto.Command;
+using DomainEntities.CodeRunDto.Query;
 
-namespace DomainEntities.CodeRunDtos;
+namespace DomainEntities.CodeRunDto;
 
 public class CodeRunProfile : Profile
 {

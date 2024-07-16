@@ -1,9 +1,9 @@
 using AutoMapper;
 using DomainEntities;
 using DomainEntities.UserDto.Command;
-using UserService.Database;
+using UserService.Infrastructure.Database;
 
-namespace UserService.Services;
+namespace UserService.Application.Services;
 
 public class UserCommandService(
     ILogger<UserCommandService> logger,

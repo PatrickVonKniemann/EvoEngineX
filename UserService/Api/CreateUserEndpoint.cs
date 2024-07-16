@@ -1,7 +1,7 @@
 using DomainEntities.UserDto.Command;
 using FastEndpoints;
-using UserService.Services;
-using UserService.Validators;
+using UserService.Application.Services;
+using UserService.Application.Validators;
 
 namespace UserService.Api;
 

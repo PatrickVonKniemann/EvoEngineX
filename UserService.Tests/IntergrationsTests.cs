@@ -1,7 +1,7 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
-using DomainEntities.UserDtos.Query;
+using DomainEntities.UserDto.Query;
 using FluentAssertions;
 using Generics.Pagination;
 using UsersService.Tests;

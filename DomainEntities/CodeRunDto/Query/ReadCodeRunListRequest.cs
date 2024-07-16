@@ -1,6 +1,6 @@
 using Generics.Pagination;
 
-namespace DomainEntities.CodeRunDtos.Query;
+namespace DomainEntities.CodeRunDto.Query;
 
 public class ReadCodeRunListRequest
 {

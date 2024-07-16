@@ -1,7 +1,7 @@
 using DomainEntities.UserDto.Query;
 using Generics.BaseEntities;
 
-namespace UserService.Services;
+namespace UserService.Application.Services;
 
 public interface IUserQueryService : IGenericEntityQueryService<ReadUserResponse, ReadUserListResponse>
 {

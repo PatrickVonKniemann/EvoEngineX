@@ -2,8 +2,8 @@ using Common;
 using DomainEntities.UserDto;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using UserService.Database;
-using UserService.Services;
+using UserService.Application.Services;
+using UserService.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
