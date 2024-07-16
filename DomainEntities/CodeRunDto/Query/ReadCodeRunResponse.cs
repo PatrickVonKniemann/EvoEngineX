@@ -6,14 +6,11 @@
 public class ReadCodeRunResponse
 {
     public Guid Id { get; set; }
-
-    public string UserName { get; set; } = string.Empty;
-    
-    public string Password { get; set; } = string.Empty;
-
-    public string Email { get; set; } = string.Empty;
-
-    public string Name { get; set; } = string.Empty;
-
-    public string Language { get; set; } = string.Empty;
+    public Guid CodeBaseId { get; set; }
+    // Navigation property for CodeBase
+    public required CodeBase CodeBase { get; set; }
+    public RunStatus Status { get; set; } 
+    public DateTime? RunStart { get; set; }
+    public DateTime? RunFinish { get; set; }
+    public RunResult? Results { get; set; }
 }

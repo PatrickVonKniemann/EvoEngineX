@@ -5,5 +5,6 @@
 /// </summary>
 public class CreateCodeRunResponse
 {
-    
+    public Guid Id { get; set; }
+    public Guid CodeBaseId { get; set; }
 }
