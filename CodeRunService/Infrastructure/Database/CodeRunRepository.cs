@@ -139,10 +139,12 @@ namespace CodeRunService.Infrastructure.Database
             var codeRun = _codeRuns.FirstOrDefault(u => u.Id == codeRunId);
             if (codeRun == null) throw new DbEntityNotFoundException("CodeRun", codeRunId);
 
-            // codeRun.CodeRunName = updatedCodeRun.CodeRunName;
-            // codeRun.Email = updatedCodeRun.Email;
-            // codeRun.Name = updatedCodeRun.Name;
-            // codeRun.Language = updatedCodeRun.Language;
+            
+            codeRun.RunFinish = updatedCodeRun.RunFinish;
+            codeRun.RunStart = updatedCodeRun.RunStart;
+            codeRun.Results = updatedCodeRun.Results;
+            codeRun.Status = updatedCodeRun.Status;
+ 
             return await Task.FromResult(codeRun);
         }
 

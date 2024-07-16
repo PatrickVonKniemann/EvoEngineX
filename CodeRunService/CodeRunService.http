@@ -37,7 +37,7 @@ Accept: application/json
 }
 ### Get existing id
 
-GET {{CodeRunService_HostAddress}}/code-runs/d9399c14-c7b7-4b04-8b12-9815e86d2e8a
+GET {{CodeRunService_HostAddress}}/code-runs/123e4567-e89b-12d3-a456-426614174000
 Accept: application/json
 
 ### Get non existing id not found
@@ -47,12 +47,10 @@ Accept: application/json
 
 ###
 
-PATCH {{CodeRunService_HostAddress}}/code-runs/c906787c-1ae0-45cc-a1d4-736e724b194f
+PATCH {{CodeRunService_HostAddress}}/code-runs/123e4567-e89b-12d3-a456-426614174000
 Content-Type: application/json
 Accept: application/json
 
 {
-  "Email": "updatedemail@example.com",
-  "Name": "Updated Name",
-  "Language": "Updated Language"
+  "status": 1
 }
