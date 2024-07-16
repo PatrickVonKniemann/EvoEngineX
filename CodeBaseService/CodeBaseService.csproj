@@ -6,14 +6,19 @@
         <ImplicitUsings>enable</ImplicitUsings>
         <InvariantGlobalization>true</InvariantGlobalization>
     </PropertyGroup>
-
+    
     <ItemGroup>
+        <PackageReference Include="FastEndpoints" Version="5.27.0.1-beta" />
+        <PackageReference Include="FastEndpoints.Swagger" Version="5.27.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
-        <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
+        <PackageReference Include="MongoDB.Bson" Version="2.27.0" />
     </ItemGroup>
-
+    
     <ItemGroup>
-      <Folder Include="DbContext\" />
+      <ProjectReference Include="..\DomainEntities\DomainEntities.csproj" />
+      <ProjectReference Include="..\DomainSharedModels\DomainSharedModels.csproj" />
+      <ProjectReference Include="..\Generics\Generics.csproj" />
+      <ProjectReference Include="..\MasterData\MasterData.csproj" />
     </ItemGroup>
 
 </Project>

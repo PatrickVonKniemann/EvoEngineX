@@ -1,6 +1,6 @@
 namespace DomainEntities;
 
-public class CodeBase
+public class Codebase
 {
     public Guid Id { get; set; }
     public string Code { get; set; }
@@ -8,5 +8,5 @@ public class CodeBase
     // Navigation property for User
     public User User { get; set; }
     // Navigation property for CodeRuns
-    public ICollection<CodeRun> CodeRuns { get; set; }
+    public ICollection<CodeRun>? CodeRuns { get; set; }
 }
