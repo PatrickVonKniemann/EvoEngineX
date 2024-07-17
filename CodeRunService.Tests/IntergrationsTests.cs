@@ -28,7 +28,6 @@ namespace CodeRunService.Tests
 
             var codeRun = new CreateCodeRunRequest
             {
-                Id = expectedId,
                 CodeBaseId = expectedCodeBaseId
             };
             var content = CreateJsonContent(codeRun);
@@ -130,16 +129,18 @@ namespace CodeRunService.Tests
             {
                 Status = expectedStatus
             };
-            var content = CreateJsonContent(codeRunToUpdate);
+            var content = new StringContent(JsonSerializer.Serialize(codeRunToUpdate), Encoding.UTF8, "application/json");
 
             // Act
             var response = await _client.PatchAsync($"/code-runs/{codeRunToUpdateId}", content);
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().Contain(codeRunToUpdate.ToString());
+            responseContent.Should().Contain(JsonSerializer.Serialize(codeRunToUpdateId));
+            responseContent.Should().Contain(JsonSerializer.Serialize(expectedStatus));
             response.StatusCode.Should().Be(expectedStatusCode);
         }
+
 
         #endregion
 
