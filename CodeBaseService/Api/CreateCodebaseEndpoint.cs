@@ -13,7 +13,7 @@ public class CreateCodebaseEndpoint(ILogger<CreateCodebaseEndpoint> logger, ICod
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("codebases/add");
+        Routes("codebase/add");
         AllowAnonymous();
         Validator<CreateCodebaseRequestValidator>();
     }

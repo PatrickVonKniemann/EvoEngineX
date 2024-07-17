@@ -12,7 +12,7 @@ public class ReadCodebaseEndpoint(ILogger<ReadCodebaseEndpoint> logger, ICodebas
     public override void Configure()
     {
         Verbs(Http.GET);
-        Routes("codebases/{ID}");
+        Routes("codebase/{ID}");
         AllowAnonymous();
     }
 

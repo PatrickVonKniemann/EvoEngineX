@@ -23,8 +23,7 @@ namespace CodeRunService.Tests
         public async Task AddCodeRun_Success_ShouldReturnSuccess()
         {
             // Arrange
-            var expectedId = new Guid();
-            var expectedCodeBaseId = new Guid();
+            var expectedCodeBaseId = _commonId;
 
             var codeRun = new CreateCodeRunRequest
             {
@@ -33,12 +32,11 @@ namespace CodeRunService.Tests
             var content = CreateJsonContent(codeRun);
 
             // Act
-            var response = await _client.PostAsync("/code-runs/add", content);
+            var response = await _client.PostAsync("/code-run/add", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().Contain(expectedId.ToString());
             responseContent.Should().Contain(expectedCodeBaseId.ToString());
         }
 
@@ -51,7 +49,7 @@ namespace CodeRunService.Tests
             var content = CreateJsonContent(codeRun);
 
             // Act
-            var response = await _client.PostAsync("/code-runs/add", content);
+            var response = await _client.PostAsync("/code-run/add", content);
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);
@@ -76,7 +74,7 @@ namespace CodeRunService.Tests
             var content = CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/code-runs", content);
+            var response = await _client.PostAsync("/code-run", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -92,7 +90,7 @@ namespace CodeRunService.Tests
             var codeRunToSearch = _commonId;
 
             // Act
-            var response = await _client.GetAsync($"/code-runs/{codeRunToSearch}");
+            var response = await _client.GetAsync($"/code-run/{codeRunToSearch}");
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -108,7 +106,7 @@ namespace CodeRunService.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
 
             // Act
-            var response = await _client.GetAsync($"/code-runs/{nonExistingId}");
+            var response = await _client.GetAsync($"/code-run/{nonExistingId}");
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);
@@ -132,7 +130,7 @@ namespace CodeRunService.Tests
             var content = new StringContent(JsonSerializer.Serialize(codeRunToUpdate), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PatchAsync($"/code-runs/{codeRunToUpdateId}", content);
+            var response = await _client.PatchAsync($"/code-run/{codeRunToUpdateId}", content);
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -154,7 +152,7 @@ namespace CodeRunService.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act
-            var response = await _client.DeleteAsync($"/code-runs/{codeRunToDeleteId}");
+            var response = await _client.DeleteAsync($"/code-run/{codeRunToDeleteId}");
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -170,7 +168,7 @@ namespace CodeRunService.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
 
             // Act
-            var response = await _client.DeleteAsync($"/code-runs/{nonExistingId}");
+            var response = await _client.DeleteAsync($"/code-run/{nonExistingId}");
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);

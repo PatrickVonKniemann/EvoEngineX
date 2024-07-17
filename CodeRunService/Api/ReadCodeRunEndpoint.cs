@@ -12,7 +12,7 @@ public class ReadCodeRunEndpoint(ILogger<ReadCodeRunEndpoint> logger, ICodeRunQu
     public override void Configure()
     {
         Verbs(Http.GET);
-        Routes("code-runs/{ID}");
+        Routes("code-run/{ID}");
         AllowAnonymous();
     }
 

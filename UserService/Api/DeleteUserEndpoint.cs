@@ -12,7 +12,7 @@ public class DeleteUserEndpoint(ILogger<DeleteUserEndpoint> logger, IUserCommand
     public override void Configure()
     {
         Verbs(Http.DELETE);
-        Routes("users/{id}");
+        Routes("user/{id}");
         AllowAnonymous();
     }
 

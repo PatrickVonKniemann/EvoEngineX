@@ -12,7 +12,7 @@ public class DeleteCodebaseEndpoint(ILogger<DeleteCodebaseEndpoint> logger, ICod
     public override void Configure()
     {
         Verbs(Http.DELETE);
-        Routes("codebases/{id}");
+        Routes("codebase/{id}");
         AllowAnonymous();
     }
 

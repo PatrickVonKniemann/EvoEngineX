@@ -13,7 +13,7 @@ public class CreateCodeRunEndpoint(ILogger<CreateCodeRunEndpoint> logger, ICodeR
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("code-runs/add");
+        Routes("code-run/add");
         AllowAnonymous();
         Validator<CreateCodeRunRequestValidator>();
     }

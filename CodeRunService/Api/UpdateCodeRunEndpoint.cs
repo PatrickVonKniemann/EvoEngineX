@@ -12,7 +12,7 @@ public class UpdateCodeRunEndpoint(ILogger<UpdateCodeRunEndpoint> logger, ICodeR
     public override void Configure()
     {
         Verbs(Http.PATCH);
-        Routes("code-runs/{id}");
+        Routes("code-run/{id}");
         AllowAnonymous();
     }
 

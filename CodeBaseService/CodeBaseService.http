@@ -1,6 +1,56 @@
-@CodeBaseService_HostAddress = http://localhost:5242
+@CodeRunService_HostAddress = http://localhost:5127
 
-GET {{CodeBaseService_HostAddress}}/weatherforecast/
+GET {{CodeRunService_HostAddress}}/code-base/all
+Content-Type: application/json
+Accept: application/json
+
+{
+  "paginationQuery": {
+    "pageNumber": 1,
+    "pageSize": 10
+  }
+}
+
+###
+
+POST {{CodeRunService_HostAddress}}/code-base/add
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": "372e9734-b9d3-4ff0-a67f-a6519fb62b5e",
+  "codeBaseId": "355e4567-e89b-12d3-a456-426614174000",
+  "status": 0,
+  "runStart": "2024-08-16T10:50:27.730439Z",
+  "runFinish": "2024-08-16T11:50:27.730439Z",
+  "results": {
+    "id": "3c15c97d-1e85-4a31-aae1-7b49d3bf0bd2",
+    "file": null,
+    "objectRefId": {
+      "timestamp": 1721137827,
+      "machine": 4798431,
+      "pid": 28340,
+      "increment": 4512257,
+      "creationTime": "2024-07-16T13:50:27Z"
+    }
+  }
+}
+### Get existing id
+
+GET {{CodeRunService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
+### Get non existing id not found
+
+GET {{CodeRunService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174001
 Accept: application/json
 
 ###
+
+PATCH {{CodeRunService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
+Content-Type: application/json
+Accept: application/json
+
+{
+  "status": 1
+}

@@ -12,7 +12,7 @@ public class UpdateCodebaseEndpoint(ILogger<UpdateCodebaseEndpoint> logger, ICod
     public override void Configure()
     {
         Verbs(Http.PATCH);
-        Routes("codebases/{id}");
+        Routes("codebase/{id}");
         AllowAnonymous();
     }
 

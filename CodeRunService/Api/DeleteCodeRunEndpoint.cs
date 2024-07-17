@@ -12,7 +12,7 @@ public class DeleteCodeRunEndpoint(ILogger<DeleteCodeRunEndpoint> logger, ICodeR
     public override void Configure()
     {
         Verbs(Http.DELETE);
-        Routes("code-runs/{id}");
+        Routes("code-run/{id}");
         AllowAnonymous();
     }
 

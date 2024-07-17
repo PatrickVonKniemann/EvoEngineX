@@ -12,7 +12,7 @@ public class UpdateUserEndpoint(ILogger<UpdateUserEndpoint> logger, IUserCommand
     public override void Configure()
     {
         Verbs(Http.PATCH);
-        Routes("users/{id}");
+        Routes("user/{id}");
         AllowAnonymous();
     }
 

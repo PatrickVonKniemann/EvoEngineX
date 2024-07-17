@@ -12,7 +12,7 @@ public class ReadCodebaseListEndpoint(ILogger<ReadCodebaseListEndpoint> logger, 
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("codebases");
+        Routes("codebase");
         AllowAnonymous();
     }
 
