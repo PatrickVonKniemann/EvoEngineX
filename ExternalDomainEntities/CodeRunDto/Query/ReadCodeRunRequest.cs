@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DomainEntities.CodeBaseDto.Command;
+namespace ExternalDomainEntities.CodeRunDto.Query;
 
 /// <summary>
 ///  User data transfer object.
 /// </summary>
-public class DeleteCodeBaseRequest
+public class ReadCodeRunRequest
 {
     [FromRoute]
     public Guid Id { get; set; }

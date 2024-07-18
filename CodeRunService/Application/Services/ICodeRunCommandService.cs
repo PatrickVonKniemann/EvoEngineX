@@ -1,4 +1,4 @@
-using DomainEntities.CodeRunDto.Command;
+using ExternalDomainEntities.CodeRunDto.Command;
 using Generics.BaseEntities;
 
 namespace CodeRunService.Application.Services;

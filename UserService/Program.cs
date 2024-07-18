@@ -1,6 +1,6 @@
 using System.Configuration;
 using Common;
-using DomainEntities.UserDto;
+using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;

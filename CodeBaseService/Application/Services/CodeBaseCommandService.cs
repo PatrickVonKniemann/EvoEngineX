@@ -2,7 +2,7 @@ using AutoMapper;
 using CodebaseService.Application.Services;
 using CodebaseService.Infrastructure.Database;
 using DomainEntities;
-using DomainEntities.CodeBaseDto.Command;
+using ExternalDomainEntities.CodeBaseDto.Command;
 
 namespace CodeBaseService.Application.Services;
 

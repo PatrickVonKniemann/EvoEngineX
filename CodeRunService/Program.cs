@@ -2,7 +2,7 @@ using CodeRunService.Application.Services;
 using CodeRunService.Infrastructure;
 using CodeRunService.Infrastructure.Database;
 using Common;
-using DomainEntities.CodeRunDto;
+using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using FluentAssertions.Common;

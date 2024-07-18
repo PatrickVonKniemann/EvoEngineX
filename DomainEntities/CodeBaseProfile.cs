@@ -1,9 +1,9 @@
 using AutoMapper;
-using DomainEntities.CodeBaseDto.Command;
 using DomainEntities.CodebaseDto.Query;
 using DomainEntities.CodeBaseDto.Query;
+using ExternalDomainEntities.CodeBaseDto.Command;
 
-namespace DomainEntities.CodebaseDto;
+namespace DomainEntities;
 
 public class CodebaseProfile : Profile
 {

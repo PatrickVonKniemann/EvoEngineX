@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using MongoDB.Bson;
 
-namespace DomainEntities;
+namespace Generics.Enums;
 
 public class RunResult
 {

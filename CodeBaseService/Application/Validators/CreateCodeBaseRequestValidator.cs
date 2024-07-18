@@ -1,4 +1,4 @@
-using DomainEntities.CodeBaseDto.Command;
+using ExternalDomainEntities.CodeBaseDto.Command;
 using FluentValidation;
 
 namespace CodebaseService.Application.Validators;

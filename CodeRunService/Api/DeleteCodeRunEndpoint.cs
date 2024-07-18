@@ -1,5 +1,5 @@
 using CodeRunService.Application.Services;
-using DomainEntities.CodeRunDto.Command;
+using ExternalDomainEntities.CodeRunDto.Command;
 using FastEndpoints;
 
 namespace CodeRunService.Api;

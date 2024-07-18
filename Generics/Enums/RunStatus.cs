@@ -1,4 +1,4 @@
-namespace DomainEntities;
+namespace Generics.Enums;
 
 public enum RunStatus
 {

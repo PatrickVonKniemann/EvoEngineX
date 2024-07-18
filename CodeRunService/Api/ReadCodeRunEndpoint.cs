@@ -1,6 +1,6 @@
-using DomainEntities.CodeRunDto.Query;
 using FastEndpoints;
 using CodeRunService.Application.Services;
+using ExternalDomainEntities.CodeRunDto.Query;
 
 namespace CodeRunService.Api;
 

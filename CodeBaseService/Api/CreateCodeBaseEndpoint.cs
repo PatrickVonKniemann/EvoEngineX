@@ -1,7 +1,7 @@
 using FastEndpoints;
-using DomainEntities.CodeBaseDto.Command;
 using CodebaseService.Application.Services;
 using CodebaseService.Application.Validators;
+using ExternalDomainEntities.CodeBaseDto.Command;
 
 namespace CodebaseService.Api;
 

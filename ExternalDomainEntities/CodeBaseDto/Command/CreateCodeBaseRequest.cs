@@ -1,9 +1,9 @@
-﻿namespace DomainEntities.CodeBaseDto.Command;
+﻿namespace ExternalDomainEntities.CodeBaseDto.Command;
 
 /// <summary>
 ///  User data transfer object.
 /// </summary>
-public class UpdateCodeBaseResponse
+public class CreateCodeBaseRequest
 {
     public Guid Id { get; set; }
 }

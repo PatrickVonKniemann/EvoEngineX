@@ -29,7 +29,6 @@
       <ProjectReference Include="..\DomainEntities\DomainEntities.csproj" />
       <ProjectReference Include="..\DomainSharedModels\DomainSharedModels.csproj" />
       <ProjectReference Include="..\Generics\Generics.csproj" />
-      <ProjectReference Include="..\MasterData\MasterData.csproj" />
     </ItemGroup>
 
 </Project>

@@ -3,7 +3,7 @@ using CodeBaseService.Application.Services;
 using CodeBaseService.Infrastructure;
 using CodebaseService.Infrastructure.Database;
 using Common;
-using DomainEntities.CodebaseDto;
+using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.EntityFrameworkCore;

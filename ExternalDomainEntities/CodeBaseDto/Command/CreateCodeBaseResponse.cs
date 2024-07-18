@@ -1,4 +1,4 @@
-﻿namespace DomainEntities.CodeBaseDto.Command;
+﻿namespace ExternalDomainEntities.CodeBaseDto.Command;
 
 /// <summary>
 ///  User data transfer object.

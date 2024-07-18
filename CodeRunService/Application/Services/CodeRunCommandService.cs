@@ -1,7 +1,7 @@
 using AutoMapper;
 using DomainEntities;
-using DomainEntities.CodeRunDto.Command;
 using CodeRunService.Infrastructure.Database;
+using ExternalDomainEntities.CodeRunDto.Command;
 
 namespace CodeRunService.Application.Services;
 

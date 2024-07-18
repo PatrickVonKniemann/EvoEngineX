@@ -1,6 +1,6 @@
 using FastEndpoints;
 using CodebaseService.Application.Services;
-using DomainEntities.CodeBaseDto.Command;
+using ExternalDomainEntities.CodeBaseDto.Command;
 
 namespace CodebaseService.Api;
 

@@ -1,9 +1,9 @@
 using AutoMapper;
 using Common.Exceptions;
-using DomainEntities.CodeRunDto.Query;
 using Generics.BaseEntities;
 using Generics.Pagination;
 using CodeRunService.Infrastructure.Database;
+using ExternalDomainEntities.CodeRunDto.Query;
 
 namespace CodeRunService.Application.Services
 {

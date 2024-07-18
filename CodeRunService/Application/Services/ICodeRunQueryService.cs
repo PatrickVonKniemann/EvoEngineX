@@ -1,4 +1,4 @@
-using DomainEntities.CodeRunDto.Query;
+using ExternalDomainEntities.CodeRunDto.Query;
 using Generics.BaseEntities;
 
 namespace CodeRunService.Application.Services;

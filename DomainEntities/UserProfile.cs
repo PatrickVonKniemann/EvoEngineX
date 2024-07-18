@@ -2,7 +2,7 @@ using AutoMapper;
 using DomainEntities.UserDto.Command;
 using DomainEntities.UserDto.Query;
 
-namespace DomainEntities.UserDto;
+namespace DomainEntities;
 
 public class UserProfile : Profile
 {

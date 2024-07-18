@@ -1,4 +1,6 @@
-namespace DomainEntities.CodeRunDto.Query;
+using Generics.Enums;
+
+namespace ExternalDomainEntities.CodeRunDto.Query;
 
 /// <summary>
 /// Item of user list
