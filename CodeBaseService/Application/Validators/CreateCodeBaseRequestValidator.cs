@@ -3,9 +3,9 @@ using FluentValidation;
 
 namespace CodebaseService.Application.Validators;
 
-public class CreateCodebaseRequestValidator : AbstractValidator<CreateCodebaseRequest>
+public class CreateCodeBaseRequestValidator : AbstractValidator<CreateCodeBaseRequest>
 {
-    public CreateCodebaseRequestValidator()
+    public CreateCodeBaseRequestValidator()
     {
     }
 }

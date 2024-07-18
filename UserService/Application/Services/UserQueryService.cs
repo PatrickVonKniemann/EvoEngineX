@@ -1,5 +1,6 @@
 using AutoMapper;
 using Common.Exceptions;
+using DomainEntities;
 using DomainEntities.UserDto.Query;
 using Generics.BaseEntities;
 using Generics.Pagination;

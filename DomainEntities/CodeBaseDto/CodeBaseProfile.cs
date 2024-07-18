@@ -9,20 +9,20 @@ public class CodebaseProfile : Profile
 {
     public CodebaseProfile()
     {
-        CreateMap<Codebase, ReadCodebaseResponse>().ReverseMap();
+        CreateMap<CodeBase, ReadCodebaseResponse>().ReverseMap();
         
         // Create
-        CreateMap<CreateCodebaseResponse, ReadCodebaseResponse>().ReverseMap();
-        CreateMap<Codebase, CreateCodebaseResponse>().ReverseMap();
-        CreateMap<CreateCodebaseRequest, CreateCodebaseResponse>().ReverseMap();
-        CreateMap<Codebase, CreateCodebaseRequest>().ReverseMap();
+        CreateMap<CreateCodeBaseResponse, ReadCodebaseResponse>().ReverseMap();
+        CreateMap<CodeBase, CreateCodeBaseResponse>().ReverseMap();
+        CreateMap<CreateCodeBaseRequest, CreateCodeBaseResponse>().ReverseMap();
+        CreateMap<CodeBase, CreateCodeBaseRequest>().ReverseMap();
 
         // Read
-        CreateMap<Codebase, CodebaseListResponseItem>().ReverseMap();
+        CreateMap<CodeBase, CodebaseListResponseItem>().ReverseMap();
 
         // Update
-        CreateMap<Codebase, UpdateCodebaseRequest>().ReverseMap();
-        CreateMap<Codebase, UpdateCodebaseResponse>().ReverseMap();
+        CreateMap<CodeBase, UpdateCodeBaseRequest>().ReverseMap();
+        CreateMap<CodeBase, UpdateCodeBaseResponse>().ReverseMap();
         
 
     }

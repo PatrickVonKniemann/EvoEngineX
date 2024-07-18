@@ -1,8 +1,11 @@
+using System.Configuration;
 using Common;
 using DomainEntities.UserDto;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.EntityFrameworkCore;
 using UserService.Application.Services;
+using UserService.Infrastructure;
 using UserService.Infrastructure.Database;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -40,6 +43,10 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
+
+builder.Services.AddDbContext<UserDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("UserDatabase")));
+
 
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware

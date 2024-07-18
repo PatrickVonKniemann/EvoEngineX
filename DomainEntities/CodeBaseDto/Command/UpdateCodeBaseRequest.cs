@@ -5,7 +5,7 @@ namespace DomainEntities.CodeBaseDto.Command;
 /// <summary>
 ///  User data transfer object.
 /// </summary>
-public class UpdateCodebaseRequest
+public class UpdateCodeBaseRequest
 {
     [FromRoute]
     public Guid Id { get; set; }

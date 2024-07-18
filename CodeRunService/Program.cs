@@ -1,9 +1,12 @@
 using CodeRunService.Application.Services;
+using CodeRunService.Infrastructure;
 using CodeRunService.Infrastructure.Database;
 using Common;
 using DomainEntities.CodeRunDto;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using FluentAssertions.Common;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,6 +43,9 @@ builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
 builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
 
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
+builder.Services.AddDbContext<CodeRunDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CodeRunDatabase")));
+
 
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware

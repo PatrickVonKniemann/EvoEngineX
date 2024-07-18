@@ -4,21 +4,21 @@ using DomainEntities.CodeBaseDto.Query;
 
 namespace CodebaseService.Api;
 
-public class ReadCodebaseListEndpoint(ILogger<ReadCodebaseListEndpoint> logger, ICodebaseQueryService codebaseQueryService)
+public class ReadCodeBaseListEndpoint(ILogger<ReadCodeBaseListEndpoint> logger, ICodeBaseQueryService codeBaseQueryService)
     : Endpoint<ReadCodebaseListRequest, ReadCodebaseListResponse>
 {
-    private new ILogger<ReadCodebaseListEndpoint> Logger { get; } = logger;
+    private new ILogger<ReadCodeBaseListEndpoint> Logger { get; } = logger;
 
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("codebase");
+        Routes("code-base");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(ReadCodebaseListRequest req, CancellationToken ct)
     {
-        Logger.LogInformation(nameof(ReadCodebaseListEndpoint));
+        Logger.LogInformation(nameof(ReadCodeBaseListEndpoint));
         
         if (req.PaginationQuery == null)
         {
@@ -26,7 +26,7 @@ public class ReadCodebaseListEndpoint(ILogger<ReadCodebaseListEndpoint> logger, 
             return;
         }
 
-        var response = codebaseQueryService.GetAllAsync(req.PaginationQuery);
+        var response = codeBaseQueryService.GetAllAsync(req.PaginationQuery);
         await SendAsync(await response, cancellation: ct);
     }
 }

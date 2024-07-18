@@ -17,7 +17,7 @@ namespace Codebase.Tests
         private readonly HttpClient _client = factory.CreateClient();
         private readonly Guid _commonId = Guid.Parse("222e4567-e89b-12d3-a456-426614174000");
 
-        #region Add Codebase Tests
+        #region Add CodeBase Tests
 
         [Fact]
         public async Task AddCodebase_Success_ShouldReturnSuccess()
@@ -26,13 +26,13 @@ namespace Codebase.Tests
             var expectedId = new Guid();
             var expectedCodebaseId = new Guid();
 
-            var codeBase = new CreateCodebaseRequest
+            var codeBase = new CreateCodeBaseRequest
             {
             };
             var content = CreateJsonContent(codeBase);
 
             // Act
-            var response = await _client.PostAsync("/codebase/add", content);
+            var response = await _client.PostAsync("/code-base/add", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -43,7 +43,7 @@ namespace Codebase.Tests
 
         #endregion
 
-        #region Get Codebase Tests
+        #region Get CodeBase Tests
 
         [Fact]
         public async Task GetCodebases_Success_ShouldReturnCodebases()
@@ -60,7 +60,7 @@ namespace Codebase.Tests
             var content = CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/codebase", content);
+            var response = await _client.PostAsync("/code-base", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -76,7 +76,7 @@ namespace Codebase.Tests
             var codeBaseToSearch = _commonId;
 
             // Act
-            var response = await _client.GetAsync($"/codebase/{codeBaseToSearch}");
+            var response = await _client.GetAsync($"/code-base/{codeBaseToSearch}");
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -92,7 +92,7 @@ namespace Codebase.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
 
             // Act
-            var response = await _client.GetAsync($"/codebase/{nonExistingId}");
+            var response = await _client.GetAsync($"/code-base/{nonExistingId}");
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);
@@ -100,7 +100,7 @@ namespace Codebase.Tests
 
         #endregion
 
-        #region Update Codebase Tests
+        #region Update CodeBase Tests
 
         [Fact]
         public async Task UpdateCodebase_Success_ShouldReturnSuccess()
@@ -109,14 +109,14 @@ namespace Codebase.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var codeBaseToUpdateId = _commonId;
             var expectedStatus = RunStatus.Done;
-            var codeBaseToUpdate = new UpdateCodebaseRequest
+            var codeBaseToUpdate = new UpdateCodeBaseRequest
             {
                 Status = expectedStatus
             };
             var content = new StringContent(JsonSerializer.Serialize(codeBaseToUpdate), Encoding.UTF8, "application/json");
 
             // Act
-            var response = await _client.PatchAsync($"/codebase/{codeBaseToUpdateId}", content);
+            var response = await _client.PatchAsync($"/code-base/{codeBaseToUpdateId}", content);
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -128,7 +128,7 @@ namespace Codebase.Tests
 
         #endregion
 
-        #region Delete Codebase Tests
+        #region Delete CodeBase Tests
 
         [Fact]
         public async Task DeleteCodebase_Success_ShouldReturnEmptyContent()
@@ -138,7 +138,7 @@ namespace Codebase.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act
-            var response = await _client.DeleteAsync($"/codebase/{codeBaseToDeleteId}");
+            var response = await _client.DeleteAsync($"/code-base/{codeBaseToDeleteId}");
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
@@ -154,7 +154,7 @@ namespace Codebase.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
 
             // Act
-            var response = await _client.DeleteAsync($"/codebase/{nonExistingId}");
+            var response = await _client.DeleteAsync($"/code-base/{nonExistingId}");
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);

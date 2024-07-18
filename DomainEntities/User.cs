@@ -1,16 +1,13 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace DomainEntities;
 
 public class User
 {
-    public Guid Id { get; set; }
-
-    public string UserName { get; set; } = string.Empty;
-    
-    public string Password { get; set; } = string.Empty;
-
-    public string Email { get; set; } = string.Empty;
-
-    public string Name { get; set; } = string.Empty;
-
-    public string Language { get; set; } = string.Empty;
+    [Key] public Guid Id { get; set; }
+    [Required] public string UserName { get; set; } = string.Empty;
+    [Required] public string Password { get; set; } = string.Empty;
+    [Required] public string Email { get; set; } = string.Empty;
+    [Required] public string Name { get; set; } = string.Empty;
+    [Required] public string Language { get; set; } = string.Empty;
 }

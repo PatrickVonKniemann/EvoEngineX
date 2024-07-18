@@ -1,10 +1,12 @@
 using CodebaseService.Application.Services;
 using CodeBaseService.Application.Services;
+using CodeBaseService.Infrastructure;
 using CodebaseService.Infrastructure.Database;
 using Common;
 using DomainEntities.CodebaseDto;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,7 +17,7 @@ builder.Services
     {
         o.DocumentSettings = s =>
         {
-            s.Title = "Code base Service API";
+            s.Title = "Code Base Service API";
             s.Version = "v0.0.1";
         };
     });
@@ -36,11 +38,14 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddScoped<ICodebaseCommandService, CodebaseCommandService>();
-builder.Services.AddScoped<ICodebaseQueryService, CodebaseQueryService>();
-builder.Services.AddScoped<ICodebaseRepository, CodebaseRepository>();
+builder.Services.AddScoped<ICodeBaseCommandService, CodeBaseCommandService>();
+builder.Services.AddScoped<ICodeBaseQueryService, CodeBaseQueryService>();
+builder.Services.AddScoped<ICodeBaseRepository, CodeBaseRepository>();
 
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodebaseProfile()));
+builder.Services.AddDbContext<CodeBaseDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("CodeBaseDatabase")));
+
 
 var app = builder.Build();
 app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware

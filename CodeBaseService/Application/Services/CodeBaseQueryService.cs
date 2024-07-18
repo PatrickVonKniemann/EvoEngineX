@@ -9,14 +9,14 @@ using Generics.Pagination;
 
 namespace CodeBaseService.Application.Services
 {
-    public class CodebaseQueryService(IMapper mapper, ICodebaseRepository codebaseRepository, ILogger<CodebaseQueryService> logger)
-        : ICodebaseQueryService
+    public class CodeBaseQueryService(IMapper mapper, ICodeBaseRepository codeBaseRepository, ILogger<CodeBaseQueryService> logger)
+        : ICodeBaseQueryService
     {
         public async Task<ReadCodebaseListResponse> GetAllAsync(PaginationQuery paginationQuery)
         {
-            logger.LogInformation($"{nameof(CodebaseQueryService)} {nameof(GetAllAsync)}");
+            logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllAsync)}");
 
-            var codebases = await codebaseRepository.GetAllAsync(paginationQuery);
+            var codebases = await codeBaseRepository.GetAllAsync(paginationQuery);
 
             return new ReadCodebaseListResponse
             {
@@ -35,10 +35,10 @@ namespace CodeBaseService.Application.Services
 
         public async Task<ReadCodebaseResponse> GetByIdAsync(Guid entityId)
         {
-            var user = await codebaseRepository.GetByIdAsync(entityId);
+            var user = await codeBaseRepository.GetByIdAsync(entityId);
             if (user == null)
             {
-                throw new DbEntityNotFoundException("Codebase", entityId);
+                throw new DbEntityNotFoundException("CodeBase", entityId);
             }
             return mapper.Map<ReadCodebaseResponse>(user);
         }
