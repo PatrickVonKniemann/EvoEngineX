@@ -26,7 +26,7 @@ public class UserServiceWebApplicationFactory<TStartup> : CustomWebApplicationFa
             },
             new User
             {
-                Id = Guid.NewGuid(),
+                Id = MockData.MockIdUpdate,
                 UserName = "jane_smith",
                 Email = "jane.smith@example.com",
                 Name = "Jane Smith",

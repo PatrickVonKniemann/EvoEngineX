@@ -1,6 +1,8 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using Common;
+using DomainEntities.UserDto.Command;
 using DomainEntities.UserDto.Query;
 using ExternalDomainEntities.UserDto.Query;
 using FluentAssertions;
@@ -21,7 +23,7 @@ namespace UserService.Tests
         {
             // Arrange
             var user = MockData.MockUser;
-            var content = CreateJsonContent(user);
+            var content = DeserializationHelper.CreateJsonContent(user);
 
             // Act
             var response = await _client.PostAsync("/user/add", content);
@@ -38,7 +40,7 @@ namespace UserService.Tests
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
             var invalidUser = new { };
-            var content = CreateJsonContent(invalidUser);
+            var content = DeserializationHelper.CreateJsonContent(invalidUser);
 
             // Act
             var response = await _client.PostAsync("/user/add", content);
@@ -59,16 +61,15 @@ namespace UserService.Tests
             {
                 PaginationQuery = MockData.MockPaginationQuery
             };
-            var content = CreateJsonContent(requestContent);
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
             var response = await _client.PostAsync("/user/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            var userListResponse = JsonSerializer.Deserialize<ReadUserListResponse>(responseContent);
-            userListResponse?.Items.Values.Should().NotBeEmpty();
+            var userListResponse = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
+            userListResponse.Items.Values.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -82,12 +83,11 @@ namespace UserService.Tests
             var response = await _client.GetAsync($"/user/{userToSearch}");
 
             // Assert
-            var responseContent = await response.Content.ReadAsStringAsync();
             response.StatusCode.Should().Be(expectedStatusCode);
 
-            var userListResponse = JsonSerializer.Deserialize<ReadUserResponse>(responseContent);
-            userListResponse?.Id.Should().Be(expectedUser.Id);
-            userListResponse?.Name.Should().Be(expectedUser.Name);
+            var userResponse = await DeserializationHelper.DeserializeResponse<ReadUserResponse>(response);
+            userResponse.Id.Should().Be(expectedUser.Id);
+            userResponse.Name.Should().Be(expectedUser.Name);
         }
 
         [Fact]
@@ -113,22 +113,26 @@ namespace UserService.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var userToUpdateId = MockData.MockId;
+            var userToUpdateId = MockData.MockIdUpdate;
             var userToUpdate = new
             {
                 Email = "updatedemail@example.com",
                 Name = "Updated Name",
                 Language = "Updated Language"
             };
-            var content = CreateJsonContent(userToUpdate);
+            var content = DeserializationHelper.CreateJsonContent(userToUpdate);
 
             // Act
             var response = await _client.PatchAsync($"/user/{userToUpdateId}", content);
 
             // Assert
-            var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().Contain("updatedemail@example.com");
             response.StatusCode.Should().Be(expectedStatusCode);
+
+            var updatedUser = await DeserializationHelper.DeserializeResponse<UpdateUserResponse>(response);
+
+            updatedUser.Id.Should().Be(userToUpdateId);
+            updatedUser.Email.Should().Be(userToUpdate.Email);
+            updatedUser.Name.Should().Be(userToUpdate.Name);
         }
 
         #endregion
@@ -146,9 +150,10 @@ namespace UserService.Tests
             var response = await _client.DeleteAsync($"/user/{userToDeleteId}");
 
             // Assert
+            response.StatusCode.Should().Be(expectedStatusCode);
+            
             var responseContent = await response.Content.ReadAsStringAsync();
             responseContent.Should().BeEmpty();
-            response.StatusCode.Should().Be(expectedStatusCode);
         }
 
         [Fact]
@@ -166,14 +171,6 @@ namespace UserService.Tests
         }
 
         #endregion
-
-        #region Helper Methods
-
-        private static StringContent CreateJsonContent(object obj)
-        {
-            return new StringContent(JsonSerializer.Serialize(obj), Encoding.UTF8, "application/json");
-        }
-
-        #endregion
+        
     }
 }

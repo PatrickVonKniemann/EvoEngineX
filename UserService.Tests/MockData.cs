@@ -6,6 +6,7 @@ namespace UserService.Tests;
 public static class MockData
 {
     public static readonly Guid MockId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
+    public static readonly Guid MockIdUpdate = Guid.Parse("123e4567-e89b-12d3-a456-426614174005");
 
     public static readonly User MockUser = new()
     {

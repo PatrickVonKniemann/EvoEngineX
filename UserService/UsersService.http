@@ -30,7 +30,7 @@ Accept: application/json
 
 ### Get existing id
 
-GET {{UsersService_HostAddress}}/user/123e4567-e89b-12d3-a456-426614174000
+GET {{UsersService_HostAddress}}/user/123e4567-e89b-12d3-a456-426614174003
 Accept: application/json
 
 ### Get non existing id not found

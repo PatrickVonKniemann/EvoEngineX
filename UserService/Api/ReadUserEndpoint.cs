@@ -19,7 +19,7 @@ public class ReadUserEndpoint(ILogger<ReadUserEndpoint> logger, IUserQueryServic
     public override async Task HandleAsync(ReadUserRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadUserEndpoint));
-        var response = userQueryService.GetByIdAsync(req.Id);
-        await SendAsync(await response, cancellation: ct);
+        var response = await userQueryService.GetByIdAsync(req.Id);
+        await SendAsync(response, cancellation: ct);
     }
 }
