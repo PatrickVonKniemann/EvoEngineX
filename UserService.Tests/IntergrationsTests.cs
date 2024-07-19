@@ -3,17 +3,15 @@ using System.Text;
 using System.Text.Json;
 using DomainEntities.UserDto.Query;
 using FluentAssertions;
-using Generics.Pagination;
-using UsersService.Tests;
 using Xunit;
 
 namespace UserService.Tests
 {
-    public class UserServiceTests(CustomWebApplicationFactory<Program> factory)
-        : IClassFixture<CustomWebApplicationFactory<Program>>
+    public class UserServiceTests(UserServiceWebAplicatonFactory<Program> factory)
+        : IClassFixture<UserServiceWebAplicatonFactory<Program>>
     {
         private readonly HttpClient _client = factory.CreateClient();
-        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
+
 
         #region Add User Tests
 
@@ -21,13 +19,7 @@ namespace UserService.Tests
         public async Task AddUser_Success_ShouldReturnSuccess()
         {
             // Arrange
-            var user = new
-            {
-                UserName = "jdoe",
-                Email = "jdoe@example.com",
-                Name = "John Doe",
-                Language = "English"
-            };
+            var user = MockData.MockUser;
             var content = CreateJsonContent(user);
 
             // Act
@@ -44,8 +36,8 @@ namespace UserService.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
-            var user = new { };
-            var content = CreateJsonContent(user);
+            var invalidUser = new { };
+            var content = CreateJsonContent(invalidUser);
 
             // Act
             var response = await _client.PostAsync("/user/add", content);
@@ -64,15 +56,7 @@ namespace UserService.Tests
             // Arrange
             var requestContent = new ReadUserListRequest
             {
-                PaginationQuery = new PaginationQuery
-                {
-                    PageNumber = 1,
-                    PageSize = 10,
-                    FilterParams = new Dictionary<string, string>
-                    {
-                        { "Language", "Spanish" }
-                    }
-                }
+                PaginationQuery = MockData.MockPaginationQuery
             };
             var content = CreateJsonContent(requestContent);
 
@@ -90,7 +74,7 @@ namespace UserService.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var userToSearch = _commonId;
+            var userToSearch = MockData.MockId;
 
             // Act
             var response = await _client.GetAsync($"/user/{userToSearch}");
@@ -124,7 +108,7 @@ namespace UserService.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var userToUpdateId = _commonId;
+            var userToUpdateId = MockData.MockId;
             var userToUpdate = new
             {
                 Email = "updatedemail@example.com",
@@ -150,7 +134,7 @@ namespace UserService.Tests
         public async Task DeleteUser_Success_ShouldReturnEmptyContent()
         {
             // Arrange
-            var userToDeleteId = _commonId;
+            var userToDeleteId = MockData.MockId;
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act

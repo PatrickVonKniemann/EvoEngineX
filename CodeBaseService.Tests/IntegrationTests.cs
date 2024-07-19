@@ -1,13 +1,13 @@
 using System.Net;
 using System.Text;
 using System.Text.Json;
+using Common;
 using DomainEntities;
 using DomainEntities.CodeBaseDto.Query;
 using ExternalDomainEntities.CodeBaseDto.Command;
 using FluentAssertions;
 using Generics.Enums;
 using Generics.Pagination;
-using UsersService.Tests;
 using Xunit;
 
 namespace Codebase.Tests

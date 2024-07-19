@@ -10,6 +10,11 @@ public class CodeRunRepository : BaseRepository<CodeRun>, ICodeRunRepository
 {
     private readonly CodeRunDbContext _context;
 
+    public CodeRunRepository(CodeRunDbContext context)
+    {
+        _context = context;
+    }
+
     // Query-side operations
     public async Task<CodeRun?> GetByIdAsync(Guid codeRunId)
     {

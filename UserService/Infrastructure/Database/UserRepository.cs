@@ -10,6 +10,11 @@ public class UserRepository : BaseRepository<User>, IUserRepository
 {
     private readonly UserDbContext _context;
 
+    public UserRepository(UserDbContext context)
+    {
+        _context = context;
+    }
+    
     // Query-side operations
     public async Task<User?> GetByIdAsync(Guid userId)
     {
@@ -17,14 +22,14 @@ public class UserRepository : BaseRepository<User>, IUserRepository
             .FirstOrDefaultAsync(user => user.Id == userId);
     }
 
-    public async Task<List<User?>> GetAllAsync(PaginationQuery paginationQuery)
+    public async Task<List<User>> GetAllAsync(PaginationQuery paginationQuery)
     {
         var query = _context.Users.AsQueryable();
         return await base.GetAllAsync(query, paginationQuery);
     }
 
     // Command-side operations
-    public async Task<User?> AddAsync(User? user)
+    public async Task<User> AddAsync(User user)
     {
         user.Id = Guid.NewGuid();
         await _context.Users.AddAsync(user);
@@ -55,42 +60,3 @@ public class UserRepository : BaseRepository<User>, IUserRepository
         await _context.SaveChangesAsync();
     }
 }
-
-// private readonly List<User?> _users =
-// [
-//     new User
-//     {
-//         Id = new Guid("123e4567-e89b-12d3-a456-426614174000"),
-//         UserName = "john_doe",
-//         Email = "john.doe@example.com",
-//         Name = "John Doe",
-//         Language = "English"
-//     },
-//
-//     new User
-//     {
-//         Id = Guid.NewGuid(),
-//         UserName = "jane_smith",
-//         Email = "jane.smith@example.com",
-//         Name = "Jane Smith",
-//         Language = "English"
-//     },
-//
-//     new User
-//     {
-//         Id = Guid.NewGuid(),
-//         UserName = "maria_garcia",
-//         Email = "maria.garcia@example.com",
-//         Name = "Maria Garcia",
-//         Language = "Spanish"
-//     },
-//
-//     new User
-//     {
-//         Id = Guid.NewGuid(),
-//         UserName = "maria_garcia2",
-//         Email = "maria2.garcia@example.com",
-//         Name = "Maria2 Garcia",
-//         Language = "Spanish"
-//     }
-// ];

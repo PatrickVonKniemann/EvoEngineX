@@ -1,6 +1,7 @@
 using AutoMapper;
 using DomainEntities;
 using DomainEntities.UserDto.Command;
+using ExternalDomainEntities.UserDto.Command;
 using UserService.Infrastructure.Database;
 
 namespace UserService.Application.Services;

@@ -11,6 +11,11 @@ public class CodeBaseRepository : BaseRepository<CodeBase>, ICodeBaseRepository
 {
     private readonly CodeBaseDbContext _context;
 
+    public CodeBaseRepository(CodeBaseDbContext context)
+    {
+        _context = context;
+    }
+
     // Query-side operations
     public async Task<CodeBase?> GetByIdAsync(Guid codeBaseId)
     {

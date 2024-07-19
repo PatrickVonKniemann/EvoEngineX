@@ -1,15 +1,13 @@
-﻿namespace DomainEntities.UserDto.Command;
+﻿namespace ExternalDomainEntities.UserDto.Command;
 
 /// <summary>
 ///  User data transfer object.
 /// </summary>
 public class CreateUserRequest
 {
-    public string UserName { get; set; } = string.Empty;
-
-    public string Email { get; set; } = string.Empty;
-
-    public string Name { get; set; } = string.Empty;
-        
-    public string Language { get; set; } = string.Empty;
+    public required string UserName { get; set; }
+    public required string Email { get; set; }
+    public required string Name { get; set; }
+    public required string Language { get; set; }
+    public required string Password { get; set; }
 }
