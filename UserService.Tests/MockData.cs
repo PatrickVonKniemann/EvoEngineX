@@ -21,4 +21,14 @@ public static class MockData
         PageNumber = 1,
         PageSize = 10
     };
+
+    public static readonly User ExpectedUser = new()
+    {
+        Id = MockId,
+        UserName = "john_doe",
+        Email = "john.doe@example.com",
+        Name = "John Doe",
+        Language = "English",
+        Password = "Pass1"
+    };
 }

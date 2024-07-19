@@ -68,7 +68,7 @@ namespace UserService.Tests
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
             var userListResponse = JsonSerializer.Deserialize<ReadUserListResponse>(responseContent);
-            userListResponse.Items.Should().NotBeNull();
+            userListResponse?.Items.Values.Should().NotBeEmpty();
         }
 
         [Fact]
@@ -77,14 +77,17 @@ namespace UserService.Tests
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var userToSearch = MockData.MockId;
-
+            var expectedUser = MockData.ExpectedUser;
             // Act
             var response = await _client.GetAsync($"/user/{userToSearch}");
 
             // Assert
             var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().NotBeNullOrEmpty();
             response.StatusCode.Should().Be(expectedStatusCode);
+
+            var userListResponse = JsonSerializer.Deserialize<ReadUserResponse>(responseContent);
+            userListResponse?.Id.Should().Be(expectedUser.Id);
+            userListResponse?.Name.Should().Be(expectedUser.Name);
         }
 
         [Fact]

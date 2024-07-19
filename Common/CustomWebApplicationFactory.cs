@@ -3,6 +3,8 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using System;
+using System.Linq;
 
 namespace Common
 {
@@ -52,9 +54,13 @@ namespace Common
 
                         try
                         {
+                            // Log before seeding
+                            Console.WriteLine("Seeding the database...");
                             // Seed the database with mock data.
                             _seedAction(db);
                             db.SaveChanges();
+                            // Log after seeding
+                            Console.WriteLine("Seeding completed.");
                         }
                         catch (Exception ex)
                         {
