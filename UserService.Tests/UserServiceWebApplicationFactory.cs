@@ -4,14 +4,10 @@ using DomainEntities;
 
 namespace UserService.Tests;
 
-public class UserServiceWebApplicationFactory<TStartup> : CustomWebApplicationFactory<TStartup, UserDbContext>
+public class UserServiceWebApplicationFactory<TStartup>()
+    : CustomWebApplicationFactory<TStartup, UserDbContext>(SeedData)
     where TStartup : class
 {
-    public UserServiceWebApplicationFactory()
-        : base(SeedData)
-    {
-    }
-
     private static void SeedData(UserDbContext context)
     {
         context.Users.AddRange(

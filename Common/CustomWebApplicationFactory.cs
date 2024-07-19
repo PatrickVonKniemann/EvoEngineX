@@ -3,22 +3,14 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using System;
-using System.Linq;
 
 namespace Common
 {
-    public class CustomWebApplicationFactory<TStartup, TDbContext> : WebApplicationFactory<TStartup>
+    public class CustomWebApplicationFactory<TStartup, TDbContext>(Action<TDbContext> seedAction)
+        : WebApplicationFactory<TStartup>
         where TStartup : class
         where TDbContext : DbContext
     {
-        private readonly Action<TDbContext> _seedAction;
-
-        public CustomWebApplicationFactory(Action<TDbContext> seedAction)
-        {
-            _seedAction = seedAction;
-        }
-
         protected override IHost CreateHost(IHostBuilder builder)
         {
             builder.ConfigureWebHost(webHostBuilder =>
@@ -57,7 +49,7 @@ namespace Common
                             // Log before seeding
                             Console.WriteLine("Seeding the database...");
                             // Seed the database with mock data.
-                            _seedAction(db);
+                            seedAction(db);
                             db.SaveChanges();
                             // Log after seeding
                             Console.WriteLine("Seeding completed.");
