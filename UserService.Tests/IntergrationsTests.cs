@@ -2,6 +2,7 @@ using System.Net;
 using System.Text;
 using System.Text.Json;
 using DomainEntities.UserDto.Query;
+using ExternalDomainEntities.UserDto.Query;
 using FluentAssertions;
 using Xunit;
 
@@ -66,7 +67,8 @@ namespace UserService.Tests
             // Assert
             response.EnsureSuccessStatusCode();
             var responseContent = await response.Content.ReadAsStringAsync();
-            responseContent.Should().NotBeNullOrEmpty();
+            var userListResponse = JsonSerializer.Deserialize<ReadUserListResponse>(responseContent);
+            userListResponse.Items.Should().NotBeNull();
         }
 
         [Fact]

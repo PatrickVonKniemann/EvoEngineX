@@ -1,4 +1,4 @@
-namespace DomainEntities.UserDto.Query;
+namespace ExternalDomainEntities.UserDto.Query;
 
 /// <summary>
 /// Item of user list

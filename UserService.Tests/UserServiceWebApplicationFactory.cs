@@ -59,7 +59,7 @@ public class UserServiceWebAplicatonFactory<TStartup> : WebApplicationFactory<TS
 
         return base.CreateHost(builder);
     }
-    
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         // Override to configure the web host for testing
@@ -107,5 +107,6 @@ public class UserServiceWebAplicatonFactory<TStartup> : WebApplicationFactory<TS
                 Password = "Pass3"
             }
         );
+        context.SaveChanges();
     }
 }

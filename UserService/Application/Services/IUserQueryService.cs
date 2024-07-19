@@ -1,4 +1,5 @@
 using DomainEntities.UserDto.Query;
+using ExternalDomainEntities.UserDto.Query;
 using Generics.BaseEntities;
 
 namespace UserService.Application.Services;

@@ -1,4 +1,5 @@
 using DomainEntities.UserDto.Query;
+using ExternalDomainEntities.UserDto.Query;
 using FastEndpoints;
 using UserService.Application.Services;
 

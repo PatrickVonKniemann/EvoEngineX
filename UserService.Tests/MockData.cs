@@ -19,10 +19,6 @@ public static class MockData
     public static readonly PaginationQuery MockPaginationQuery = new()
     {
         PageNumber = 1,
-        PageSize = 10,
-        FilterParams = new Dictionary<string, string>
-        {
-            { "Language", "Spanish" }
-        }
+        PageSize = 10
     };
 }
