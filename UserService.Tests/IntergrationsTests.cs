@@ -8,8 +8,8 @@ using Xunit;
 
 namespace UserService.Tests
 {
-    public class UserServiceTests(UserServiceWebAplicatonFactory<Program> factory)
-        : IClassFixture<UserServiceWebAplicatonFactory<Program>>
+    public class UserServiceTests(UserServiceWebApplicationFactory<Program> factory)
+        : IClassFixture<UserServiceWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client = factory.CreateClient();
 
