@@ -27,6 +27,7 @@
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\CodeRunService\CodeRunService.csproj" />
       <ProjectReference Include="..\DomainEntities\DomainEntities.csproj" />
+      <ProjectReference Include="..\DomainSharedModels\DomainSharedModels.csproj" />
     </ItemGroup>
 
 </Project>

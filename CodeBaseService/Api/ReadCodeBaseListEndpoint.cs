@@ -1,11 +1,12 @@
-using FastEndpoints;
 using CodebaseService.Application.Services;
+using FastEndpoints;
 using DomainEntities.CodeBaseDto.Query;
+using ExternalDomainEntities.CodeBaseDto.Query;
 
-namespace CodebaseService.Api;
+namespace CodeBaseService.Api;
 
 public class ReadCodeBaseListEndpoint(ILogger<ReadCodeBaseListEndpoint> logger, ICodeBaseQueryService codeBaseQueryService)
-    : Endpoint<ReadCodebaseListRequest, ReadCodebaseListResponse>
+    : Endpoint<ReadCodeBaseListRequest, ReadCodeBaseListResponse>
 {
     private new ILogger<ReadCodeBaseListEndpoint> Logger { get; } = logger;
 
@@ -16,7 +17,7 @@ public class ReadCodeBaseListEndpoint(ILogger<ReadCodeBaseListEndpoint> logger, 
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(ReadCodebaseListRequest req, CancellationToken ct)
+    public override async Task HandleAsync(ReadCodeBaseListRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadCodeBaseListEndpoint));
         

@@ -3,7 +3,7 @@ using Generics.BaseEntities;
 
 namespace CodebaseService.Application.Services;
 
-public interface ICodeBaseQueryService : IGenericEntityQueryService<ReadCodebaseResponse, ReadCodebaseListResponse>
+public interface ICodeBaseQueryService : IGenericEntityQueryService<ReadCodeBaseResponse, ReadCodeBaseListResponse>
 {
     
 }

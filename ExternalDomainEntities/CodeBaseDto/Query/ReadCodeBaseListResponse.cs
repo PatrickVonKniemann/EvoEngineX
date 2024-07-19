@@ -3,6 +3,6 @@ using Generics.BaseEntities;
 
 namespace DomainEntities.CodeBaseDto.Query;
 
-public class ReadCodebaseListResponse :  ListResponseDtoBase<CodebaseListResponseItem>
+public class ReadCodeBaseListResponse :  ListResponseDtoBase<CodeBaseListResponseItem>
 {
 }

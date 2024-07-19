@@ -9,16 +9,16 @@ public class CodebaseProfile : Profile
 {
     public CodebaseProfile()
     {
-        CreateMap<CodeBase, ReadCodebaseResponse>().ReverseMap();
+        CreateMap<CodeBase, ReadCodeBaseResponse>().ReverseMap();
         
         // Create
-        CreateMap<CreateCodeBaseResponse, ReadCodebaseResponse>().ReverseMap();
+        CreateMap<CreateCodeBaseResponse, ReadCodeBaseResponse>().ReverseMap();
         CreateMap<CodeBase, CreateCodeBaseResponse>().ReverseMap();
         CreateMap<CreateCodeBaseRequest, CreateCodeBaseResponse>().ReverseMap();
         CreateMap<CodeBase, CreateCodeBaseRequest>().ReverseMap();
 
         // Read
-        CreateMap<CodeBase, CodebaseListResponseItem>().ReverseMap();
+        CreateMap<CodeBase, CodeBaseListResponseItem>().ReverseMap();
 
         // Update
         CreateMap<CodeBase, UpdateCodeBaseRequest>().ReverseMap();

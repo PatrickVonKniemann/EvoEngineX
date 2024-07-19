@@ -1,8 +1,8 @@
 using Generics.Pagination;
 
-namespace DomainEntities.CodeBaseDto.Query;
+namespace ExternalDomainEntities.CodeBaseDto.Query;
 
-public class ReadCodebaseListRequest
+public class ReadCodeBaseListRequest
 {
     public required PaginationQuery? PaginationQuery { get; set; }
 }

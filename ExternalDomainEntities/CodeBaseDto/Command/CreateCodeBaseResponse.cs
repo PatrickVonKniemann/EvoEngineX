@@ -6,5 +6,6 @@
 public class CreateCodeBaseResponse
 {
     public Guid Id { get; set; }
+    public Guid UserId { get; set; }
     public Guid CodeBaseId { get; set; }
 }

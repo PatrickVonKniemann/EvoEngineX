@@ -5,5 +5,5 @@
 /// </summary>
 public class CreateCodeBaseRequest
 {
-    public Guid Id { get; set; }
+    public required Guid UserId { get; set; }
 }

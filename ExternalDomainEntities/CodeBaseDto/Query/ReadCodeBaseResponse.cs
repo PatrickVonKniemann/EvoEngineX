@@ -3,7 +3,7 @@
 /// <summary>
 ///  User data transfer object.
 /// </summary>
-public class ReadCodebaseResponse
+public class ReadCodeBaseResponse
 {
     public Guid Id { get; set; }
 }

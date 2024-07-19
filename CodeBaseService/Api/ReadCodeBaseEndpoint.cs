@@ -5,7 +5,7 @@ using DomainEntities.CodeBaseDto.Query;
 namespace CodebaseService.Api;
 
 public class ReadCodeBaseEndpoint(ILogger<ReadCodeBaseEndpoint> logger, ICodeBaseQueryService codeBaseQueryService)
-    : Endpoint<ReadCodebaseRequest, ReadCodebaseResponse>
+    : Endpoint<ReadCodeBaseRequest, ReadCodeBaseResponse>
 {
     private new ILogger<ReadCodeBaseEndpoint> Logger { get; } = logger;
 
@@ -16,7 +16,7 @@ public class ReadCodeBaseEndpoint(ILogger<ReadCodeBaseEndpoint> logger, ICodeBas
         AllowAnonymous();
     }
 
-    public override async Task HandleAsync(ReadCodebaseRequest req, CancellationToken ct)
+    public override async Task HandleAsync(ReadCodeBaseRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadCodeBaseEndpoint));
         var response = codeBaseQueryService.GetByIdAsync(req.Id);

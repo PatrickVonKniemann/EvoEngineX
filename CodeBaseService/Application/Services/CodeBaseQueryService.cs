@@ -12,17 +12,17 @@ namespace CodeBaseService.Application.Services
     public class CodeBaseQueryService(IMapper mapper, ICodeBaseRepository codeBaseRepository, ILogger<CodeBaseQueryService> logger)
         : ICodeBaseQueryService
     {
-        public async Task<ReadCodebaseListResponse> GetAllAsync(PaginationQuery paginationQuery)
+        public async Task<ReadCodeBaseListResponse> GetAllAsync(PaginationQuery paginationQuery)
         {
             logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllAsync)}");
 
             var codebases = await codeBaseRepository.GetAllAsync(paginationQuery);
 
-            return new ReadCodebaseListResponse
+            return new ReadCodeBaseListResponse
             {
-                Items = new ItemWrapper<CodebaseListResponseItem>
+                Items = new ItemWrapper<CodeBaseListResponseItem>
                 {
-                    Values = mapper.Map<List<CodebaseListResponseItem>>(codebases)
+                    Values = mapper.Map<List<CodeBaseListResponseItem>>(codebases)
                 },
                 Pagination = new PaginationResponse
                 {
@@ -33,14 +33,14 @@ namespace CodeBaseService.Application.Services
             };
         }
 
-        public async Task<ReadCodebaseResponse> GetByIdAsync(Guid entityId)
+        public async Task<ReadCodeBaseResponse> GetByIdAsync(Guid entityId)
         {
             var user = await codeBaseRepository.GetByIdAsync(entityId);
             if (user == null)
             {
                 throw new DbEntityNotFoundException("CodeBase", entityId);
             }
-            return mapper.Map<ReadCodebaseResponse>(user);
+            return mapper.Map<ReadCodeBaseResponse>(user);
         }
     }
 }
