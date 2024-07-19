@@ -5,7 +5,7 @@ namespace UserService.Infrastructure;
 
 public class UserDbContext : DbContext
 {
-    public DbSet<User?> Users { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public UserDbContext(DbContextOptions<UserDbContext> options)
         : base(options)

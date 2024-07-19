@@ -14,14 +14,14 @@ public class CodeBaseRepository : BaseRepository<CodeBase>, ICodeBaseRepository
     // Query-side operations
     public async Task<CodeBase?> GetByIdAsync(Guid codeBaseId)
     {
-        return await _context.CodeBases.Include(cb => cb.User).Include(cb => cb.CodeRuns)
+        return await _context.CodeBases
             .FirstOrDefaultAsync(cb => cb.Id == codeBaseId);
     }
 
 
     public async Task<List<CodeBase>> GetAllAsync(PaginationQuery paginationQuery)
     {
-        var query = _context.CodeBases.Include(cb => cb.User).Include(cb => cb.CodeRuns).AsQueryable();
+        var query = _context.CodeBases.AsQueryable();
         return await base.GetAllAsync(query, paginationQuery);
     }
 

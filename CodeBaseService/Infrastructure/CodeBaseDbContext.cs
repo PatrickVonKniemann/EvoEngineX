@@ -15,10 +15,5 @@ public class CodeBaseDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
-        // Define relationships and configurations
-        modelBuilder.Entity<CodeBase>()
-            .HasMany(cb => cb.CodeRuns)
-            .WithOne(cr => cr.CodeBase)
-            .HasForeignKey(cr => cr.CodeBaseId);
     }
 }

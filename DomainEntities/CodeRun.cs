@@ -5,14 +5,10 @@ namespace DomainEntities;
 
 public class CodeRun
 {
-    [Key] [Required] public Guid Id { get; set; }
-
-    [Required] public Guid CodeBaseId { get; set; }
-
-    // Navigation property for CodeBase
-    [Required] public required CodeBase CodeBase { get; set; }
-    [Required] public RunStatus Status { get; set; } = RunStatus.Ready;
-    public DateTime? RunStart { get; set; }
-    public DateTime? RunFinish { get; set; }
-    public RunResult? Results { get; set; }
+    [Key] public Guid Id { get; set; }
+    public required Guid CodeBaseId { get; init; }
+    public required RunStatus Status { get; set; } = RunStatus.Ready;
+    public required DateTime? RunStart { get; set; }
+    public required DateTime? RunFinish { get; set; }
+    public required RunResult? Results { get; set; }
 }
