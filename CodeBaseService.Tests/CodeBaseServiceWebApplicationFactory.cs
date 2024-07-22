@@ -14,7 +14,7 @@ public class CodeBaseServiceWebApplicationFactory<TStartup>()
             {
                 Id = MockData.MockId,
                 Code = "Sample code 1",
-                UserId = new Guid("111e4567-e89b-12d3-a456-426614174000")
+                UserId = MockData.MockId
             },
             new DomainEntities.CodeBase
             {

@@ -2,6 +2,7 @@ using System.Net;
 using Common;
 using ExternalDomainEntities.CodeBaseDto.Command;
 using ExternalDomainEntities.CodeBaseDto.Query;
+using FastEndpoints;
 using FluentAssertions;
 using Generics.Enums;
 using Generics.Pagination;
@@ -81,6 +82,7 @@ namespace CodeBase.Tests
             var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListResponse>(response);
             responseContent.Items.Values.Should().NotBeEmpty();
         }
+
         [Fact]
         public async Task GetCodeBasesNoPaginationQuery_Success_ShouldReturnCodeBases()
         {
@@ -95,6 +97,36 @@ namespace CodeBase.Tests
             response.EnsureSuccessStatusCode();
             var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListResponse>(response);
             responseContent.Items.Values.Should().NotBeEmpty();
+        }
+
+        [Fact]
+        public async Task GetCodeBasesByUserId_Success_ShouldReturnCodeBases()
+        {
+            // Arrange
+            var userId = MockData.MockId;
+
+            // Act
+            var response = await _client.GetAsync($"/code-base/by-user-id/{userId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
+            responseContent.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetCodeBasesByUserId_Fail_ShouldReturnResponseWithNullValues()
+        {
+            // Arrange
+            var randomUserId = Guid.Empty;
+
+            // Act
+            var response = await _client.GetAsync($"/code-base/by-user-id/{randomUserId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
+            responseContent.CodeBaseListResponseItems.Should().BeEmpty();
         }
 
         [Fact]
