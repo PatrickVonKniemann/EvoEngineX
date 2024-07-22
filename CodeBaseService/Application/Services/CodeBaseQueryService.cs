@@ -3,8 +3,7 @@ using CodebaseService.Application.Services;
 using CodebaseService.Infrastructure.Database;
 using Common.Exceptions;
 using DomainEntities;
-using DomainEntities.CodebaseDto.Query;
-using DomainEntities.CodeBaseDto.Query;
+using ExternalDomainEntities.CodeBaseDto.Query;
 using Generics.BaseEntities;
 using Generics.Pagination;
 
@@ -19,8 +18,7 @@ namespace CodeBaseService.Application.Services
         public async Task<ReadCodeBaseListResponse> GetAllAsync(PaginationQuery? paginationQuery)
         {
             logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllAsync)}");
-
-
+            
             List<CodeBase> codebases;
             if (paginationQuery != null)
             {
@@ -28,9 +26,9 @@ namespace CodeBaseService.Application.Services
 
                 return new ReadCodeBaseListResponse
                 {
-                    Items = new ItemWrapper<CodeBaseListResponseItem>
+                    Items = new ItemWrapper<ReadCodeBaseListResponseItem>
                     {
-                        Values = mapper.Map<List<CodeBaseListResponseItem>>(codebases)
+                        Values = mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
                     },
                     Pagination = new PaginationResponse
                     {
@@ -45,13 +43,20 @@ namespace CodeBaseService.Application.Services
 
             return new ReadCodeBaseListResponse
             {
-                Items = new ItemWrapper<CodeBaseListResponseItem>
+                Items = new ItemWrapper<ReadCodeBaseListResponseItem>
                 {
-                    Values = mapper.Map<List<CodeBaseListResponseItem>>(codebases)
+                    Values = mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
                 }
             };
         }
 
+        public async Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId)
+        {
+            logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllByUserIdAsync)}");
+            var codebases = await codeBaseRepository.GetAllByUserIdAsync(userId);
+            return mapper.Map<ReadCodeBaseListByUserIdResponse>(codebases);
+        }
+        
         public async Task<ReadCodeBaseResponse> GetByIdAsync(Guid entityId)
         {
             var user = await codeBaseRepository.GetByIdAsync(entityId);

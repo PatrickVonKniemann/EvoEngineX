@@ -1,6 +1,5 @@
 using System.Net;
 using Common;
-using DomainEntities.CodeBaseDto.Query;
 using ExternalDomainEntities.CodeBaseDto.Command;
 using ExternalDomainEntities.CodeBaseDto.Query;
 using FluentAssertions;

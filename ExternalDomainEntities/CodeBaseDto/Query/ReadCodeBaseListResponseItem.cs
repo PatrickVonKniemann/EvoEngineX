@@ -1,12 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
 namespace ExternalDomainEntities.CodeBaseDto.Query;
 
 /// <summary>
-///  User data transfer object.
+/// Item of user list
 /// </summary>
-public class ReadCodeBaseRequest
+public class ReadCodeBaseListResponseItem
 {
-    [FromRoute]
     public Guid Id { get; set; }
+    public string? Code { get; set; }
 }

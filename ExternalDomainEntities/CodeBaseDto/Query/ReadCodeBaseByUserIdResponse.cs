@@ -5,8 +5,7 @@ namespace ExternalDomainEntities.CodeBaseDto.Query;
 /// <summary>
 ///  User data transfer object.
 /// </summary>
-public class ReadCodeBaseRequest
+public class ReadCodeBaseListByUserIdResponse
 {
-    [FromRoute]
-    public Guid Id { get; set; }
+    public List<ReadCodeBaseListResponseItem>? CodeBaseListResponseItems { get; set; } = null;
 }

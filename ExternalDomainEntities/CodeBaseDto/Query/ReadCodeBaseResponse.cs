@@ -1,4 +1,4 @@
-﻿namespace DomainEntities.CodeBaseDto.Query;
+﻿namespace ExternalDomainEntities.CodeBaseDto.Query;
 
 /// <summary>
 ///  User data transfer object.

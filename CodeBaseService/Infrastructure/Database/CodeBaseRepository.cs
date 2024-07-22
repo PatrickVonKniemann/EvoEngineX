@@ -29,6 +29,12 @@ public class CodeBaseRepository(CodeBaseDbContext context) : BaseRepository<Code
         return await base.GetAllAsync(query, paginationQuery);
     }
 
+    public async Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId)
+    {
+        var query = context.CodeBases.AsQueryable().Where(cb => cb.UserId.Equals(userId));
+        return await base.GetAllAsync(query);
+    }
+
     // Command-side operations
     public async Task<CodeBase> AddAsync(CodeBase codeBase)
     {

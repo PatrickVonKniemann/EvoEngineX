@@ -1,7 +1,6 @@
 using AutoMapper;
-using DomainEntities.CodebaseDto.Query;
-using DomainEntities.CodeBaseDto.Query;
 using ExternalDomainEntities.CodeBaseDto.Command;
+using ExternalDomainEntities.CodeBaseDto.Query;
 
 namespace DomainEntities;
 
@@ -18,7 +17,7 @@ public class CodebaseProfile : Profile
         CreateMap<CodeBase, CreateCodeBaseRequest>().ReverseMap();
 
         // Read
-        CreateMap<CodeBase, CodeBaseListResponseItem>().ReverseMap();
+        CreateMap<CodeBase, ReadCodeBaseListResponseItem>().ReverseMap();
 
         // Update
         CreateMap<CodeBase, UpdateCodeBaseRequest>().ReverseMap();
