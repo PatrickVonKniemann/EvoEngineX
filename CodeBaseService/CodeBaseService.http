@@ -1,6 +1,6 @@
-@CodeRunService_HostAddress = http://localhost:5127
+@CodeBaseService_HostAddress = http://localhost:5242
 
-GET {{CodeRunService_HostAddress}}/code-base/all
+GET {{CodeBaseService_HostAddress}}/code-base/all
 Content-Type: application/json
 Accept: application/json
 
@@ -13,7 +13,16 @@ Accept: application/json
 
 ###
 
-POST {{CodeRunService_HostAddress}}/code-base/add
+GET {{CodeBaseService_HostAddress}}/code-base/by-user-id/123e4567-e89b-12d3-a456-426614174003
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###
+
+POST {{CodeBaseService_HostAddress}}/code-base/add
 Content-Type: application/json
 Accept: application/json
 
@@ -37,17 +46,17 @@ Accept: application/json
 }
 ### Get existing id
 
-GET {{CodeRunService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
+GET {{CodeBaseService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
 Accept: application/json
 
 ### Get non existing id not found
 
-GET {{CodeRunService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174001
+GET {{CodeBaseService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174001
 Accept: application/json
 
 ###
 
-PATCH {{CodeRunService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
+PATCH {{CodeBaseService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
 Content-Type: application/json
 Accept: application/json
 

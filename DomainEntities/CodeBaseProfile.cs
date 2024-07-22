@@ -18,6 +18,7 @@ public class CodebaseProfile : Profile
 
         // Read
         CreateMap<CodeBase, ReadCodeBaseListResponseItem>().ReverseMap();
+        CreateMap<CodeBase, ReadCodeBaseListByUserIdResponse>().ReverseMap();
 
         // Update
         CreateMap<CodeBase, UpdateCodeBaseRequest>().ReverseMap();

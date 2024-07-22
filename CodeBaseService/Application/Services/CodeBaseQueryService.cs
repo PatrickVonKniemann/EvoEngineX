@@ -18,7 +18,7 @@ namespace CodeBaseService.Application.Services
         public async Task<ReadCodeBaseListResponse> GetAllAsync(PaginationQuery? paginationQuery)
         {
             logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllAsync)}");
-            
+
             List<CodeBase> codebases;
             if (paginationQuery != null)
             {
@@ -54,9 +54,12 @@ namespace CodeBaseService.Application.Services
         {
             logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllByUserIdAsync)}");
             var codebases = await codeBaseRepository.GetAllByUserIdAsync(userId);
-            return mapper.Map<ReadCodeBaseListByUserIdResponse>(codebases);
+            return new ReadCodeBaseListByUserIdResponse
+            {
+                CodeBaseListResponseItems = mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+            };
         }
-        
+
         public async Task<ReadCodeBaseResponse> GetByIdAsync(Guid entityId)
         {
             var user = await codeBaseRepository.GetByIdAsync(entityId);

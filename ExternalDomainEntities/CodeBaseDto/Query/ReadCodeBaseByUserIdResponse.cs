@@ -1,11 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
-
-namespace ExternalDomainEntities.CodeBaseDto.Query;
+﻿namespace ExternalDomainEntities.CodeBaseDto.Query;
 
 /// <summary>
 ///  User data transfer object.
 /// </summary>
 public class ReadCodeBaseListByUserIdResponse
 {
-    public List<ReadCodeBaseListResponseItem>? CodeBaseListResponseItems { get; set; } = null;
+    public List<ReadCodeBaseListResponseItem>? CodeBaseListResponseItems { get; set; }
 }

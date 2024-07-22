@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodebaseService.Infrastructure.Database;
 
+// TODO fix repositories to makes sence
 public class CodeBaseRepository(CodeBaseDbContext context) : BaseRepository<CodeBase>, ICodeBaseRepository
 {
     // Query-side operations
@@ -31,8 +32,8 @@ public class CodeBaseRepository(CodeBaseDbContext context) : BaseRepository<Code
 
     public async Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId)
     {
-        var query = context.CodeBases.AsQueryable().Where(cb => cb.UserId.Equals(userId));
-        return await base.GetAllAsync(query);
+        return await context.CodeBases.Where(cb => cb.UserId == userId)
+            .ToListAsync();
     }
 
     // Command-side operations
