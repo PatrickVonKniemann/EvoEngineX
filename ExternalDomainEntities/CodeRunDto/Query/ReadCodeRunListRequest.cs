@@ -4,5 +4,5 @@ namespace ExternalDomainEntities.CodeRunDto.Query;
 
 public class ReadCodeRunListRequest
 {
-    public required PaginationQuery? PaginationQuery { get; set; }
+    public PaginationQuery? PaginationQuery { get; set; }
 }

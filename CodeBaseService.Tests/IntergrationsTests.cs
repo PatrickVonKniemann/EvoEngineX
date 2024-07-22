@@ -82,6 +82,21 @@ namespace CodeBase.Tests
             var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListResponse>(response);
             responseContent.Items.Values.Should().NotBeEmpty();
         }
+        [Fact]
+        public async Task GetCodeBasesNoPaginationQuery_Success_ShouldReturnCodeBases()
+        {
+            // Arrange
+            var requestContent = new ReadCodeBaseListRequest();
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+
+            // Act
+            var response = await _client.PostAsync("/code-base", content);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListResponse>(response);
+            responseContent.Items.Values.Should().NotBeEmpty();
+        }
 
         [Fact]
         public async Task GetCodeBaseById_Success_ShouldReturnCodeBase()

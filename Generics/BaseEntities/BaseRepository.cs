@@ -18,6 +18,11 @@ namespace Generics.BaseEntities
             _propertyNames = typeof(TEntity).GetProperties().Select(p => p.Name).ToList();
         }
 
+        public async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query)
+        {
+            return await Task.FromResult(query.ToList());
+        }
+        
         public async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query, PaginationQuery paginationQuery)
         {
             ValidateQueryParams(paginationQuery);

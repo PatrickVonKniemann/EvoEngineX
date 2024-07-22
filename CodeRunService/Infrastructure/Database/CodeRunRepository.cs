@@ -6,25 +6,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CodeRunService.Infrastructure.Database;
 
-public class CodeRunRepository : BaseRepository<CodeRun>, ICodeRunRepository
+public class CodeRunRepository(CodeRunDbContext context) : BaseRepository<CodeRun>, ICodeRunRepository
 {
-    private readonly CodeRunDbContext _context;
-
-    public CodeRunRepository(CodeRunDbContext context)
-    {
-        _context = context;
-    }
-
     // Query-side operations
     public async Task<CodeRun?> GetByIdAsync(Guid codeRunId)
     {
-        return await _context.CodeRuns
+        return await context.CodeRuns
             .FirstOrDefaultAsync(cr => cr.Id == codeRunId);
+    }
+
+    public async Task<List<CodeRun>> GetAllAsync()
+    {
+        var query = context.CodeRuns.AsQueryable();
+        return await base.GetAllAsync(query);
     }
 
     public async Task<List<CodeRun>> GetAllAsync(PaginationQuery paginationQuery)
     {
-        var query = _context.CodeRuns.AsQueryable();
+        var query = context.CodeRuns.AsQueryable();
         return await base.GetAllAsync(query, paginationQuery);
     }
 
@@ -32,13 +31,13 @@ public class CodeRunRepository : BaseRepository<CodeRun>, ICodeRunRepository
     public async Task<CodeRun> AddAsync(CodeRun codeRun)
     {
         codeRun.Id = Guid.NewGuid();
-        await _context.CodeRuns.AddAsync(codeRun);
+        await context.CodeRuns.AddAsync(codeRun);
         return await Task.FromResult(codeRun);
     }
 
     public async Task<CodeRun> UpdateAsync(Guid codeRunId, CodeRun updatedCodeRun)
     {
-        var codeRun = await _context.CodeRuns.FindAsync(codeRunId);
+        var codeRun = await context.CodeRuns.FindAsync(codeRunId);
 
         if (codeRun == null) throw new DbEntityNotFoundException("CodeRun", codeRunId);
 
@@ -46,18 +45,18 @@ public class CodeRunRepository : BaseRepository<CodeRun>, ICodeRunRepository
         codeRun.RunStart = updatedCodeRun.RunStart;
         codeRun.Results = updatedCodeRun.Results;
         codeRun.Status = updatedCodeRun.Status;
-        _context.CodeRuns.Update(codeRun);
-        await _context.SaveChangesAsync();
+        context.CodeRuns.Update(codeRun);
+        await context.SaveChangesAsync();
         return codeRun;
     }
 
     public async Task DeleteAsync(Guid codeRunId)
     {
-        var codeRun = await _context.CodeRuns.FindAsync(codeRunId);
-        if (codeRun == null) throw new DbEntityNotFoundException("User", codeRunId);
+        var codeRun = await context.CodeRuns.FindAsync(codeRunId);
+        if (codeRun == null) throw new DbEntityNotFoundException("CodeRun", codeRunId);
 
-        _context.CodeRuns.Remove(codeRun);
-        await _context.SaveChangesAsync();
+        context.CodeRuns.Remove(codeRun);
+        await context.SaveChangesAsync();
     }
 }
 

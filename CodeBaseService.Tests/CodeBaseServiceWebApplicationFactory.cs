@@ -14,29 +14,25 @@ public class CodeBaseServiceWebApplicationFactory<TStartup>()
             {
                 Id = MockData.MockId,
                 Code = "Sample code 1",
-                UserId = new Guid("111e4567-e89b-12d3-a456-426614174000"),
-                CodeRunIds = new List<Guid>()
+                UserId = new Guid("111e4567-e89b-12d3-a456-426614174000")
             },
             new DomainEntities.CodeBase
             {
                 Id = MockData.MockIdUpdate,
                 Code = "Sample code 2",
-                UserId = new Guid("222e4567-e89b-12d3-a456-426614174000"),
-                CodeRunIds = new List<Guid>()
+                UserId = new Guid("222e4567-e89b-12d3-a456-426614174000")
             },
             new DomainEntities.CodeBase
             {
                 Id = new Guid("444e4567-e89b-12d3-a456-426614174000"),
                 Code = "Sample code 3",
-                UserId = new Guid("333e4567-e89b-12d3-a456-426614174000"),
-                CodeRunIds = new List<Guid>()
+                UserId = new Guid("333e4567-e89b-12d3-a456-426614174000")
             },
             new DomainEntities.CodeBase
             {
                 Id = new Guid("555e4567-e89b-12d3-a456-426614174000"),
                 Code = "Sample code 4",
-                UserId = new Guid("444e4567-e89b-12d3-a456-426614174000"),
-                CodeRunIds = new List<Guid>()
+                UserId = new Guid("444e4567-e89b-12d3-a456-426614174000")
             });
     }
 }

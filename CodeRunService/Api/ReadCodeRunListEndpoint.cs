@@ -19,13 +19,6 @@ public class ReadCodeRunListEndpoint(ILogger<ReadCodeRunListEndpoint> logger, IC
     public override async Task HandleAsync(ReadCodeRunListRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadCodeRunListEndpoint));
-        
-        if (req.PaginationQuery == null)
-        {
-            ThrowError("PaginationQuery is invalid or null");
-            return;
-        }
-
         var response = codeRunQueryService.GetAllAsync(req.PaginationQuery);
         await SendAsync(await response, cancellation: ct);
     }

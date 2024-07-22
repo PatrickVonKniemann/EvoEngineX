@@ -12,6 +12,7 @@ namespace CodebaseService.Infrastructure.Database
 
         // Query-side operations
         Task<CodeBase?> GetByIdAsync(Guid codeBaseId);
+        Task<List<CodeBase>> GetAllAsync();
         Task<List<CodeBase>> GetAllAsync(PaginationQuery paginationQuery);
     }
 }

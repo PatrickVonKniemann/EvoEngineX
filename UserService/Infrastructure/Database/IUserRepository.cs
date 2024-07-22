@@ -12,6 +12,7 @@ namespace UserService.Infrastructure.Database
 
         // Query-side operations
         Task<User?> GetByIdAsync(Guid userId);
+        Task<List<User>> GetAllAsync();
         Task<List<User>> GetAllAsync(PaginationQuery paginationQuery);
     }
 }

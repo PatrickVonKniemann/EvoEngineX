@@ -13,7 +13,7 @@ public interface IGenericEntityQueryService<TReadResponse, TListResponse>
     /// Get all
     /// </summary>
     /// <returns></returns>
-    Task<TListResponse> GetAllAsync(PaginationQuery paginationQuery);
+    Task<TListResponse> GetAllAsync(PaginationQuery? paginationQuery);
 
     /// <summary>
     /// Get by id

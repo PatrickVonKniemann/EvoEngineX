@@ -21,12 +21,6 @@ public class ReadCodeBaseListEndpoint(ILogger<ReadCodeBaseListEndpoint> logger, 
     {
         Logger.LogInformation(nameof(ReadCodeBaseListEndpoint));
         
-        if (req.PaginationQuery == null)
-        {
-            ThrowError("PaginationQuery is invalid or null");
-            return;
-        }
-
         var response = codeBaseQueryService.GetAllAsync(req.PaginationQuery);
         await SendAsync(await response, cancellation: ct);
     }

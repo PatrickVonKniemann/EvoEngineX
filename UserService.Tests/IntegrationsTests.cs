@@ -71,6 +71,25 @@ namespace UserService.Tests
             var userListResponse = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
             userListResponse.Items.Values.Should().NotBeEmpty();
         }
+        
+        [Fact]
+        public async Task GetUsersNoPaginationQuery_Success_ShouldReturnUsers()
+        {
+            // Arrange
+            var requestContent = new ReadUserListRequest
+            {
+                
+            };
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+
+            // Act
+            var response = await _client.PostAsync("/user/all", content);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var userListResponse = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
+            userListResponse.Items.Values.Should().NotBeEmpty();
+        }
 
         [Fact]
         public async Task GetUserById_Success_ShouldReturnUser()

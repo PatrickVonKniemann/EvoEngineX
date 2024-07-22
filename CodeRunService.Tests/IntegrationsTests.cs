@@ -79,6 +79,22 @@ namespace CodeRunService.Tests
             var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
             responseContent.Items.Values.Should().NotBeEmpty();
         }
+        
+        [Fact]
+        public async Task GetCodeRunsNoPaginationQuery_Success_ShouldReturnCodeRuns()
+        {
+            // Arrange
+            var requestContent = new ReadCodeRunListRequest();
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+
+            // Act
+            var response = await _client.PostAsync("/code-run", content);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
+            responseContent.Items.Values.Should().NotBeEmpty();
+        }
 
         [Fact]
         public async Task GetCodeRunById_Success_ShouldReturnCodeRun()

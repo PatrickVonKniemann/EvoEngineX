@@ -1,8 +1,8 @@
 using Generics.Pagination;
 
-namespace DomainEntities.UserDto.Query;
+namespace ExternalDomainEntities.UserDto.Query;
 
 public class ReadUserListRequest
 {
-    public required PaginationQuery? PaginationQuery { get; set; }
+    public PaginationQuery? PaginationQuery { get; set; }
 }
