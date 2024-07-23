@@ -80,6 +80,39 @@ namespace CodeRunService.Tests
             responseContent.Items.Values.Should().NotBeEmpty();
         }
         
+
+
+        [Fact]
+        public async Task GetCodeRunsByCodeBaseId_Success_ShouldReturnCodeBases()
+        {
+            // Arrange
+            var codeBaseId = MockData.MockId;
+
+            // Act
+            var response = await _client.GetAsync($"/code-run/by-code-base-id/{codeBaseId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
+            responseContent.Should().NotBeNull();
+        }
+
+        [Fact]
+        public async Task GetCodeBasesByUserId_Fail_ShouldReturnResponseWithNullValues()
+        {
+            // Arrange
+            var randomCodeBaseId = Guid.Empty;
+
+            // Act
+            var response = await _client.GetAsync($"/code-run/by-code-base-id/{randomCodeBaseId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
+            responseContent.CodeRunListResponseItems.Should().BeEmpty();
+        }
+
+        
         [Fact]
         public async Task GetCodeRunsNoPaginationQuery_Success_ShouldReturnCodeRuns()
         {
