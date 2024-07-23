@@ -2,7 +2,6 @@ using System.Net;
 using Common;
 using ExternalDomainEntities.CodeBaseDto.Command;
 using ExternalDomainEntities.CodeBaseDto.Query;
-using FastEndpoints;
 using FluentAssertions;
 using Generics.Enums;
 using Generics.Pagination;

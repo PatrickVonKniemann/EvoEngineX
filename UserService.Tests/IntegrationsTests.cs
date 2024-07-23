@@ -1,6 +1,5 @@
 using System.Net;
-using System.Text;
-using System.Text.Json;
+using System.Threading.Tasks;
 using Common;
 using DomainEntities.UserDto.Command;
 using DomainEntities.UserDto.Query;
@@ -10,11 +9,14 @@ using Xunit;
 
 namespace UserService.Tests
 {
-    public class UserServiceTests(UserServiceWebApplicationFactory<Program> factory)
-        : IClassFixture<UserServiceWebApplicationFactory<Program>>
+    public class UserServiceTests : IClassFixture<UserServiceWebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client = factory.CreateClient();
+        private readonly HttpClient _client;
 
+        public UserServiceTests(UserServiceWebApplicationFactory<Program> factory)
+        {
+            _client = factory.CreateClient();
+        }
 
         #region Add User Tests
 
@@ -71,14 +73,14 @@ namespace UserService.Tests
             var userListResponse = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
             userListResponse.Items.Values.Should().NotBeEmpty();
         }
-        
+
         [Fact]
         public async Task GetUsersNoPaginationQuery_Success_ShouldReturnUsers()
         {
             // Arrange
             var requestContent = new ReadUserListRequest
             {
-                
+                // No pagination query
             };
             var content = DeserializationHelper.CreateJsonContent(requestContent);
 
@@ -98,12 +100,12 @@ namespace UserService.Tests
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var userToSearch = MockData.MockId;
             var expectedUser = MockData.ExpectedUser;
+
             // Act
             var response = await _client.GetAsync($"/user/{userToSearch}");
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);
-
             var userResponse = await DeserializationHelper.DeserializeResponse<ReadUserResponse>(response);
             userResponse.Id.Should().Be(expectedUser.Id);
             userResponse.Name.Should().Be(expectedUser.Name);
@@ -146,9 +148,7 @@ namespace UserService.Tests
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);
-
             var updatedUser = await DeserializationHelper.DeserializeResponse<UpdateUserResponse>(response);
-
             updatedUser.Id.Should().Be(userToUpdateId);
             updatedUser.Email.Should().Be(userToUpdate.Email);
             updatedUser.Name.Should().Be(userToUpdate.Name);
@@ -170,7 +170,6 @@ namespace UserService.Tests
 
             // Assert
             response.StatusCode.Should().Be(expectedStatusCode);
-            
             var responseContent = await response.Content.ReadAsStringAsync();
             responseContent.Should().BeEmpty();
         }
@@ -190,6 +189,5 @@ namespace UserService.Tests
         }
 
         #endregion
-        
     }
 }
