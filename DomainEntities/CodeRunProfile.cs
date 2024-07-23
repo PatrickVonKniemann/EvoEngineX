@@ -17,7 +17,8 @@ public class CodeRunProfile : Profile
         CreateMap<CodeRun, CreateCodeRunRequest>().ReverseMap();
 
         // Read
-        CreateMap<CodeRun, CodeRunListResponseItem>().ReverseMap();
+        CreateMap<CodeRun, ReadCodeRunListResponseItem>().ReverseMap();
+        CreateMap<CodeRun, ReadCodeRunListByCodeBaseIdResponse>().ReverseMap();
 
         // Update
         CreateMap<CodeRun, UpdateCodeRunRequest>().ReverseMap();

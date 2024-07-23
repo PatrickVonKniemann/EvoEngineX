@@ -2,6 +2,6 @@ using Generics.BaseEntities;
 
 namespace ExternalDomainEntities.CodeRunDto.Query;
 
-public class ReadCodeRunListResponse :  ListResponseDtoBase<CodeRunListResponseItem>
+public class ReadCodeRunListResponse :  ListResponseDtoBase<ReadCodeRunListResponseItem>
 {
 }

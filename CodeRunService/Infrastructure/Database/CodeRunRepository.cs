@@ -27,6 +27,12 @@ public class CodeRunRepository(CodeRunDbContext context) : BaseRepository<CodeRu
         return await base.GetAllAsync(query, paginationQuery);
     }
 
+    public async Task<List<CodeRun>> GetAllByCodeBaseIdAsync(Guid codeBaseId)
+    {
+        return await context.CodeRuns.Where(cr => cr.CodeBaseId == codeBaseId)
+            .ToListAsync();
+    }
+
     // Command-side operations
     public async Task<CodeRun> AddAsync(CodeRun codeRun)
     {
@@ -59,4 +65,3 @@ public class CodeRunRepository(CodeRunDbContext context) : BaseRepository<CodeRu
         await context.SaveChangesAsync();
     }
 }
-

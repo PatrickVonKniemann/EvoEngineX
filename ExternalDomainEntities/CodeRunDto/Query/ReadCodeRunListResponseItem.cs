@@ -5,7 +5,7 @@ namespace ExternalDomainEntities.CodeRunDto.Query;
 /// <summary>
 /// Item of user list
 /// </summary>
-public class CodeRunListResponseItem
+public class ReadCodeRunListResponseItem
 {
     public Guid Id { get; set; }
     public Guid CodeBaseId { get; set; }

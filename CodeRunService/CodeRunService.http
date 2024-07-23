@@ -40,6 +40,11 @@ Accept: application/json
 GET {{CodeRunService_HostAddress}}/code-run/123e4567-e89b-12d3-a456-426614174000
 Accept: application/json
 
+### Get list by codebase id 
+
+GET {{CodeRunService_HostAddress}}/code-run/by-code-base-id/123e4567-e89b-12d3-a456-426614174000
+Accept: application/json
+
 ### Get non existing id not found
 
 GET {{CodeRunService_HostAddress}}/code-run/123e4567-e89b-12d3-a456-426614174001

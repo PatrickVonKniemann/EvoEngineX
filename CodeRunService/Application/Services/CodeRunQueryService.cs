@@ -25,9 +25,9 @@ namespace CodeRunService.Application.Services
 
                 return new ReadCodeRunListResponse
                 {
-                    Items = new ItemWrapper<CodeRunListResponseItem>
+                    Items = new ItemWrapper<ReadCodeRunListResponseItem>
                     {
-                        Values = mapper.Map<List<CodeRunListResponseItem>>(codeRuns)
+                        Values = mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
                     },
                     Pagination = new PaginationResponse
                     {
@@ -42,10 +42,21 @@ namespace CodeRunService.Application.Services
 
             return new ReadCodeRunListResponse
             {
-                Items = new ItemWrapper<CodeRunListResponseItem>
+                Items = new ItemWrapper<ReadCodeRunListResponseItem>
                 {
-                    Values = mapper.Map<List<CodeRunListResponseItem>>(codeRuns)
+                    Values = mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
                 }
+            };
+        }
+
+
+        public async Task<ReadCodeRunListByCodeBaseIdResponse> GetAllByCodeBaseIdAsync(Guid codeBaseId)
+        {
+            logger.LogInformation($"{nameof(CodeRunQueryService)} {nameof(GetAllByCodeBaseIdAsync)}");
+            var coderuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId);
+            return new ReadCodeRunListByCodeBaseIdResponse
+            {
+                CodeRunListResponseItems = mapper.Map<List<ReadCodeRunListResponseItem>>(coderuns)
             };
         }
 
