@@ -1,0 +1,60 @@
+#  docker compose -p eex-services --env-file ./docker-compose.env up --build -d
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  code-run-service:
+    build:
+      context: ..
+      dockerfile: ./Configs/dockerfile-template
+      args:
+        SERVICE_NAME: ${SERVICE1_NAME}
+    depends_on:
+      - postgres
+    environment:
+      # Variable pass for script 
+      SERVICE_NAME: ${SERVICE1_NAME}
+      ConnectionStrings__DefaultConnection: "Host=postgres;Database=${SERVICE1_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+    ports:
+      - "5001:80"
+
+  code-base-service:
+    build:
+      context: ..
+      dockerfile: ./Configs/dockerfile-template
+      args:
+        SERVICE_NAME: ${SERVICE2_NAME}
+    depends_on:
+      - postgres
+    environment:
+      # Variable pass for script 
+      SERVICE_NAME: ${SERVICE2_NAME}
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=${SERVICE2_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    ports:
+      - "5002:80"
+
+  user-service:
+    build:
+      context: ..
+      dockerfile: ./Configs/dockerfile-template
+      args:
+        SERVICE_NAME: ${SERVICE3_NAME}
+    depends_on:
+      - postgres
+    environment:
+      # Variable pass for script 
+      SERVICE_NAME: ${SERVICE3_NAME}
+      ConnectionStrings__DefaultConnection: Host=postgres;Database=${SERVICE3_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}
+    ports:
+      - "5003:80"
+
+volumes:
+  postgres_data:

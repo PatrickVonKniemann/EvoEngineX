@@ -51,3 +51,5 @@ DesktopApp/build/
 ._*
 .Spotlight-V100
 .Trashes
+
+Configs/docker-compose.env

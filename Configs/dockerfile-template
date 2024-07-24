@@ -1,0 +1,57 @@
+# Use the official .NET image as a build environment
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /app
+
+# Accept build arguments
+ARG SERVICE_NAME
+
+# Print the service name to verify the argument is passed correctly
+RUN echo "Building service: ${SERVICE_NAME}"
+
+# Copy the current service source code into the container
+COPY ./${SERVICE_NAME}/ ./${SERVICE_NAME}/
+
+# Copy the referenced projects
+COPY ./DomainEntities ./DomainEntities
+COPY ./DomainSharedModels ./DomainSharedModels
+COPY ./Generics ./Generics
+COPY ./ExternalDomainEntities ./ExternalDomainEntities
+COPY ./Common ./Common
+
+# Print the directory contents to verify files are copied correctly
+RUN echo "Contents of /app after copying service and external libraries:"
+RUN ls -la /app
+RUN ls -la /app/${SERVICE_NAME}
+RUN ls -la /app/DomainEntities
+RUN ls -la /app/DomainSharedModels
+RUN ls -la /app/Generics
+RUN ls -la /app/ExternalDomainEntities
+RUN ls -la /app/Common
+
+# Restore and build
+WORKDIR /app/${SERVICE_NAME}
+RUN echo "Running dotnet restore in /app/${SERVICE_NAME}"
+RUN dotnet restore
+RUN echo "Running dotnet publish in /app/${SERVICE_NAME}"
+RUN dotnet publish -c Release -o out
+RUN echo "Contents of /app/${SERVICE_NAME}/out after publish:"
+RUN ls -la /app/${SERVICE_NAME}/out
+
+# Build runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+
+# Re-declare the ARG in this stage
+ARG SERVICE_NAME
+
+COPY --from=build-env /app/${SERVICE_NAME}/out .
+
+# Copy the entrypoint script
+COPY ../Configs/entrypoint.sh /app/entrypoint.sh
+RUN chmod +x /app/entrypoint.sh
+
+RUN echo "Contents of /app after copying published output:"
+RUN ls -la /app
+
+# Use the script as the entrypoint
+ENTRYPOINT ["/app/entrypoint.sh"]
