@@ -21,6 +21,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\DomainSharedModels\DomainSharedModels.csproj" />
+      <ProjectReference Include="..\ExternalDomainEntities\ExternalDomainEntities.csproj" />
     </ItemGroup>
 
     <ItemGroup>

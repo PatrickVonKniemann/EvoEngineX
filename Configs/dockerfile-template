@@ -11,6 +11,9 @@ RUN echo "Building service: ${SERVICE_NAME}"
 # Copy the current service source code into the container
 COPY ./${SERVICE_NAME}/ ./${SERVICE_NAME}/
 
+# Copy the SQL scripts
+COPY ./${SERVICE_NAME}/SqlScripts ./SqlScripts
+
 # Copy the referenced projects
 COPY ./DomainEntities ./DomainEntities
 COPY ./DomainSharedModels ./DomainSharedModels
@@ -27,6 +30,7 @@ RUN ls -la /app/DomainSharedModels
 RUN ls -la /app/Generics
 RUN ls -la /app/ExternalDomainEntities
 RUN ls -la /app/Common
+RUN ls -la /app/SqlScripts
 
 # Restore and build
 WORKDIR /app/${SERVICE_NAME}
@@ -45,13 +49,20 @@ WORKDIR /app
 ARG SERVICE_NAME
 
 COPY --from=build-env /app/${SERVICE_NAME}/out .
+COPY --from=build-env /app/SqlScripts ./SqlScripts
 
-# Copy the entrypoint script
-COPY ../Configs/entrypoint.sh /app/entrypoint.sh
-RUN chmod +x /app/entrypoint.sh
+# Install PostgreSQL client
+RUN apt-get update && apt-get install -y postgresql-client
+
+# Copy the entrypoint script and wait-for-it.sh
+COPY ../Configs/dll_entrypoint.sh /app/dll_entrypoint.sh
+COPY ../Configs/wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/dll_entrypoint.sh
+RUN chmod +x /app/wait-for-it.sh
 
 RUN echo "Contents of /app after copying published output:"
 RUN ls -la /app
+RUN ls -la /app/SqlScripts
 
 # Use the script as the entrypoint
-ENTRYPOINT ["/app/entrypoint.sh"]
+ENTRYPOINT ["/app/dll_entrypoint.sh"]

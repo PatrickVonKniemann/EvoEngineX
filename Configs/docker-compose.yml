@@ -24,7 +24,10 @@ services:
     environment:
       # Variable pass for script 
       SERVICE_NAME: ${SERVICE1_NAME}
-      ConnectionStrings__DefaultConnection: "Host=${POSTGRES_ADDRESS};Database=${SERVICE1_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      DB_HOST: postgres
+      DB_NAME: ${SERVICE1_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5001:8080"
     networks:
@@ -41,7 +44,10 @@ services:
     environment:
       # Variable pass for script 
       SERVICE_NAME: ${SERVICE2_NAME}
-      ConnectionStrings__DefaultConnection: "Host=${POSTGRES_ADDRESS};Database=${SERVICE2_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      DB_HOST: postgres
+      DB_NAME: ${SERVICE2_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5002:8080"
     networks:
@@ -58,7 +64,10 @@ services:
     environment:
       # Variable pass for script 
       SERVICE_NAME: ${SERVICE3_NAME}
-      ConnectionStrings__DefaultConnection: "Host=${POSTGRES_ADDRESS};Database=${SERVICE3_DB};Username=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
+      DB_HOST: postgres
+      DB_NAME: ${SERVICE3_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
       - "5003:8080"
     networks:

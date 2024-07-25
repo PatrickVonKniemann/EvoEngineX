@@ -43,12 +43,42 @@ builder.Services.AddScoped<IUserQueryService, UserQueryService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
+var connectionString = builder.Configuration.GetConnectionString("UserDatabase");
+connectionString = connectionString
+    .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+    .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "UserDb")
+    .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
+    .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
+
 
 builder.Services.AddDbContext<UserDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("UserDatabase")));
-
+    options.UseNpgsql(connectionString));
 
 var app = builder.Build();
+
+app.Logger.LogInformation($"Using connection string: {connectionString}");
+
+
+// Apply migrations
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<UserDbContext>();
+        await context.Database.EnsureCreatedAsync();
+        app.Logger.LogInformation("Database migrations applied successfully.");
+        await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, new List<string>
+        {
+            "Users"
+        });
+    }
+    catch (Exception ex)
+    {
+        app.Logger.LogError(ex, "An error occurred while applying migrations.");
+    }
+}
+
 app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware
 app.UseFastEndpoints()
     .UseSwaggerGen();
