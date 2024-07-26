@@ -1,6 +1,6 @@
 namespace DomainModels;
 
-public enum GradientButtonType
+public enum ButtonType
 {
     primary,
     secondary

@@ -40,6 +40,32 @@ body {
     transition-duration: .1s;
 }
 
+.primary-basic {
+    background: var(--color-primary);
+    color: White;
+    transition: all .5s;
+    text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+}
+
+.primary-basic:hover {
+    background: var(--color-primary-dark);
+    box-shadow: var(--color-primary) 0 1px 8px;
+    transition-duration: .1s;
+}
+
+.secondary-basic {
+    background: var(--color-secondary);
+    color: white;
+    transition: all .5s;
+    text-shadow: rgba(0, 0, 0, 0.25) 0 3px 8px;
+}
+
+.secondary-basic:hover {
+    background: var(--color-secondary-light);
+    box-shadow: var(--color-primary-darker)  0 1px 8px;
+    transition-duration: .1s;
+}
+
 .secondary-gradient {
     background: linear-gradient(92.88deg, var(--color-secondary) 30.16%, var(--color-secondary-dark) 64.72%);
     color: white;
@@ -49,6 +75,6 @@ body {
 
 .secondary-gradient:hover {
     background: linear-gradient(92.88deg, var(--color-secondary) 9.16%, var(--color-secondary-light) 64.72%);
-    box-shadow: var(--color-primary-darker) 0 1px 30px;
+    box-shadow: var(--color-primary-darker) 0 1px 8px;
     transition-duration: .1s;
 }
