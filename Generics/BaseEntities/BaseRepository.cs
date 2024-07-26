@@ -1,7 +1,7 @@
-using Generics.Pagination;
 using System.Linq.Expressions;
 using System.Reflection;
 using Generics.Exceptions;
+using Generics.Pagination;
 
 namespace Generics.BaseEntities
 {

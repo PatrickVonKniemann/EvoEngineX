@@ -35,7 +35,6 @@
       <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\DomainEntities\DomainEntities.csproj" />
       <ProjectReference Include="..\DomainSharedModels\DomainSharedModels.csproj" />
-      <ProjectReference Include="..\Generics\Generics.csproj" />
     </ItemGroup>
 
     <ItemGroup>

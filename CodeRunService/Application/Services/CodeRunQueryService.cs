@@ -1,10 +1,10 @@
 using AutoMapper;
 using Generics.BaseEntities;
-using Generics.Pagination;
 using CodeRunService.Infrastructure.Database;
 using DomainEntities;
 using ExternalDomainEntities.CodeRunDto.Query;
 using Generics.Exceptions;
+using Generics.Pagination;
 
 namespace CodeRunService.Application.Services
 {

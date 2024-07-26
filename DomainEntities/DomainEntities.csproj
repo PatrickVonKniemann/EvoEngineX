@@ -8,7 +8,6 @@
 
     <ItemGroup>
       <ProjectReference Include="..\ExternalDomainEntities\ExternalDomainEntities.csproj" />
-      <ProjectReference Include="..\Generics\Generics.csproj" />
     </ItemGroup>
 
     <ItemGroup>
