@@ -1,6 +1,6 @@
-@CodeRunService_HostAddress = http://localhost:5127
+@CodeRunService_HostAddress = http://localhost:5001
 
-POST {{CodeRunService_HostAddress}}/code-run
+GET {{CodeRunService_HostAddress}}/code-run/all
 Content-Type: application/json
 Accept: application/json
 

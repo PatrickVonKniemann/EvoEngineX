@@ -1,7 +1,35 @@
 ﻿@page "/admin"
+@inject UserService UserService
+@using ClientApp.Services
+@using ExternalDomainEntities.UserDto.Query
 
 <PageTitle>Admin</PageTitle>
 
-<h1>Here is admin section</h1>
+
+@if (_users == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <ul>
+        @foreach (var user in _users.Items.Values)
+        {
+            <li>@user.Id</li>
+            <li>@user.Email</li>
+            <li>@user.Name</li>
+            <li>@user.UserName</li>
+        }
+    </ul>
+}
 
 
+@code {
+    private ReadUserListResponse? _users;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _users = await UserService.GetDataAsync();
+    }
+
+}

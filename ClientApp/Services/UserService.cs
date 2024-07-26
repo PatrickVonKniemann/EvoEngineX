@@ -6,15 +6,23 @@ namespace ClientApp.Services;
 public class UserService
 {
     private readonly HttpClient _httpClient;
-    private readonly string UserServiceEndpoint = "127.0.0.1:5003";
+    private const string UserServiceEndpoint = "http://localhost:5003";
 
     public UserService(HttpClient httpClient)
     {
         _httpClient = httpClient;
     }
 
-    public async Task<ReadUserListResponse> GetDataAsync()
+    public async Task<ReadUserListResponse?> GetDataAsync()
     {
-        return await _httpClient.GetFromJsonAsync<ReadUserListResponse>($"{UserServiceEndpoint}/user/all");
+        try
+        {
+            return await _httpClient.GetFromJsonAsync<ReadUserListResponse>($"{UserServiceEndpoint}/user/all?pageNumber=1&pageSize=10&sortBy=name&sortOrder=asc");
+        }
+        catch (HttpRequestException ex)
+        {
+            Console.WriteLine($"Request error: {ex.Message}");
+            return null;
+        }
     }
 }

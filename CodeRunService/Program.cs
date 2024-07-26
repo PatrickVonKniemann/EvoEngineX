@@ -29,12 +29,11 @@ builder.Services.AddLogging(); // Ensure logging is added first
 // Add CORS services
 builder.Services.AddCors(options =>
 {
-    options.AddDefaultPolicy(corsPolicyBuilder =>
-    {
-        corsPolicyBuilder.AllowAnyOrigin()
+    options.AddPolicy("AllowAllOrigins",
+        corsPolicyBuilder => corsPolicyBuilder
+            .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader();
-    });
+            .AllowAnyHeader());
 });
 
 builder.Services.AddScoped<ICodeRunCommandService, CodeRunCommandService>();
@@ -84,6 +83,7 @@ app.UseFastEndpoints()
     .UseSwaggerGen();
 
 app.UseHttpsRedirection();
+app.UseCors("AllowAllOrigins");
 
 await app.RunAsync();
 

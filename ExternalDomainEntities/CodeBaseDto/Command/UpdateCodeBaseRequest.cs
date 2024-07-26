@@ -1,5 +1,4 @@
 ﻿using Generics.Enums;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ExternalDomainEntities.CodeBaseDto.Command;
 
@@ -8,7 +7,6 @@ namespace ExternalDomainEntities.CodeBaseDto.Command;
 /// </summary>
 public class UpdateCodeBaseRequest
 {
-    [FromRoute]
     public Guid Id { get; set; }
     public RunStatus? Status { get; set; }
     public DateTime? RunStart { get; set; }

@@ -1,6 +1,6 @@
 @UsersService_HostAddress = http://localhost:5003
 
-POST {{UsersService_HostAddress}}/user/all
+GET {{UsersService_HostAddress}}/user/all
 Content-Type: application/json
 Accept: application/json
 
@@ -13,6 +13,12 @@ Accept: application/json
     }
   }
 }
+
+###
+
+GET {{UsersService_HostAddress}}/user/all?pageNumber=1&pageSize=10&sortBy=name&sortOrder=asc
+Content-Type: application/json
+Accept: application/json
 
 ###
 

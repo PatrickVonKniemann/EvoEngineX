@@ -1,6 +1,5 @@
 ﻿using System.Text.Json.Serialization;
 using Generics.Enums;
-using Microsoft.AspNetCore.Mvc;
 
 namespace ExternalDomainEntities.CodeRunDto.Command;
 
@@ -9,7 +8,6 @@ namespace ExternalDomainEntities.CodeRunDto.Command;
 /// </summary>
 public class UpdateCodeRunRequest
 {
-    [FromRoute]
     public Guid Id { get; set; }
     
     [JsonConverter(typeof(JsonStringEnumConverter))]
