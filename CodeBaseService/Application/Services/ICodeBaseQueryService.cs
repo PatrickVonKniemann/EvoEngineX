@@ -1,5 +1,3 @@
-using System;
-using System.Threading.Tasks;
 using ExternalDomainEntities.CodeBaseDto.Query;
 using Generics.BaseEntities;
 

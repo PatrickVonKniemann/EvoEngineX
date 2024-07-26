@@ -1,9 +1,5 @@
-using System;
 using Microsoft.Extensions.Logging;
 using Npgsql;
-using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 
 namespace Common
 {

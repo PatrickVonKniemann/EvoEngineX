@@ -1,11 +1,8 @@
-using System;
-using System.Threading.Tasks;
 using AutoMapper;
 using CodebaseService.Application.Services;
 using CodebaseService.Infrastructure.Database;
 using DomainEntities;
 using ExternalDomainEntities.CodeBaseDto.Command;
-using Microsoft.Extensions.Logging;
 
 namespace CodeBaseService.Application.Services;
 

@@ -1,11 +1,8 @@
-using System;
-using System.Threading.Tasks;
+namespace Common;
+
 using Generics;
 using Generics.Exceptions;
 using Newtonsoft.Json;
-
-namespace Common;
-
 using System.Net;
 using System.Security.Authentication;
 using FluentValidation;
