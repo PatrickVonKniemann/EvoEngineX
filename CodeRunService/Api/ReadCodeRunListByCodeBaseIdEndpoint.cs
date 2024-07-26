@@ -1,5 +1,4 @@
 using CodeRunService.Application.Services;
-using ExternalDomainEntities.CodeBaseDto.Query;
 using ExternalDomainEntities.CodeRunDto.Query;
 using FastEndpoints;
 

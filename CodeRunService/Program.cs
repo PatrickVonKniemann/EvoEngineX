@@ -44,8 +44,7 @@ builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
 
 var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
-connectionString = connectionString
-    .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeRunDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
     .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
@@ -92,6 +91,4 @@ await app.RunAsync();
 /// This class is used to start the API,
 /// Partial class is used to add the entry point for CustomWebApplicationFactory
 /// </summary>
-public partial class Program
-{
-}
+public abstract partial class Program;

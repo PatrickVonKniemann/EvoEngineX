@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 
-namespace DomainEntities.UserDto.Command;
+namespace ExternalDomainEntities.UserDto.Command;
 
 /// <summary>
 ///  User data transfer object.

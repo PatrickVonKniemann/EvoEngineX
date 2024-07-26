@@ -1,4 +1,3 @@
-using DomainEntities.UserDto.Command;
 using ExternalDomainEntities.UserDto.Command;
 using FastEndpoints;
 using UserService.Application.Services;

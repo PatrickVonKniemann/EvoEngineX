@@ -1,8 +1,8 @@
 using System.Net;
 using System.Threading.Tasks;
 using Common;
-using DomainEntities.UserDto.Command;
 using DomainEntities.UserDto.Query;
+using ExternalDomainEntities.UserDto.Command;
 using ExternalDomainEntities.UserDto.Query;
 using FluentAssertions;
 using Xunit;

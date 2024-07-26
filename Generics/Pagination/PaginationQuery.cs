@@ -1,5 +1,3 @@
-using Generics.Pagination;
-
 namespace Generics.Pagination;
 
 /// <summary>

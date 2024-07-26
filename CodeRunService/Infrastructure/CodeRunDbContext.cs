@@ -11,10 +11,4 @@ public class CodeRunDbContext : DbContext
         : base(options)
     {
     }
-
-    protected override void OnModelCreating(ModelBuilder modelBuilder)
-    {
-        base.OnModelCreating(modelBuilder);
-        // Additional configurations if needed
-    }
 }

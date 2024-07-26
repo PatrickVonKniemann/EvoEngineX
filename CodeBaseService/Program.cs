@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using CodebaseService.Application.Services;
 using CodeBaseService.Application.Services;
 using CodeBaseService.Infrastructure;
@@ -8,11 +6,7 @@ using Common;
 using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,8 +45,7 @@ builder.Services.AddScoped<ICodeBaseRepository, CodeBaseRepository>();
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodebaseProfile()));
 
 var connectionString = builder.Configuration.GetConnectionString("CodeBaseDatabase");
-connectionString = connectionString
-    .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeBaseDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
     .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
@@ -96,6 +89,4 @@ await app.RunAsync();
 /// This class is used to start the API,
 /// Partial class is used to add the entry point for CustomWebApplicationFactory
 /// </summary>
-public partial class Program
-{
-}
+public abstract partial class Program;

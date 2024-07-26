@@ -73,7 +73,7 @@ namespace Generics.BaseEntities
             if (paginationQuery == null || !paginationQuery.FilterParams.Any()) return query;
             var parameterExp = Expression.Parameter(typeof(TEntity), "type");
             Expression? finalExp = null;
-            var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+            var method = typeof(string).GetMethod("Contains", [typeof(string)]);
 
             foreach (var (paramName, paramValue) in paginationQuery.FilterParams)
             {
@@ -119,7 +119,7 @@ namespace Generics.BaseEntities
                     MethodCallExpression orderByCall = Expression.Call(
                         typeof(Queryable),
                         "OrderBy",
-                        new[] { typeof(TEntity), property.Type },
+                        [typeof(TEntity), property.Type],
                         query.Expression,
                         Expression.Quote(lambda));
 
@@ -130,7 +130,7 @@ namespace Generics.BaseEntities
                     MethodCallExpression orderByDescendingCall = Expression.Call(
                         typeof(Queryable),
                         "OrderByDescending",
-                        new[] { typeof(TEntity), property.Type },
+                        [typeof(TEntity), property.Type],
                         query.Expression,
                         Expression.Quote(lambda));
 

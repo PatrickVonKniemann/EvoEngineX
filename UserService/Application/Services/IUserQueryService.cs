@@ -4,7 +4,4 @@ using Generics.BaseEntities;
 
 namespace UserService.Application.Services;
 
-public interface IUserQueryService : IGenericEntityQueryService<ReadUserResponse, ReadUserListResponse>
-{
-    
-}
+public interface IUserQueryService : IGenericEntityQueryService<ReadUserResponse, ReadUserListResponse>;
