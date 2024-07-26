@@ -1,9 +1,9 @@
 using AutoMapper;
-using Common.Exceptions;
 using DomainEntities;
 using DomainEntities.UserDto.Query;
 using ExternalDomainEntities.UserDto.Query;
 using Generics.BaseEntities;
+using Generics.Exceptions;
 using Generics.Pagination;
 using UserService.Infrastructure.Database;
 

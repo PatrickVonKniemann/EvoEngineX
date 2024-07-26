@@ -1,4 +1,4 @@
-@UsersService_HostAddress = http://localhost:5127
+@UsersService_HostAddress = http://localhost:5003
 
 POST {{UsersService_HostAddress}}/user/all
 Content-Type: application/json

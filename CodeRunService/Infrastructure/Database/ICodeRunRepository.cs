@@ -13,7 +13,7 @@ namespace CodeRunService.Infrastructure.Database
         // Query-side operations
         Task<CodeRun?> GetByIdAsync(Guid codeRunId);
         Task<List<CodeRun>> GetAllAsync();
-        Task<List<CodeRun>> GetAllAsync(PaginationQuery paginationQuery);
+        Task<List<CodeRun>> GetAllAsync(PaginationQuery? paginationQuery);
         Task<List<CodeRun>> GetAllByCodeBaseIdAsync(Guid codeBaseId);
     }
 }

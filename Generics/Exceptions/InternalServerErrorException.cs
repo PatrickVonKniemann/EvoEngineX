@@ -1,4 +1,4 @@
-namespace Common.Exceptions;
+namespace Generics.Exceptions;
 
 public class InternalServerErrorException : Exception
 {

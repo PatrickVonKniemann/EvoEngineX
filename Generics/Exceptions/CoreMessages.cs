@@ -1,4 +1,4 @@
-namespace Common.Exceptions;
+namespace Generics.Exceptions;
 
 /// <summary>
 /// System messages for inner app events

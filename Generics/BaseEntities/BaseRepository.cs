@@ -1,11 +1,7 @@
 using Generics.Pagination;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
-using System.Threading.Tasks;
-using Common.Exceptions;
+using Generics.Exceptions;
 
 namespace Generics.BaseEntities
 {
@@ -23,18 +19,18 @@ namespace Generics.BaseEntities
             return await Task.FromResult(query.ToList());
         }
         
-        public async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query, PaginationQuery paginationQuery)
+        public async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
         {
             ValidateQueryParams(paginationQuery);
 
             query = ApplyFiltering(query, paginationQuery);
-            query = ApplySorting(query, paginationQuery.SortingQuery);
+            if (paginationQuery?.SortingQuery != null) query = ApplySorting(query, paginationQuery.SortingQuery);
             query = ApplyPagination(query, paginationQuery);
 
             return await Task.FromResult(query.ToList());
         }
 
-        private void ValidateQueryParams(PaginationQuery paginationQuery)
+        private void ValidateQueryParams(PaginationQuery? paginationQuery)
         {
             if (paginationQuery != null && paginationQuery.PageNumber <= 0)
             {
@@ -72,7 +68,7 @@ namespace Generics.BaseEntities
                 throw new ArgumentException(CoreMessages.FilterParametersDoesntMatch);
         }
 
-        private IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, PaginationQuery paginationQuery)
+        private IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
         {
             if (paginationQuery != null && paginationQuery.FilterParams.Any())
             {
@@ -94,7 +90,7 @@ namespace Generics.BaseEntities
                         }
                         else
                         {
-                            finalExp = paginationQuery.FilterCondition == FilterCondition.AND
+                            finalExp = paginationQuery.FilterCondition == FilterCondition.And
                                 ? Expression.AndAlso(finalExp, containsMethodExp)
                                 : Expression.OrElse(finalExp, containsMethodExp);
                         }
@@ -124,7 +120,7 @@ namespace Generics.BaseEntities
                     Expression property = Expression.Property(parameter, propertyInfo);
                     LambdaExpression lambda = Expression.Lambda(property, parameter);
 
-                    if (sortingQuery.SortDirection == SortDirection.ASC)
+                    if (sortingQuery.SortDirection == SortDirection.Asc)
                     {
                         MethodCallExpression orderByCall = Expression.Call(
                             typeof(Queryable),
@@ -135,7 +131,7 @@ namespace Generics.BaseEntities
 
                         return query.Provider.CreateQuery<TEntity>(orderByCall);
                     }
-                    else if (sortingQuery.SortDirection == SortDirection.DESC)
+                    else if (sortingQuery.SortDirection == SortDirection.Desc)
                     {
                         MethodCallExpression orderByDescendingCall = Expression.Call(
                             typeof(Queryable),
@@ -152,9 +148,9 @@ namespace Generics.BaseEntities
             return query;
         }
 
-        private IQueryable<TEntity> ApplyPagination(IQueryable<TEntity> query, PaginationQuery paginationQuery)
+        private IQueryable<TEntity> ApplyPagination(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
         {
-            if (paginationQuery.PageSize > 0)
+            if (paginationQuery != null && paginationQuery.PageSize > 0)
             {
                 int skipAmount = (paginationQuery.PageNumber - 1) * paginationQuery.PageSize;
                 query = query.Skip(skipAmount).Take(paginationQuery.PageSize);

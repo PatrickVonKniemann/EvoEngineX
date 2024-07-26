@@ -1,6 +1,6 @@
 using System.Net;
 
-namespace Common;
+namespace Generics;
 
 public static class HttpStatusCodeExtension
 {

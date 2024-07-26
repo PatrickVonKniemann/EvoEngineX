@@ -1,3 +1,4 @@
+using System.Net.Http.Json;
 using ExternalDomainEntities.UserDto.Query;
 
 namespace ClientApp.Services;
@@ -5,7 +6,7 @@ namespace ClientApp.Services;
 public class UserService
 {
     private readonly HttpClient _httpClient;
-    private readonly UserServiceEndpoint = "127.0.0.1:5003"
+    private readonly string UserServiceEndpoint = "127.0.0.1:5003";
 
     public UserService(HttpClient httpClient)
     {
@@ -14,11 +15,6 @@ public class UserService
 
     public async Task<ReadUserListResponse> GetDataAsync()
     {
-        return await _httpClient.GetFromJsonAsync<ReadUserListResponse>("api/your-endpoint");
-    }
-
-    public async Task PostDataAsync(YourDataType data)
-    {
-        await _httpClient.PostAsJsonAsync("api/your-endpoint", data);
+        return await _httpClient.GetFromJsonAsync<ReadUserListResponse>($"{UserServiceEndpoint}/user/all");
     }
 }

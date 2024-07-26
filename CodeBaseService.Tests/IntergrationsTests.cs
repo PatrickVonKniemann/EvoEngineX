@@ -74,7 +74,7 @@ namespace CodeBase.Tests
             var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/code-base", content);
+            var response = await _client.PostAsync("/code-base/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -90,7 +90,7 @@ namespace CodeBase.Tests
             var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/code-base", content);
+            var response = await _client.PostAsync("/code-base/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();

@@ -1,4 +1,4 @@
-namespace Common.Exceptions;
+namespace Generics.Exceptions;
 
 /// <summary>
 /// Exception. Selected entity is not found in database

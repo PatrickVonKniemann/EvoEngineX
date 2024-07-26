@@ -1,6 +1,6 @@
-using Common.Exceptions;
 using DomainEntities;
 using Generics.BaseEntities;
+using Generics.Exceptions;
 using Generics.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +21,7 @@ public class CodeRunRepository(CodeRunDbContext context) : BaseRepository<CodeRu
         return await base.GetAllAsync(query);
     }
 
-    public async Task<List<CodeRun>> GetAllAsync(PaginationQuery paginationQuery)
+    public async Task<List<CodeRun>> GetAllAsync(PaginationQuery? paginationQuery)
     {
         var query = context.CodeRuns.AsQueryable();
         return await base.GetAllAsync(query, paginationQuery);

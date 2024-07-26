@@ -24,4 +24,8 @@
       <PackageReference Include="Npgsql" Version="8.0.3" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\Generics\Generics.csproj" />
+    </ItemGroup>
+
 </Project>

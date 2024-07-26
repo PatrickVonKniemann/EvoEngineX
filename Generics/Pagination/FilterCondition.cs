@@ -2,6 +2,6 @@ namespace Generics.Pagination;
 
 public enum FilterCondition
 {
-    OR,
-    AND
+    Or,
+    And
 }

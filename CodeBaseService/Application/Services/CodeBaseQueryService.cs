@@ -1,10 +1,10 @@
 using AutoMapper;
 using CodebaseService.Application.Services;
 using CodebaseService.Infrastructure.Database;
-using Common.Exceptions;
 using DomainEntities;
 using ExternalDomainEntities.CodeBaseDto.Query;
 using Generics.BaseEntities;
+using Generics.Exceptions;
 using Generics.Pagination;
 
 namespace CodeBaseService.Application.Services

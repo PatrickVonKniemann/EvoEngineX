@@ -1,7 +1,7 @@
 using CodeBaseService.Infrastructure;
-using Common.Exceptions;
 using DomainEntities;
 using Generics.BaseEntities;
+using Generics.Exceptions;
 using Generics.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -24,7 +24,7 @@ public class CodeBaseRepository(CodeBaseDbContext context) : BaseRepository<Code
         return await base.GetAllAsync(query);
     }
 
-    public async Task<List<CodeBase>> GetAllAsync(PaginationQuery paginationQuery)
+    public async Task<List<CodeBase>> GetAllAsync(PaginationQuery? paginationQuery)
     {
         var query = context.CodeBases.AsQueryable();
         return await base.GetAllAsync(query, paginationQuery);

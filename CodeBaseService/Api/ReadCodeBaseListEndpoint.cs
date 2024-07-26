@@ -12,14 +12,13 @@ public class ReadCodeBaseListEndpoint(ILogger<ReadCodeBaseListEndpoint> logger, 
     public override void Configure()
     {
         Verbs(Http.POST);
-        Routes("code-base");
+        Routes("code-base/all");
         AllowAnonymous();
     }
 
     public override async Task HandleAsync(ReadCodeBaseListRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadCodeBaseListEndpoint));
-        
         var response = codeBaseQueryService.GetAllAsync(req.PaginationQuery);
         await SendAsync(await response, cancellation: ct);
     }

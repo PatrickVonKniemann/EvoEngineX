@@ -1,4 +1,4 @@
-namespace Common.Exceptions;
+namespace Generics.Exceptions;
 
 /// <summary>
 /// Base exception on DB context

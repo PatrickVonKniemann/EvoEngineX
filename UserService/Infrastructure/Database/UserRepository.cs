@@ -1,6 +1,6 @@
-using Common.Exceptions;
 using DomainEntities;
 using Generics.BaseEntities;
+using Generics.Exceptions;
 using Generics.Pagination;
 using Microsoft.EntityFrameworkCore;
 
@@ -21,7 +21,7 @@ public class UserRepository(UserDbContext context) : BaseRepository<User>, IUser
         return await base.GetAllAsync(query);
     }
 
-    public async Task<List<User>> GetAllAsync(PaginationQuery paginationQuery)
+    public async Task<List<User>> GetAllAsync(PaginationQuery? paginationQuery)
     {
         var query = context.Users.AsQueryable();
         return await base.GetAllAsync(query, paginationQuery);

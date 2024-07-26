@@ -1,4 +1,5 @@
-using Common.Exceptions;
+using Generics;
+using Generics.Exceptions;
 using Newtonsoft.Json;
 
 namespace Common;
