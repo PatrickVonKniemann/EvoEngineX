@@ -3,7 +3,7 @@ namespace Generics.Exceptions;
 /// <summary>
 /// Base exception on DB context
 /// </summary>
-public class AccessRightsViolationException : Exception
+public abstract class AccessRightsViolationException : Exception
 {
     /// <summary>
     /// 

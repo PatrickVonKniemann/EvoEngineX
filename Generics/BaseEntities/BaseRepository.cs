@@ -9,17 +9,17 @@ namespace Generics.BaseEntities
     {
         private readonly List<string> _propertyNames;
 
-        public BaseRepository()
+        protected BaseRepository()
         {
             _propertyNames = typeof(TEntity).GetProperties().Select(p => p.Name).ToList();
         }
 
-        public async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query)
+        protected async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query)
         {
             return await Task.FromResult(query.ToList());
         }
-        
-        public async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
+
+        protected async Task<List<TEntity>> GetAllAsync(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
         {
             ValidateQueryParams(paginationQuery);
 
@@ -70,87 +70,80 @@ namespace Generics.BaseEntities
 
         private IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
         {
-            if (paginationQuery != null && paginationQuery.FilterParams.Any())
+            if (paginationQuery == null || !paginationQuery.FilterParams.Any()) return query;
+            var parameterExp = Expression.Parameter(typeof(TEntity), "type");
+            Expression? finalExp = null;
+            var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+
+            foreach (var (paramName, paramValue) in paginationQuery.FilterParams)
             {
-                var parameterExp = Expression.Parameter(typeof(TEntity), "type");
-                Expression? finalExp = null;
-                var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+                var propertyExp = Expression.Property(parameterExp, paramName);
+                var someValue = Expression.Constant(paramValue, typeof(string));
+                if (method == null) continue;
+                var containsMethodExp = Expression.Call(propertyExp, method, someValue);
 
-                foreach (var (paramName, paramValue) in paginationQuery.FilterParams)
+                if (finalExp == null)
                 {
-                    var propertyExp = Expression.Property(parameterExp, paramName);
-                    var someValue = Expression.Constant(paramValue, typeof(string));
-                    if (method != null)
-                    {
-                        var containsMethodExp = Expression.Call(propertyExp, method, someValue);
-
-                        if (finalExp == null)
-                        {
-                            finalExp = containsMethodExp;
-                        }
-                        else
-                        {
-                            finalExp = paginationQuery.FilterCondition == FilterCondition.And
-                                ? Expression.AndAlso(finalExp, containsMethodExp)
-                                : Expression.OrElse(finalExp, containsMethodExp);
-                        }
-                    }
+                    finalExp = containsMethodExp;
                 }
-
-                if (finalExp != null)
+                else
                 {
-                    var lambda = Expression.Lambda<Func<TEntity, bool>>(finalExp, parameterExp);
-                    query = query.Where(lambda);
+                    finalExp = paginationQuery.FilterCondition == FilterCondition.And
+                        ? Expression.AndAlso(finalExp, containsMethodExp)
+                        : Expression.OrElse(finalExp, containsMethodExp);
                 }
             }
+
+            if (finalExp == null) return query;
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(finalExp, parameterExp);
+            query = query.Where(lambda);
 
             return query;
         }
 
         private IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, SortingQuery sortingQuery)
         {
-            if (!string.IsNullOrWhiteSpace(sortingQuery.SortParam))
+            if (string.IsNullOrWhiteSpace(sortingQuery.SortParam)) return query;
+            PropertyInfo? propertyInfo = typeof(TEntity).GetProperty(sortingQuery.SortParam,
+                BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+
+            if (propertyInfo == null) return query;
+            ParameterExpression parameter = Expression.Parameter(typeof(TEntity), "x");
+            Expression property = Expression.Property(parameter, propertyInfo);
+            LambdaExpression lambda = Expression.Lambda(property, parameter);
+
+            switch (sortingQuery.SortDirection)
             {
-                PropertyInfo? propertyInfo = typeof(TEntity).GetProperty(sortingQuery.SortParam,
-                    BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
-
-                if (propertyInfo != null)
+                case SortDirection.Asc:
                 {
-                    ParameterExpression parameter = Expression.Parameter(typeof(TEntity), "x");
-                    Expression property = Expression.Property(parameter, propertyInfo);
-                    LambdaExpression lambda = Expression.Lambda(property, parameter);
+                    MethodCallExpression orderByCall = Expression.Call(
+                        typeof(Queryable),
+                        "OrderBy",
+                        new[] { typeof(TEntity), property.Type },
+                        query.Expression,
+                        Expression.Quote(lambda));
 
-                    if (sortingQuery.SortDirection == SortDirection.Asc)
-                    {
-                        MethodCallExpression orderByCall = Expression.Call(
-                            typeof(Queryable),
-                            "OrderBy",
-                            new[] { typeof(TEntity), property.Type },
-                            query.Expression,
-                            Expression.Quote(lambda));
-
-                        return query.Provider.CreateQuery<TEntity>(orderByCall);
-                    }
-                    else if (sortingQuery.SortDirection == SortDirection.Desc)
-                    {
-                        MethodCallExpression orderByDescendingCall = Expression.Call(
-                            typeof(Queryable),
-                            "OrderByDescending",
-                            new[] { typeof(TEntity), property.Type },
-                            query.Expression,
-                            Expression.Quote(lambda));
-
-                        return query.Provider.CreateQuery<TEntity>(orderByDescendingCall);
-                    }
+                    return query.Provider.CreateQuery<TEntity>(orderByCall);
                 }
-            }
+                case SortDirection.Desc:
+                {
+                    MethodCallExpression orderByDescendingCall = Expression.Call(
+                        typeof(Queryable),
+                        "OrderByDescending",
+                        new[] { typeof(TEntity), property.Type },
+                        query.Expression,
+                        Expression.Quote(lambda));
 
-            return query;
+                    return query.Provider.CreateQuery<TEntity>(orderByDescendingCall);
+                }
+                default:
+                    return query;
+            }
         }
 
         private IQueryable<TEntity> ApplyPagination(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
         {
-            if (paginationQuery != null && paginationQuery.PageSize > 0)
+            if (paginationQuery is { PageSize: > 0 })
             {
                 int skipAmount = (paginationQuery.PageNumber - 1) * paginationQuery.PageSize;
                 query = query.Skip(skipAmount).Take(paginationQuery.PageSize);

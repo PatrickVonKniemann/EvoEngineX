@@ -1,10 +1,10 @@
 namespace Generics.Exceptions;
 
-public class InternalServerErrorException : Exception
+public abstract class InternalServerErrorException : Exception
 {
     /// <summary>
     /// 
     /// </summary>
     /// <param name="message"></param>
-    public InternalServerErrorException(string message) : base(message) { }
+    protected InternalServerErrorException(string message) : base(message) { }
 }

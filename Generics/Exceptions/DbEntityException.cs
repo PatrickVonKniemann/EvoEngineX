@@ -9,7 +9,7 @@ public class DbEntityException : Exception
     /// Initializes a new instance of the <see cref="DbEntityNotFoundException"/> class.
     /// </summary>
     /// <param name="message"></param>
-    public DbEntityException(string message) : base(message)
+    protected DbEntityException(string message) : base(message)
     {
     }
 
@@ -88,13 +88,13 @@ public class DbEntityAlreadyExistsException : DbEntityException
 /// <summary>
 /// Exception. Selected entity is not found in database
 /// </summary>
-public class DbEntityEmptyListException : DbEntityException
+public abstract class DbEntityEmptyListException : DbEntityException
 {
     /// <summary>
     /// Initializes a new instance of the <see cref="DbEntityNotFoundException"/> class.
     /// </summary>
     /// <param name="entityType"></param>
-    public DbEntityEmptyListException(string entityType) : base(string.Format(CoreMessages.EntityEmptyList,
+    protected DbEntityEmptyListException(string entityType) : base(string.Format(CoreMessages.EntityEmptyList,
         entityType))
     {
     }
