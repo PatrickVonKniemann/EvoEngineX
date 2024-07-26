@@ -5,7 +5,6 @@ using Common;
 using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using FluentAssertions.Common;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -57,7 +56,7 @@ builder.Services.AddDbContext<CodeRunDbContext>(options =>
 
 
 var app = builder.Build();
-app.Logger.LogInformation($"Using connection string: {connectionString}");
+app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
 
 
 // Apply migrations
@@ -68,7 +67,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<CodeRunDbContext>();
         await context.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("Database migrations applied successfully.");
+        app.Logger.LogInformation("Database migrations applied successfully");
         await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, new List<string>
         {
             "RunResults",
@@ -77,7 +76,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occurred while applying migrations.");
+        app.Logger.LogError(ex, "An error occurred while applying migrations");
     }
 }
 

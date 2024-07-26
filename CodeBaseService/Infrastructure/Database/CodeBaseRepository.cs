@@ -1,3 +1,7 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 using CodeBaseService.Infrastructure;
 using DomainEntities;
 using Generics.BaseEntities;
@@ -48,9 +52,6 @@ public class CodeBaseRepository(CodeBaseDbContext context) : BaseRepository<Code
     {
         var codeBase = await context.CodeBases.FindAsync(codeBaseId);
         if (codeBase == null) throw new DbEntityNotFoundException("CodeBase", codeBaseId);
-
-        // Update properties as needed
-        // codeBase.Property = updatedCodeBase.Property;
 
         context.CodeBases.Update(codeBase);
         await context.SaveChangesAsync();

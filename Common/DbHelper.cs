@@ -1,3 +1,4 @@
+using System;
 using Microsoft.Extensions.Logging;
 using Npgsql;
 using System.Collections.Generic;
@@ -8,13 +9,13 @@ namespace Common
 {
     public static class DbHelper
     {
-        public static async Task RunSeedSqlFileAsync(ILogger logger, string connectionString, List<string> fileNames)
+        public static async Task RunSeedSqlFileAsync(ILogger logger, string? connectionString, List<string> fileNames)
         {
             foreach (var fileName in fileNames)
             {
                 try
                 {
-                    logger.LogInformation($"Seeding data for {fileName}");
+                    logger.LogInformation("Seeding data for {FileName}", fileName);
                     string sql = await File.ReadAllTextAsync($"/app/SqlScripts/{fileName}.sql");
 
                     await using (var connection = new NpgsqlConnection(connectionString))
@@ -31,7 +32,7 @@ namespace Common
                 }
                 catch (Exception e)
                 {
-                    logger.LogError($"Seeding error for {fileName}, {e.Message}");
+                    logger.LogError("Seeding error for {FileName}, {EMessage}", fileName, e.Message);
                 }
             }
         }

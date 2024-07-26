@@ -1,3 +1,5 @@
+using System;
+using System.Threading.Tasks;
 using Generics;
 using Generics.Exceptions;
 using Newtonsoft.Json;
@@ -12,22 +14,13 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
 
-public class ErrorHandlingMiddleware
+public class ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
 {
-    private readonly ILogger<ErrorHandlingMiddleware> _logger;
-    private readonly RequestDelegate _next;
-
-    public ErrorHandlingMiddleware(RequestDelegate next, ILogger<ErrorHandlingMiddleware> logger)
-    {
-        _logger = logger;
-        this._next = next;
-    }
-
     public async Task Invoke(HttpContext context)
     {
         try
         {
-            await _next(context);
+            await next(context);
         }
         catch (Exception ex)
         {
@@ -119,13 +112,13 @@ public class ErrorHandlingMiddleware
     private void LogException(Exception exception)
     {
         // Log the top-level exception
-        _logger.LogError("Exception: {Message}", exception.Message);
+        logger.LogError("Exception: {Message}", exception.Message);
 
         // Recursively log inner exceptions
         var innerException = exception.InnerException;
         while (innerException != null)
         {
-            _logger.LogError("Inner Exception: {Message}", innerException.Message);
+            logger.LogError("Inner Exception: {Message}", innerException.Message);
             innerException = innerException.InnerException;
         }
     }

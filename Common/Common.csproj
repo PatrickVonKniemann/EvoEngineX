@@ -28,4 +28,8 @@
       <ProjectReference Include="..\Generics\Generics.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="obj\" />
+    </ItemGroup>
+
 </Project>

@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using CodebaseService.Application.Services;
 using CodeBaseService.Application.Services;
 using CodeBaseService.Infrastructure;
@@ -6,8 +8,11 @@ using Common;
 using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
-using Npgsql;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -56,7 +61,7 @@ builder.Services.AddDbContext<CodeBaseDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 var app = builder.Build();
-app.Logger.LogInformation($"Using connection string: {connectionString}");
+app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
 
 // Apply migrations
 using (var scope = app.Services.CreateScope())
@@ -66,7 +71,7 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<CodeBaseDbContext>();
         await context.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("Database migrations applied successfully.");
+        app.Logger.LogInformation("Database migrations applied successfully");
         await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, new List<string>
         {
             "CodeBases"
@@ -74,7 +79,7 @@ using (var scope = app.Services.CreateScope())
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occurred while applying migrations.");
+        app.Logger.LogError(ex, "An error occurred while applying migrations");
     }
 }
 

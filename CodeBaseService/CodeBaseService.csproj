@@ -33,6 +33,7 @@
     
     <ItemGroup>
       <Folder Include="Migrations\" />
+      <Folder Include="obj\" />
     </ItemGroup>
 
 </Project>

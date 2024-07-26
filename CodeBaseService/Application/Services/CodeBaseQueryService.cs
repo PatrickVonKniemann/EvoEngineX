@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using AutoMapper;
 using CodebaseService.Application.Services;
 using CodebaseService.Infrastructure.Database;
@@ -6,6 +9,7 @@ using ExternalDomainEntities.CodeBaseDto.Query;
 using Generics.BaseEntities;
 using Generics.Exceptions;
 using Generics.Pagination;
+using Microsoft.Extensions.Logging;
 
 namespace CodeBaseService.Application.Services
 {

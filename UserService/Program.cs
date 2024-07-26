@@ -1,4 +1,3 @@
-using System.Configuration;
 using Common;
 using DomainEntities;
 using FastEndpoints;
@@ -44,8 +43,7 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
 var connectionString = builder.Configuration.GetConnectionString("UserDatabase");
-connectionString = connectionString
-    .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "UserDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
     .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
@@ -56,7 +54,7 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 
 var app = builder.Build();
 
-app.Logger.LogInformation($"Using connection string: {connectionString}");
+app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
 
 
 // Apply migrations
@@ -67,15 +65,12 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<UserDbContext>();
         await context.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("Database migrations applied successfully.");
-        await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, new List<string>
-        {
-            "Users"
-        });
+        app.Logger.LogInformation("Database migrations applied successfully");
+        await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, ["Users"]);
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occurred while applying migrations.");
+        app.Logger.LogError(ex, "An error occurred while applying migrations");
     }
 }
 
@@ -91,6 +86,4 @@ await app.RunAsync();
 /// This class is used to start the API,
 /// Partial class is used to add the entry point for CustomWebApplicationFactory
 /// </summary>
-public partial class Program
-{
-}
+public abstract partial class Program;
