@@ -1,5 +1,4 @@
 using AutoMapper;
-using DomainEntities.UserDto.Query;
 using ExternalDomainEntities.UserDto.Command;
 using ExternalDomainEntities.UserDto.Query;
 

@@ -25,4 +25,10 @@ public class UserService(HttpClient httpClient)
         var userListResponse = await response.Content.ReadFromJsonAsync<ReadUserListResponse>();
         return userListResponse;
     }
+
+    public async Task<ReadUserResponse?> GetEntityAsync(string userId)
+    {
+          var response = await httpClient.GetAsync($"{UserServiceEndpoint}/user/{userId}");
+          return await response.Content.ReadFromJsonAsync<ReadUserResponse>();
+    }
 }
