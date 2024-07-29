@@ -34,15 +34,17 @@ namespace UserService.Application.Services
                     }
                 };
             }
-
-            users = await userRepository.GetAllAsync();
-            return new ReadUserListResponse
+            else
             {
-                Items = new ItemWrapper<UserListResponseItem>
+                users = await userRepository.GetAllAsync();
+                return new ReadUserListResponse
                 {
-                    Values = mapper.Map<List<UserListResponseItem>>(users)
-                }
-            };
+                    Items = new ItemWrapper<UserListResponseItem>
+                    {
+                        Values = mapper.Map<List<UserListResponseItem>>(users)
+                    }
+                };
+            }
         }
 
         public async Task<ReadUserResponse> GetByIdAsync(Guid entityId)

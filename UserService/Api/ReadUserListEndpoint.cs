@@ -11,7 +11,7 @@ public class ReadUserListEndpoint(ILogger<ReadUserListEndpoint> logger, IUserQue
 
     public override void Configure()
     {
-        Verbs(Http.GET);
+        Verbs(Http.POST);
         Routes("user/all");
         AllowAnonymous();
     }

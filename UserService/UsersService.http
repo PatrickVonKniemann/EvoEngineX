@@ -1,4 +1,15 @@
-@UsersService_HostAddress = http://localhost:5003
+@UsersService_HostAddress = http://localhost:5127
+
+###
+
+GET {{UsersService_HostAddress}}/user/all?paginationQuery.pageNumber=1&paginationQuery.pageSize=10&paginationQuery.filterCondition=Or
+Content-Type: application/json
+Accept: application/json
+
+{
+}
+
+###
 
 GET {{UsersService_HostAddress}}/user/all
 Content-Type: application/json
@@ -13,12 +24,6 @@ Accept: application/json
     }
   }
 }
-
-###
-
-GET {{UsersService_HostAddress}}/user/all?pageNumber=1&pageSize=10&sortBy=name&sortOrder=asc
-Content-Type: application/json
-Accept: application/json
 
 ###
 

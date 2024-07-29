@@ -1,6 +1,5 @@
 ﻿@page "/admin"
 @inject UserService UserService
-@using Blazorise
 @using ClientApp.Services
 @using DomainModels
 @using ExternalDomainEntities.UserDto.Query
@@ -54,14 +53,32 @@ else
             </tbody>
         </table>
     </div>
+    <Pagination
+        PageNumber="@_users.Pagination.PageNumber"
+        TotalPages="@_users.Pagination.TotalPages"
+        OnPageChanged="HandlePageChanged"/>
 }
 
 @code {
     private ReadUserListResponse? _users;
 
+    private int currentPage = 1;
+    private int pageSize = 10;
+
     protected override async Task OnInitializedAsync()
     {
-        _users = await UserService.GetDataAsync();
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        _users = await UserService.GetDataAsync(currentPage, pageSize);
+    }
+
+    private async Task HandlePageChanged(int pageNumber)
+    {
+        currentPage = pageNumber;
+        await LoadDataAsync();
     }
 
 }

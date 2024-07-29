@@ -1,28 +1,27 @@
 using System.Net.Http.Json;
 using ExternalDomainEntities.UserDto.Query;
+using Generics.Pagination;
 
 namespace ClientApp.Services;
 
-public class UserService
+public class UserService(HttpClient httpClient)
 {
-    private readonly HttpClient _httpClient;
     private const string UserServiceEndpoint = "http://localhost:5003";
 
-    public UserService(HttpClient httpClient)
+    public async Task<ReadUserListResponse?> GetDataAsync(int pageNumber = 1, int pageSize = 10)
     {
-        _httpClient = httpClient;
-    }
+        var paginationQuery = new PaginationQuery
+        {
+            PageNumber = pageNumber,
+            PageSize = pageSize
+        };
 
-    public async Task<ReadUserListResponse?> GetDataAsync()
-    {
-        try
+        var readUserListRequest = new ReadUserListRequest
         {
-            return await _httpClient.GetFromJsonAsync<ReadUserListResponse>($"{UserServiceEndpoint}/user/all?pageNumber=1&pageSize=10&sortBy=name&sortOrder=asc");
-        }
-        catch (HttpRequestException ex)
-        {
-            Console.WriteLine($"Request error: {ex.Message}");
-            return null;
-        }
+            PaginationQuery = paginationQuery
+        };
+
+        var response = await httpClient.PostAsJsonAsync($"{UserServiceEndpoint}/user/all", readUserListRequest);
+        return await response.Content.ReadFromJsonAsync<ReadUserListResponse>();
     }
 }
