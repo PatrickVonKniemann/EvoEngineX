@@ -11,6 +11,7 @@ namespace UserService.Infrastructure.Database
         Task DeleteAsync(Guid userId);
 
         // Query-side operations
+        Task<int> GetCount();
         Task<User?> GetByIdAsync(Guid userId);
         Task<List<User>> GetAllAsync();
         Task<List<User>> GetAllAsync(PaginationQuery? paginationQuery);

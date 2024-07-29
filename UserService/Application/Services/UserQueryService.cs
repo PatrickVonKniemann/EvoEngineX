@@ -20,6 +20,7 @@ namespace UserService.Application.Services
             if (paginationQuery != null)
             {
                 users = await userRepository.GetAllAsync(paginationQuery);
+                var itemsCount = await userRepository.GetCount();
                 return new ReadUserListResponse
                 {
                     Items = new ItemWrapper<UserListResponseItem>
@@ -30,7 +31,8 @@ namespace UserService.Application.Services
                     {
                         PageNumber = paginationQuery.PageNumber,
                         PageSize = paginationQuery.PageSize,
-                        ItemsCount = users.Count
+                        ItemsCount = itemsCount,
+                        TotalPages = (int)Math.Ceiling((double)itemsCount / paginationQuery.PageSize)
                     }
                 };
             }

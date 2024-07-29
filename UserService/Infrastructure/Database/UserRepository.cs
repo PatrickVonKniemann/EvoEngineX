@@ -9,6 +9,11 @@ namespace UserService.Infrastructure.Database;
 public class UserRepository(UserDbContext context) : BaseRepository<User>, IUserRepository
 {
     // Query-side operations
+    public Task<int> GetCount()
+    {
+        return context.Users.CountAsync();
+    }
+
     public async Task<User?> GetByIdAsync(Guid userId)
     {
         return await context.Users

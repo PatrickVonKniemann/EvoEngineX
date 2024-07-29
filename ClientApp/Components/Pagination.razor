@@ -1,3 +1,17 @@
+<div class="pagination flex justify-between items-center p-4">
+    <button class="bg-neutral-800 text-white py-2 px-4 rounded disabled:opacity-50"
+            @onclick="() => SetPage(PageNumber - 1)"
+            disabled="@(PageNumber == 1)">
+        Previous
+    </button>
+    <span class="text-gray-700">Page @PageNumber of @TotalPages</span>
+    <button class="bg-neutral-800 text-white py-2 px-4 rounded disabled:opacity-50"
+            @onclick="() => SetPage(PageNumber + 1)"
+            disabled="@(PageNumber == TotalPages)">
+        Next
+    </button>
+</div>
+
 @code {
     [Parameter] public int PageNumber { get; set; }
     [Parameter] public int TotalPages { get; set; }
@@ -10,10 +24,5 @@
             await OnPageChanged.InvokeAsync(pageNumber);
         }
     }
-}
 
-<div class="pagination">
-    <button @onclick="() => SetPage(PageNumber - 1)" disabled="@(PageNumber == 1)">Previous</button>
-    <span>Page @PageNumber of @TotalPages</span>
-    <button @onclick="() => SetPage(PageNumber + 1)" disabled="@(PageNumber == TotalPages)">Next</button>
-</div>
+}

@@ -2,11 +2,15 @@
 
 ###
 
-GET {{UsersService_HostAddress}}/user/all?paginationQuery.pageNumber=1&paginationQuery.pageSize=10&paginationQuery.filterCondition=Or
+POST {{UsersService_HostAddress}}/user/all
 Content-Type: application/json
 Accept: application/json
 
 {
+  "paginationQuery": {
+    "pageNumber": 1,
+    "pageSize": 10
+  }
 }
 
 ###

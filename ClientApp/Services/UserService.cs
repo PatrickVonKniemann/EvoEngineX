@@ -22,6 +22,7 @@ public class UserService(HttpClient httpClient)
         };
 
         var response = await httpClient.PostAsJsonAsync($"{UserServiceEndpoint}/user/all", readUserListRequest);
-        return await response.Content.ReadFromJsonAsync<ReadUserListResponse>();
+        var userListResponse = await response.Content.ReadFromJsonAsync<ReadUserListResponse>();
+        return userListResponse;
     }
 }
