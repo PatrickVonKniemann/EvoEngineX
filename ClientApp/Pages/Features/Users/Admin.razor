@@ -15,48 +15,50 @@
 }
 else
 {
-    <div class="relative overflow-x-auto">
-        <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-            <thead class="text-xs text-gray-700 uppercase">
-            <tr>
-                <th scope="col" class="px-6 py-3">
-                    User Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Name
-                </th>
-                <th scope="col" class="px-6 py-3">
-                    Email
-                </th>
-                <th scope="col" class="px-6 py-3">
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var user in _users.Items.Values)
-            {
-                <tr class="bg-white border-b text-gray-950">
-                    <th scope="row" class="px-6 py-4 font-medium whitespace-nowrap">
-                        @user.UserName
+    <div class="overflow-x-auto">
+        <div class="max-h-fit overflow-y-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase">
+                <tr>
+                    <th scope="col" class="px-6 py-3">
+                        User Name
                     </th>
-                    <td class="px-6 py-4">
-                        @user.Name
-                    </td>
-                    <td class="px-6 py-4">
-                        @user.Email
-                    </td>
-                    <td class="px-6 py-4">
-                        <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" Link=@Links.UserDetail/>
-                    </td>
+                    <th scope="col" class="px-6 py-3">
+                        Name
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                        Email
+                    </th>
+                    <th scope="col" class="px-6 py-3">
+                    </th>
                 </tr>
-            }
-            </tbody>
-        </table>
+                </thead>
+                <tbody>
+                @foreach (var user in _users.Items.Values)
+                {
+                    <tr class="bg-white border-b text-gray-950 w-full">
+                        <td scope="col" class="px-6 py-3 font-medium whitespace-nowrap">
+                            @user.UserName
+                        </td>
+                        <td scope="col" class="px-6 py-3">
+                            @user.Name
+                        </td>
+                        <td scope="col" class="px-6 py-3">
+                            @user.Email
+                        </td>
+                        <td scope="col" class="px-6 py-3">
+                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" Link=@Links.UserDetail/>
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <Pagination
+            PageNumber="@_users.Pagination.PageNumber"
+            TotalPages="@_users.Pagination.TotalPages"
+            OnPageChanged="HandlePageChanged"/>
     </div>
-    <Pagination
-        PageNumber="@_users.Pagination.PageNumber"
-        TotalPages="@_users.Pagination.TotalPages"
-        OnPageChanged="HandlePageChanged"/>
 }
 
 @code {
