@@ -1,8 +1,74 @@
-﻿@page "/cloud-profile"
-
-<PageTitle>Cloud providers profile</PageTitle>
-
-<h1>Cloud providers profile</h1>
-
-here you will setup profiles for a connection with a provider
-
+﻿@* @page "/cloud-profile" *@
+@* *@
+@* <PageTitle>Cloud providers profile</PageTitle> *@
+@* *@
+@* <h1>Cloud providers profile</h1> *@
+@* *@
+@* here you will setup profiles for a connection with a provider *@
+@* *@
+@* using System; *@
+@* using System.Collections.Generic; *@
+@* *@
+@* namespace CloudConfigurationApp *@
+@* { *@
+@*     public class UserProfile *@
+@*     { *@
+@*         // Authentication Credentials *@
+@*         public string ApiKey { get; set; } *@
+@*         public string OAuthToken { get; set; } *@
+@*         public string Username { get; set; } *@
+@*         public string Password { get; set; } *@
+@* *@
+@*         // User Identification *@
+@*         public string UserId { get; set; } *@
+@*         public string Email { get; set; } *@
+@* *@
+@*         // Authorization *@
+@*         public List<string> AccessControlList { get; set; } *@
+@*         public string Role { get; set; } *@
+@* *@
+@*         // Connection Details *@
+@*         public string EndpointUrl { get; set; } *@
+@*         public string Region { get; set; } *@
+@* *@
+@*         // Session Management *@
+@*         public string SessionToken { get; set; } *@
+@* *@
+@*         // Profile Information *@
+@*         public string ProfileName { get; set; } *@
+@*         public string ProfilePictureUrl { get; set; } *@
+@* *@
+@*         // Logging and Monitoring *@
+@*         public List<string> ActivityLogs { get; set; } *@
+@*         public List<string> ErrorLogs { get; set; } *@
+@* *@
+@*         // Configuration Settings *@
+@*         public Dictionary<string, string> DefaultPreferences { get; set; } *@
+@*         public Dictionary<string, string> CustomConfigurations { get; set; } *@
+@* *@
+@*         // Encryption and Security *@
+@*         public string EncryptionKey { get; set; } *@
+@*         public string Certificate { get; set; } *@
+@* *@
+@*         // API Rate Limits *@
+@*         public int RateLimit { get; set; } *@
+@*         public int RateLimitRemaining { get; set; } *@
+@*         public DateTime RateLimitReset { get; set; } *@
+@* *@
+@*         // Billing and Subscription Information *@
+@*         public string BillingDetails { get; set; } *@
+@*         public Dictionary<string, double> UsageMetrics { get; set; } *@
+@* *@
+@*         public UserProfile() *@
+@*         { *@
+@*             AccessControlList = new List<string>(); *@
+@*             ActivityLogs = new List<string>(); *@
+@*             ErrorLogs = new List<string>(); *@
+@*             DefaultPreferences = new Dictionary<string, string>(); *@
+@*             CustomConfigurations = new Dictionary<string, string>(); *@
+@*             UsageMetrics = new Dictionary<string, double>(); *@
+@*         } *@
+@* *@
+@*         // Methods for handling the user profile can be added here *@
+@*     } *@
+@* } *@

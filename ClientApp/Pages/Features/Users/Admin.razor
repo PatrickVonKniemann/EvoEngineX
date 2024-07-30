@@ -37,17 +37,17 @@ else
                 @foreach (var user in _users.Items.Values)
                 {
                     <tr class="bg-white border-b text-gray-950 w-full">
-                        <td scope="col" class="px-6 py-3 font-medium whitespace-nowrap">
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">
                             @user.UserName
                         </td>
-                        <td scope="col" class="px-6 py-3">
+                        <td class="px-6 py-3">
                             @user.Name
                         </td>
-                        <td scope="col" class="px-6 py-3">
+                        <td class="px-6 py-3">
                             @user.Email
                         </td>
-                        <td scope="col" class="px-6 py-3">
-                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" Link=@Links.UserDetail/>
+                        <td class="px-6 py-3">
+                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" Padding="py-3 px-4" Link=@Links.UserDetail/>
                         </td>
                     </tr>
                 }
