@@ -1,7 +1,7 @@
 @using DomainModels
 
 
-<a href="@Link" class="@ButtonType-basic text-white font-bold @Padding rounded-lg mr-3 mt-2">
+<a href="@Link" class="@ButtonType-basic text-white font-bold rounded-lg @CustomClass">
     @ButtonText
 </a>
 
@@ -12,5 +12,5 @@
 
     [Parameter] public string? Link { get; set; }
     
-    [Parameter] public string? Padding { get; set; }
+    [Parameter] public string? CustomClass { get; set; }
 }

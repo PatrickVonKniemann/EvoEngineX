@@ -7,14 +7,14 @@
 
 <PageTitle>User Profile</PageTitle>
 
-<div class="bg-white">
+<div class="pt-4">
     <div class="mx-auto grid max-w-7xl px-6 ">
         <div class="max-w-2xl">
             <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl mb-2">User Profile</h2>
             <form class="w-full max-w-lg">
                 <div class="flex flex-wrap -mx-3 mb-6">
                     <div class="w-full px-3">
-                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-3" for="grid-zip">
+                        <label class="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-3 pt-1" for="grid-zip">
                             ID
                         </label>
                         <input value="@_user.Id" readonly class="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500" id="grid-zip" type="text" placeholder="ID">
@@ -69,8 +69,8 @@
                     </div>
                 </div>
                 <div class="flex flex-wrap -mx-3 mb-6">
-                    <div class="w-full md:w-1/2 px-3 mb-6 md:mb-0">
-                        <BasicButton ButtonType=@ButtonType.secondary Padding="py-4 px-6"  ButtonText="Update" Link="Update"/>
+                    <div class="w-full px-4 mb-6 md:mb-0">
+                        <BasicButton ButtonType=@ButtonType.secondary @CustomClass="py-4 px-6"  ButtonText="Update" Link="Update"/>
                     </div>
                 </div>
             </form>

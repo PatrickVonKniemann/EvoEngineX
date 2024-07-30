@@ -1,9 +1,9 @@
 ﻿@page "/admin"
 @inject UserService UserService
 @using ClientApp.Services
-@using DomainModels
 @using ExternalDomainEntities.UserDto.Query
 @using ClientApp.Components
+@using DomainModels
 @using ButtonType = DomainModels.ButtonType
 
 <PageTitle>Admin</PageTitle>
@@ -47,7 +47,7 @@ else
                             @user.Email
                         </td>
                         <td class="px-6 py-3">
-                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" Padding="py-3 px-4" Link=@Links.UserDetail/>
+                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" CustomClass="py-3 px-4" Link=@Links.UserDetail/>
                         </td>
                     </tr>
                 }

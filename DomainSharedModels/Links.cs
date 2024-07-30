@@ -2,6 +2,7 @@ namespace DomainModels;
 
 public static class Links
 {
+    public const string Home = "/";
     public const string Codebases = "code-bases";
     public const string CloudProfile = "cloud-profile";
     public const string UserProfile = "user-profile";
