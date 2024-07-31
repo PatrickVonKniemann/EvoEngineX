@@ -1,33 +1,18 @@
 using AutoMapper;
 using DomainEntities;
 using ExternalDomainEntities.UserDto.Command;
+using Generics.BaseEntities;
 using UserService.Infrastructure.Database;
 
-namespace UserService.Application.Services;
-
-public class UserCommandService(
-    ILogger<UserCommandService> logger,
-    IMapper mapper,
-    IUserRepository userRepository)
-    : IUserCommandService
+namespace UserService.Application.Services
 {
-    public async Task<CreateUserResponse> AddAsync(CreateUserRequest entityRequest)
+    public class UserCommandService(
+        ILogger<UserCommandService> logger,
+        IMapper mapper,
+        IUserRepository userRepository)
+        : BaseCommandService<User, CreateUserRequest, CreateUserResponse, UpdateUserRequest,
+            UpdateUserResponse>(mapper, userRepository, logger), IUserCommandService
     {
-        logger.LogInformation($"{nameof(UserCommandService)} {nameof(AddAsync)}");
-        var user = await userRepository.AddAsync(mapper.Map<User>(entityRequest));
-        return mapper.Map<CreateUserResponse>(user);
-    }
-
-    public async Task<UpdateUserResponse> UpdateAsync(Guid entityId, UpdateUserRequest entityRequest)
-    {
-        logger.LogInformation($"{nameof(UserCommandService)} {nameof(UpdateAsync)}");
-        var updatedUser = await userRepository.UpdateAsync(entityId, mapper.Map<User>(entityRequest));
-        return mapper.Map<UpdateUserResponse>(updatedUser);
-    }
-
-    public async Task DeleteAsync(Guid entityId)
-    {
-        logger.LogInformation($"{nameof(UserCommandService)} {nameof(DeleteAsync)}");
-        await userRepository.DeleteAsync(entityId);
+        // Any additional methods specific to UserCommandService can go here
     }
 }

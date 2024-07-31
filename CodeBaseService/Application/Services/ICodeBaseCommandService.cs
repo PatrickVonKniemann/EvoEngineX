@@ -3,7 +3,5 @@ using Generics.BaseEntities;
 
 namespace CodebaseService.Application.Services;
 
-public interface ICodeBaseCommandService : IGenericCommandService<CreateCodeBaseRequest, UpdateCodeBaseRequest, CreateCodeBaseResponse, UpdateCodeBaseResponse>
-{
-    
-}
+public interface ICodeBaseCommandService : IGenericEntityCommandService<CreateCodeBaseRequest, CreateCodeBaseResponse,
+    UpdateCodeBaseRequest, UpdateCodeBaseResponse>;

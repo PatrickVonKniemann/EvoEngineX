@@ -3,4 +3,5 @@ using Generics.BaseEntities;
 
 namespace UserService.Application.Services;
 
-public interface IUserCommandService : IGenericCommandService<CreateUserRequest, UpdateUserRequest, CreateUserResponse, UpdateUserResponse>;
+public interface IUserCommandService : IGenericEntityCommandService<CreateUserRequest, CreateUserResponse,
+    UpdateUserRequest, UpdateUserResponse>;
