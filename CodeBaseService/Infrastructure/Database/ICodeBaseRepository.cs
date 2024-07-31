@@ -1,19 +1,9 @@
 using DomainEntities;
-using Generics.Pagination;
+using Generics.BaseEntities;
 
-namespace CodebaseService.Infrastructure.Database
+namespace CodebaseService.Infrastructure.Database;
+
+public interface ICodeBaseRepository : IRepository<CodeBase>
 {
-    public interface ICodeBaseRepository
-    {
-        // Command-side operations
-        Task<CodeBase> AddAsync(CodeBase codeBase);
-        Task<CodeBase> UpdateAsync(Guid codeBaseId, CodeBase updatedCodeBase);
-        Task DeleteAsync(Guid codeBaseId);
-
-        // Query-side operations
-        Task<CodeBase?> GetByIdAsync(Guid codeBaseId);
-        Task<List<CodeBase>> GetAllAsync();
-        Task<List<CodeBase>> GetAllAsync(PaginationQuery? paginationQuery);
-        Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId);
-    }
+    Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId);
 }

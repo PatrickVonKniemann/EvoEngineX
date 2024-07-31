@@ -1,5 +1,6 @@
 using CodeBaseService.Infrastructure;
 using Common;
+using Generics.Enums;
 
 namespace CodeBase.Tests;
 
@@ -13,25 +14,37 @@ public class CodeBaseServiceWebApplicationFactory<TStartup>()
             new DomainEntities.CodeBase
             {
                 Id = MockData.MockId,
-                Code = "Sample code 1",
+                Code = "Hello wordls",
+                Name = "Testing Code",
+                SupportedPlatform = SupportedPlatformType.Csharp,
+                Valid = true,
                 UserId = MockData.MockId
             },
             new DomainEntities.CodeBase
             {
                 Id = MockData.MockIdUpdate,
-                Code = "Sample code 2",
+                Code = "Hello wordls",
+                Name = "Testing Code",
+                SupportedPlatform = SupportedPlatformType.Java,
+                Valid = false,
                 UserId = new Guid("222e4567-e89b-12d3-a456-426614174000")
             },
             new DomainEntities.CodeBase
             {
                 Id = new Guid("444e4567-e89b-12d3-a456-426614174000"),
-                Code = "Sample code 3",
+                Code = "Hello wordls",
+                Name = "Testing Code",
+                SupportedPlatform = SupportedPlatformType.Matlab,
+                Valid = false,
                 UserId = new Guid("333e4567-e89b-12d3-a456-426614174000")
             },
             new DomainEntities.CodeBase
             {
                 Id = new Guid("555e4567-e89b-12d3-a456-426614174000"),
-                Code = "Sample code 4",
+                Code = "Hello wordls",
+                Name = "Testing Code",
+                SupportedPlatform = SupportedPlatformType.Java,
+                Valid = true,
                 UserId = new Guid("444e4567-e89b-12d3-a456-426614174000")
             });
     }

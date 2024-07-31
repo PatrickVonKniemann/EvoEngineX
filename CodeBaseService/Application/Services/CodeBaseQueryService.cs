@@ -23,7 +23,7 @@ namespace CodeBaseService.Application.Services
             if (paginationQuery != null)
             {
                 codebases = await codeBaseRepository.GetAllAsync(paginationQuery);
-
+                var itemsCount = await codeBaseRepository.GetCount();
                 return new ReadCodeBaseListResponse
                 {
                     Items = new ItemWrapper<ReadCodeBaseListResponseItem>
@@ -34,20 +34,22 @@ namespace CodeBaseService.Application.Services
                     {
                         PageNumber = paginationQuery.PageNumber,
                         PageSize = paginationQuery.PageSize,
-                        ItemsCount = codebases.Count
-                    }
+                        ItemsCount = itemsCount,
+                        TotalPages = (int)Math.Ceiling((double)itemsCount / paginationQuery.PageSize)                    }
                 };
             }
-
-            codebases = await codeBaseRepository.GetAllAsync();
-
-            return new ReadCodeBaseListResponse
+            else
             {
-                Items = new ItemWrapper<ReadCodeBaseListResponseItem>
+                codebases = await codeBaseRepository.GetAllAsync();
+
+                return new ReadCodeBaseListResponse
                 {
-                    Values = mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
-                }
-            };
+                    Items = new ItemWrapper<ReadCodeBaseListResponseItem>
+                    {
+                        Values = mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+                    }
+                }; 
+            }
         }
 
         public async Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId)

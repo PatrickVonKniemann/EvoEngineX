@@ -1,19 +1,6 @@
 using DomainEntities;
-using Generics.Pagination;
+using Generics.BaseEntities;
 
-namespace UserService.Infrastructure.Database
-{
-    public interface IUserRepository
-    {
-        // Command-side operations
-        Task<User> AddAsync(User user);
-        Task<User> UpdateAsync(Guid userId, User updatedUser);
-        Task DeleteAsync(Guid userId);
+namespace UserService.Infrastructure.Database;
 
-        // Query-side operations
-        Task<int> GetCount();
-        Task<User?> GetByIdAsync(Guid userId);
-        Task<List<User>> GetAllAsync();
-        Task<List<User>> GetAllAsync(PaginationQuery? paginationQuery);
-    }
-}
+public interface IUserRepository : IRepository<User>;

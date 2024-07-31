@@ -1,6 +1,6 @@
 @CodeBaseService_HostAddress = http://localhost:5002
 
-POST {{CodeBaseService_HostAddress}}/code-base
+POST {{CodeBaseService_HostAddress}}/code-base/all
 Content-Type: application/json
 Accept: application/json
 
