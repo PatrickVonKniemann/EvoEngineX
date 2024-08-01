@@ -13,7 +13,9 @@ namespace CodeRunService.Tests
         : IClassFixture<CodeRunServiceWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client = factory.CreateClient();
-        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
+        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174001");
+        private readonly Guid _commonIdToUpdate = Guid.Parse("123e4567-e89b-12d3-a456-426614174002");
+        private readonly Guid _commonIdToDelete = Guid.Parse("123e4567-e89b-12d3-a456-426614174003");
 
 
         #region Add CodeRun Tests
@@ -101,7 +103,7 @@ namespace CodeRunService.Tests
         public async Task GetCodeRunsByCodeBaseId_Fail_ShouldReturnEmpty()
         {
             // Arrange
-            var codeBaseId = Guid.Empty;
+            var codeBaseId = new Guid("133e4567-e39b-1233-a456-423314174009");
 
             // Act
             var response = await _client.GetAsync($"/code-run/by-code-base-id/{codeBaseId}");
@@ -117,7 +119,7 @@ namespace CodeRunService.Tests
         public async Task GetCodeBasesByUserId_Fail_ShouldReturnResponseWithNullValues()
         {
             // Arrange
-            var randomCodeBaseId = Guid.Empty;
+            var randomCodeBaseId = new Guid("123e4567-e81b-1213-a456-416614174013");
 
             // Act
             var response = await _client.GetAsync($"/code-run/by-code-base-id/{randomCodeBaseId}");
@@ -212,7 +214,7 @@ namespace CodeRunService.Tests
         public async Task DeleteCodeRun_Success_ShouldReturnEmptyContent()
         {
             // Arrange
-            var codeRunToDeleteId = _commonId;
+            var codeRunToDeleteId = _commonIdToDelete;
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act

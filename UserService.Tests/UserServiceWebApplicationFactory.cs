@@ -1,9 +1,10 @@
 using Common;
 using UserService.Infrastructure;
-using DomainEntities;
 
-namespace UserService.Tests;
-
-public class UserServiceWebApplicationFactory<TStartup>()
-    : CustomWebApplicationFactory<TStartup, UserDbContext>()
-    where TStartup : class;
+namespace UserService.Tests
+{
+    public class UserServiceWebApplicationFactory<TStartup>()
+        : CustomWebApplicationFactory<TStartup, UserDbContext>("UserServiceDb", new List<string> { "Users" },
+            "../../../../Configs/SqlScripts")
+        where TStartup : class;
+}

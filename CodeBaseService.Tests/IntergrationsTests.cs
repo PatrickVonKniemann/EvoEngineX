@@ -14,7 +14,9 @@ namespace CodeBase.Tests
         : IClassFixture<CodeBaseServiceWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client = factory.CreateClient();
-        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174000");
+        private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174008");
+        private readonly Guid _idToUpdate = Guid.Parse("123e4567-e89b-12d3-a456-426614174011");
+        private readonly Guid _idToDelete = Guid.Parse("123e4567-e89b-12d3-a456-426614174007");
 
 
         #region Add CodeBase Tests
@@ -137,17 +139,17 @@ namespace CodeBase.Tests
         public async Task GetCodeBaseById_Success_ShouldReturnCodeBase()
         {
             // Arrange
+            var existingId = _commonId;
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var codeBaseToSearch = MockData.MockIdUpdate;
 
             // Act
-            var response = await _client.GetAsync($"/code-base/{codeBaseToSearch}");
+            var response = await _client.GetAsync($"/code-base/{existingId}");
 
             // Assert
             var codeBaseResponse = await DeserializationHelper.DeserializeResponse<ReadCodeBaseResponse>(response);
             response.StatusCode.Should().Be(expectedStatusCode);
 
-            codeBaseResponse.Id.Should().Be(codeBaseToSearch);
+            codeBaseResponse.Id.Should().Be(existingId);
         }
 
         [Fact]
@@ -173,7 +175,7 @@ namespace CodeBase.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var codeBaseToUpdateId = MockData.MockIdUpdate;
+            var codeBaseToUpdateId = _idToUpdate;
             var expectedStatus = RunStatus.Done;
             var codeBaseToUpdate = new UpdateCodeBaseRequest
             {
@@ -199,7 +201,7 @@ namespace CodeBase.Tests
         public async Task DeleteCodeBase_Success_ShouldReturnEmptyContent()
         {
             // Arrange
-            var codeBaseToDeleteId = _commonId;
+            var codeBaseToDeleteId = _idToDelete;
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act

@@ -1,5 +1,8 @@
+-- Truncate the table before inserting new data
+TRUNCATE TABLE public."Users";
+
 INSERT INTO public."Users" ("Id", "UserName", "Password", "Email", "Name", "Language")
-VALUES ('123e4567-e89b-12d3-a456-426614174003', 'Diago', 'gag', 'geg', 'gege', 'Spanish'),
+VALUES ('123e4567-e89b-12d3-a456-426614174003', 'Diago', 'gag', 'geg', 'John Doe', 'Spanish'),
        ('123e4567-e89b-12d3-a456-426614174004', 'Ernesto', 'gag', 'geg', 'gege', 'Spanish'),
        ('123e4567-e89b-12d3-a456-426614174005', 'July', 'ga', 'h', 'ge', 'English'),
        ('123e4567-e89b-12d3-a456-426614174006', 'Anna', 'pass1', 'anna@example.com', 'Anna Smith', 'English'),

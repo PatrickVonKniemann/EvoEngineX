@@ -11,7 +11,9 @@ namespace UserService.Tests
     public class UserServiceTests : IClassFixture<UserServiceWebApplicationFactory<Program>>
     {
         private readonly HttpClient _client;
-
+        private readonly Guid _commonId = new Guid("123e4567-e89b-12d3-a456-426614174003");
+        private readonly Guid _commonIdToUpdate = new Guid("123e4567-e89b-12d3-a456-426614174004");
+        private readonly Guid _commonIdToDelete = new Guid("123e4567-e89b-12d3-a456-426614174005");
         public UserServiceTests(UserServiceWebApplicationFactory<Program> factory)
         {
             _client = factory.CreateClient();
@@ -97,7 +99,7 @@ namespace UserService.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var userToSearch = MockData.MockId;
+            var userToSearch = _commonId;
             var expectedUser = MockData.ExpectedUser;
 
             // Act
@@ -133,7 +135,7 @@ namespace UserService.Tests
         {
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
-            var userToUpdateId = MockData.MockIdUpdate;
+            var userToUpdateId = _commonIdToUpdate;
             var userToUpdate = new
             {
                 Email = "updatedemail@example.com",
@@ -161,7 +163,7 @@ namespace UserService.Tests
         public async Task DeleteUser_Success_ShouldReturnEmptyContent()
         {
             // Arrange
-            var userToDeleteId = MockData.MockId;
+            var userToDeleteId = _commonIdToDelete;
             const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act

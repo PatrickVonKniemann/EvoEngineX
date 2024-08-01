@@ -1,3 +1,34 @@
+-- Truncate the table before inserting new data
+TRUNCATE TABLE public."CodeRuns" CASCADE;
+
+-- Truncate the table before inserting new data
+TRUNCATE TABLE public."RunResult" CASCADE;
+
+
+INSERT INTO public."RunResult" ("Id", "File")
+VALUES
+    ('123e4567-e89b-12d3-a456-426614174000', null),
+    ('123e4567-e89b-12d3-a456-426614174001', null),
+    ('123e4567-e89b-12d3-a456-426614174002', null),
+    ('123e4567-e89b-12d3-a456-426614174003', null),
+    ('123e4567-e89b-12d3-a456-426614174004', null),
+    ('123e4567-e89b-12d3-a456-426614174005', null),
+    ('123e4567-e89b-12d3-a456-426614174006', null),
+    ('123e4567-e89b-12d3-a456-426614174007', null),
+    ('123e4567-e89b-12d3-a456-426614174008', null),
+    ('123e4567-e89b-12d3-a456-426614174009', null),
+    ('123e4567-e89b-12d3-a456-426614174010', null),
+    ('123e4567-e89b-12d3-a456-426614174011', null),
+    ('123e4567-e89b-12d3-a456-426614174012', null),
+    ('123e4567-e89b-12d3-a456-426614174013', null),
+    ('123e4567-e89b-12d3-a456-426614174014', null),
+    ('123e4567-e89b-12d3-a456-426614174015', null),
+    ('123e4567-e89b-12d3-a456-426614174016', null),
+    ('123e4567-e89b-12d3-a456-426614174017', null),
+    ('123e4567-e89b-12d3-a456-426614174018', null),
+    ('123e4567-e89b-12d3-a456-426614174019', null),
+    ('123e4567-e89b-12d3-a456-426614174020', null);
+
 INSERT INTO public."CodeRuns" ("Id", "CodeBaseId", "Status", "RunStart", "RunFinish", "ResultsId")
 VALUES
     ('123e4567-e89b-12d3-a456-426614174000', '123e4567-e89b-12d3-a456-426614174000', 1, '2024-07-23 10:01:31.064000 +00:00', '2024-07-23 10:01:33.459000 +00:00', '123e4567-e89b-12d3-a456-426614174000'),
