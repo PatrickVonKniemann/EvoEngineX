@@ -79,7 +79,7 @@ namespace CodeRunService.Tests
             var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
             responseContent.Items.Values.Should().NotBeEmpty();
         }
-        
+
 
 
         [Fact]
@@ -98,6 +98,22 @@ namespace CodeRunService.Tests
         }
 
         [Fact]
+        public async Task GetCodeRunsByCodeBaseId_Fail_ShouldReturnEmpty()
+        {
+            // Arrange
+            var codeBaseId = Guid.Empty;
+
+            // Act
+            var response = await _client.GetAsync($"/code-run/by-code-base-id/{codeBaseId}");
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
+            responseContent.CodeRunListResponseItems.Should().BeEmpty();
+
+        }
+
+        [Fact]
         public async Task GetCodeBasesByUserId_Fail_ShouldReturnResponseWithNullValues()
         {
             // Arrange
@@ -112,7 +128,7 @@ namespace CodeRunService.Tests
             responseContent.CodeRunListResponseItems.Should().BeEmpty();
         }
 
-        
+
         [Fact]
         public async Task GetCodeRunsNoPaginationQuery_Success_ShouldReturnCodeRuns()
         {

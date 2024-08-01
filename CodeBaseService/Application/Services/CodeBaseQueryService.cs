@@ -7,10 +7,16 @@ using Generics.BaseEntities;
 
 namespace CodeBaseService.Application.Services;
 
-public class CodeBaseQueryService(IMapper mapper, ICodeBaseRepository codeBaseRepository, ILogger<CodeBaseQueryService> logger)
-    : BaseQueryService<CodeBase, ReadCodeBaseResponse, ReadCodeBaseListResponseItem, ReadCodeBaseListResponse>(mapper, codeBaseRepository,
+public class CodeBaseQueryService(
+    IMapper mapper,
+    ICodeBaseRepository codeBaseRepository,
+    ILogger<CodeBaseQueryService> logger)
+    : BaseQueryService<CodeBase, ReadCodeBaseResponse, ReadCodeBaseListResponseItem, ReadCodeBaseListResponse>(mapper,
+        codeBaseRepository,
         logger), ICodeBaseQueryService
 {
+    private readonly IMapper _mapper = mapper;
+
     // Any additional methods specific to CodeBaseQueryService can go here
     public async Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId)
     {
@@ -18,12 +24,7 @@ public class CodeBaseQueryService(IMapper mapper, ICodeBaseRepository codeBaseRe
         var codebases = await codeBaseRepository.GetAllByUserIdAsync(userId);
         return new ReadCodeBaseListByUserIdResponse
         {
-            CodeBaseListResponseItems = mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+            CodeBaseListResponseItems = _mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
         };
     }
 }
-
-
-        
-
-

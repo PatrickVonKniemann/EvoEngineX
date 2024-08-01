@@ -26,7 +26,10 @@ namespace CodeBase.Tests
             var expectedCodeBaseUserId = _commonId;
             var codeBase = new CreateCodeBaseRequest
             {
-                UserId = expectedCodeBaseUserId
+                UserId = expectedCodeBaseUserId,
+                Name = "My new codebase",
+                SupportedPlatform = SupportedPlatformType.Csharp,
+                Valid = false
             };
             var content = DeserializationHelper.CreateJsonContent(codeBase);
 
@@ -109,7 +112,8 @@ namespace CodeBase.Tests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
+            var responseContent =
+                await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
             responseContent.Should().NotBeNull();
         }
 
@@ -124,7 +128,8 @@ namespace CodeBase.Tests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
+            var responseContent =
+                await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
             responseContent.CodeBaseListResponseItems.Should().BeEmpty();
         }
 
