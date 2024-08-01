@@ -176,10 +176,12 @@ namespace CodeBase.Tests
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var codeBaseToUpdateId = _idToUpdate;
-            var expectedStatus = RunStatus.Done;
             var codeBaseToUpdate = new UpdateCodeBaseRequest
             {
-                Status = expectedStatus
+                Name = "Updated Name",
+                SupportedPlatform = SupportedPlatformType.Csharp,
+                Valid = true,
+                Code = "Hello updated world"
             };
             var content = DeserializationHelper.CreateJsonContent(codeBaseToUpdate);
 

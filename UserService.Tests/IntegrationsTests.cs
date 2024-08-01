@@ -136,12 +136,15 @@ namespace UserService.Tests
             // Arrange
             const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var userToUpdateId = _commonIdToUpdate;
-            var userToUpdate = new
+            var userToUpdate = new UpdateUserRequest()
             {
                 Email = "updatedemail@example.com",
                 Name = "Updated Name",
+                Password = "Test pass",
+                UserName = "Updated UserName",
                 Language = "Updated Language"
             };
+            
             var content = DeserializationHelper.CreateJsonContent(userToUpdate);
 
             // Act
