@@ -5,7 +5,7 @@ using Generics.Enums;
 namespace CodeBase.Tests;
 
 public class CodeBaseServiceWebApplicationFactory<TStartup>()
-    : CustomWebApplicationFactory<TStartup, CodeBaseDbContext>(SeedData)
+    : CustomWebApplicationFactory<TStartup, CodeBaseDbContext>()
     where TStartup : class
 {
     private static void SeedData(CodeBaseDbContext context)

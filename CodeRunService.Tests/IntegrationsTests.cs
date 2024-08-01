@@ -81,7 +81,6 @@ namespace CodeRunService.Tests
         }
 
 
-
         [Fact]
         public async Task GetCodeRunsByCodeBaseId_Success_ShouldReturnCodeBases()
         {
@@ -93,7 +92,8 @@ namespace CodeRunService.Tests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
+            var responseContent =
+                await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
             responseContent.Should().NotBeNull();
         }
 
@@ -108,9 +108,9 @@ namespace CodeRunService.Tests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
+            var responseContent =
+                await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
             responseContent.CodeRunListResponseItems.Should().BeEmpty();
-
         }
 
         [Fact]
@@ -124,7 +124,8 @@ namespace CodeRunService.Tests
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
+            var responseContent =
+                await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
             responseContent.CodeRunListResponseItems.Should().BeEmpty();
         }
 

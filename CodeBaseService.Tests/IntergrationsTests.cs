@@ -121,7 +121,7 @@ namespace CodeBase.Tests
         public async Task GetCodeBasesByUserId_Fail_ShouldReturnResponseWithNullValues()
         {
             // Arrange
-            var randomUserId = Guid.Empty;
+            var randomUserId = new Guid("5886293d-1569-4e50-881b-853abb880229");
 
             // Act
             var response = await _client.GetAsync($"/code-base/by-user-id/{randomUserId}");

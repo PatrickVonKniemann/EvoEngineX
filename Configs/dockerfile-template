@@ -12,7 +12,7 @@ RUN echo "Building service: ${SERVICE_NAME}"
 COPY ./${SERVICE_NAME}/ ./${SERVICE_NAME}/
 
 # Copy the SQL scripts
-COPY ./${SERVICE_NAME}/SqlScripts ./SqlScripts
+COPY ../Configs/SqlScripts ./SqlScripts
 
 # Copy the referenced projects
 COPY ./DomainEntities ./DomainEntities

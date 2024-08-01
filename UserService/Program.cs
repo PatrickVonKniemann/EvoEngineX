@@ -42,7 +42,8 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new UserProfile()));
 var connectionString = builder.Configuration.GetConnectionString("UserDatabase");
-connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost:5433")
+connectionString = connectionString
+    ?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost:5433")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "UserServiceDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
     .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
@@ -65,7 +66,15 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<UserDbContext>();
         await context.Database.EnsureCreatedAsync();
         app.Logger.LogInformation("Database migrations applied successfully");
-        await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, ["Users"]);
+
+
+        // Check if seeding is needed based on environment
+        var fileList = new List<string>
+        {
+            "Users"
+        };
+        var sqlDirectory = "./App/SqlScripts";
+        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
     }
     catch (Exception ex)
     {

@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Common;
 
-public class CustomWebApplicationFactory<TStartup, TDbContext>(Action<TDbContext> seedAction)
-    : WebApplicationFactory<TStartup>
+public class CustomWebApplicationFactory<TStartup, TDbContext> : WebApplicationFactory<TStartup>
     where TStartup : class
     where TDbContext : DbContext
 {
@@ -26,10 +26,11 @@ public class CustomWebApplicationFactory<TStartup, TDbContext>(Action<TDbContext
                     services.Remove(descriptor);
                 }
 
-                // Add a new DbContext using an in-memory database for testing.
+                // Add a new DbContext using the PostgreSQL database for testing.
                 services.AddDbContext<TDbContext>(options =>
                 {
-                    options.UseInMemoryDatabase("InMemoryDbForTesting");
+                    var connectionString = "Host=localhost;port=5434;Database=UserServiceDb;Username=kolenpat;Password=sa";
+                    options.UseNpgsql(connectionString);
                 });
 
                 // Build the service provider.
@@ -41,32 +42,30 @@ public class CustomWebApplicationFactory<TStartup, TDbContext>(Action<TDbContext
                 var db = scopedServices.GetRequiredService<TDbContext>();
 
                 // Ensure the database is created.
-                db.Database.EnsureCreated();
+                db.Database.EnsureCreatedAsync().GetAwaiter().GetResult();
 
-                try
-                {
-                    // Log before seeding
-                    Console.WriteLine("Seeding the database...");
-                    // Seed the database with mock data.
-                    seedAction(db);
-                    db.SaveChanges();
-                    // Log after seeding
-                    Console.WriteLine("Seeding completed.");
-                }
-                catch (Exception ex)
-                {
-                    // Log any errors during seeding.
-                    Console.WriteLine($"An error occurred seeding the database. Error: {ex.Message}");
-                }
+                // Seed the database with data from SQL files.
+                var logger = scopedServices
+                    .GetRequiredService<ILogger<CustomWebApplicationFactory<TStartup, TDbContext>>>();
+
+                SeedDatabase(logger).GetAwaiter().GetResult();
             });
         });
 
         return base.CreateHost(builder);
     }
 
+    private async Task SeedDatabase(ILogger<CustomWebApplicationFactory<TStartup, TDbContext>> logger)
+    {
+        var connectionString = "Host=localhost;port=5434;Database=UserServiceDb;Username=kolenpat;Password=sa";
+        var sqlDirectory = "../../../../Configs/SqlScripts";
+        var fileList = new List<string> { "Users" };
+        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, logger, connectionString, fileList);
+    }
+
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
         // Override to configure the web host for testing
-        builder.UseEnvironment("Development"); // Set the environment to Development or Testing
+        builder.UseEnvironment("IntegrationTesting"); // Set the environment to Development or Testing
     }
 }

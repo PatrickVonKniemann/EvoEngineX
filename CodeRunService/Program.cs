@@ -66,11 +66,15 @@ using (var scope = app.Services.CreateScope())
         var context = services.GetRequiredService<CodeRunDbContext>();
         await context.Database.EnsureCreatedAsync();
         app.Logger.LogInformation("Database migrations applied successfully");
-        await DbHelper.RunSeedSqlFileAsync(app.Logger, connectionString, new List<string>
+
+        // Check if seeding is needed based on environment
+        var fileList = new List<string>
         {
             "RunResults",
             "CodeRuns"
-        });
+        };
+        var sqlDirectory =  "./App/SqlScripts";
+        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
     }
     catch (Exception ex)
     {
