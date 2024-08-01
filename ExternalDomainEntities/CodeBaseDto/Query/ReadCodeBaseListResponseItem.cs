@@ -11,6 +11,6 @@ public class ReadCodeBaseListResponseItem
     public required Guid UserId { get; set; }
     public required string Name { get; set; }
     public required SupportedPlatformType SupportedPlatform { get; set; }
-    public required bool Valid { get; set; } = false;
+    public required bool Valid { get; set; }
     // public List<Guid>? Collaborators { get; set; } 
 }

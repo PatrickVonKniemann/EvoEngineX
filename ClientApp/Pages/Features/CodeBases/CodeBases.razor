@@ -1,7 +1,7 @@
 ﻿@page "/code-bases"
+@inject CodeBaseService CodeBaseService
 @using ClientApp.Services
 @using DomainModels
-@inject CodeBaseService CodeBaseService
 @using ExternalDomainEntities.CodeBaseDto.Query
 @using ClientApp.Components
 
@@ -37,7 +37,7 @@ else
                 {
                     <tr class="bg-white border-b text-gray-950 w-full">
                         <td class="px-6 py-3 font-medium whitespace-nowrap">
-                            @codeBase.Id
+                            @codeBase.Name
                         </td>
                         <td class="px-6 py-3">
                             @codeBase.Valid
@@ -62,7 +62,6 @@ else
 
 @code {
     private ReadCodeBaseListResponse? _codeBases;
-
     private int currentPage = 1;
     private int pageSize = 10;
 

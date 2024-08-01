@@ -18,6 +18,10 @@ Content-Type: application/json
 Accept: application/json
 
 {
+  "paginationQuery": {
+    "pageNumber": 1,
+    "pageSize": 3
+  }
 }
 
 ###

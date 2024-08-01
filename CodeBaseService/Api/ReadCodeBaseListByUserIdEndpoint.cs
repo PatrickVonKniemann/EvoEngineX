@@ -19,7 +19,7 @@ public class ReadCodeBaseListByUserId(ILogger<ReadCodeBaseListByUserId> logger, 
     public override async Task HandleAsync(ReadCodeBaseListByUserIdRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadCodeBaseListByUserId));
-        var response = codeBaseQueryService.GetAllByUserIdAsync(req.UserId);
+        var response = codeBaseQueryService.GetAllByUserIdAsync(req.UserId, req.PaginationQuery);
         await SendAsync(await response, cancellation: ct);
     }
 }

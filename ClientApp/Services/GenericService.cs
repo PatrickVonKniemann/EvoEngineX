@@ -3,17 +3,10 @@ using Generics.Pagination;
 
 namespace ClientApp.Services
 {
-    public class GenericService<TListResponse, TEntityResponse, TQueryRequest>
+    public class GenericService<TListResponse, TEntityResponse, TQueryRequest>(
+        HttpClient httpClient,
+        string serviceEndpoint)
     {
-        private readonly HttpClient _httpClient;
-        private readonly string _serviceEndpoint;
-
-        public GenericService(HttpClient httpClient, string serviceEndpoint)
-        {
-            _httpClient = httpClient;
-            _serviceEndpoint = serviceEndpoint;
-        }
-
         public async Task<TListResponse?> GetDataAsync(int pageNumber = 1, int pageSize = 10)
         {
             var paginationQuery = new PaginationQuery
@@ -29,13 +22,13 @@ namespace ClientApp.Services
                 paginationProperty.SetValue(queryRequest, paginationQuery);
             }
 
-            var response = await _httpClient.PostAsJsonAsync($"{_serviceEndpoint}/all", queryRequest);
+            var response = await httpClient.PostAsJsonAsync($"{serviceEndpoint}/all", queryRequest);
             return await response.Content.ReadFromJsonAsync<TListResponse>();
         }
 
         public async Task<TEntityResponse?> GetEntityAsync(string entityId)
         {
-            var response = await _httpClient.GetAsync($"{_serviceEndpoint}/{entityId}");
+            var response = await httpClient.GetAsync($"{serviceEndpoint}/{entityId}");
             return await response.Content.ReadFromJsonAsync<TEntityResponse>();
         }
     }

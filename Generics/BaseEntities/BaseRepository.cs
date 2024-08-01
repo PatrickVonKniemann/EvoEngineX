@@ -61,6 +61,30 @@ namespace Generics.BaseEntities
             return await _context.Set<TEntity>().Where(lambda).ToListAsync();
         }
 
+        protected async Task<List<TEntity>> GetAllByParameterAsync<TValue>(string parameterName, TValue parameterValue, PaginationQuery paginationQuery)
+        {
+            _logger.LogInformation("Querying {Entity} with {ParameterName} = {ParameterValue} and pagination", typeof(TEntity).Name, parameterName, parameterValue);
+
+            var parameter = Expression.Parameter(typeof(TEntity), "entity");
+            var property = Expression.Property(parameter, parameterName);
+            var value = Expression.Constant(parameterValue);
+            var equals = Expression.Equal(property, value);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
+
+            IQueryable<TEntity> query = _context.Set<TEntity>().Where(lambda);
+
+            if (paginationQuery != null)
+            {
+                ValidateQueryParams(paginationQuery);
+
+                query = ApplyFiltering(query, paginationQuery);
+                query = ApplySorting(query, paginationQuery.SortingQuery);
+                query = ApplyPagination(query, paginationQuery);
+            }
+
+            return await query.ToListAsync();
+        }
+
         public async Task<TEntity?> GetByIdAsync(Guid entityId)
         {
             _logger.LogInformation("Getting {Entity} by Id: {EntityId}", typeof(TEntity).Name, entityId);

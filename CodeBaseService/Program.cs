@@ -66,7 +66,7 @@ using (var scope = app.Services.CreateScope())
         await context.Database.EnsureCreatedAsync();
         app.Logger.LogInformation("Database migrations applied successfully");
         // Check if seeding is needed based on environment
-        var sqlDirectory = "./App/SqlScripts";
+        var sqlDirectory = "./SqlScripts";
         var fileList = new List<string>
         {
             "CodeBases"

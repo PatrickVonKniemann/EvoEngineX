@@ -73,7 +73,7 @@ using (var scope = app.Services.CreateScope())
             "RunResults",
             "CodeRuns"
         };
-        var sqlDirectory =  "./App/SqlScripts";
+        var sqlDirectory =  "./SqlScripts";
         await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
     }
     catch (Exception ex)

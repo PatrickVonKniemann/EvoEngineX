@@ -1,4 +1,6 @@
-﻿namespace ExternalDomainEntities.CodeBaseDto.Query;
+﻿using Generics.Pagination;
+
+namespace ExternalDomainEntities.CodeBaseDto.Query;
 
 /// <summary>
 ///  User data transfer object.
@@ -6,4 +8,5 @@
 public class ReadCodeBaseListByUserIdRequest
 {
     public Guid UserId { get; set; }
+    public PaginationQuery PaginationQuery { get; set; }
 }
