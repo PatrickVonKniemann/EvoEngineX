@@ -7,22 +7,24 @@ using Generics.Enums;
 using Generics.Pagination;
 using Xunit;
 
-
 namespace CodeBase.Tests
 {
-    public class CodeBaseServiceTests(CodeBaseServiceWebApplicationFactory<Program> factory)
-        : IClassFixture<CodeBaseServiceWebApplicationFactory<Program>>
+    public class CodeBaseServiceTests : IClassFixture<CodeBaseServiceWebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client = factory.CreateClient();
+        private readonly HttpClient _client;
         private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174008");
         private readonly Guid _idToUpdate = Guid.Parse("123e4567-e89b-12d3-a456-426614174011");
         private readonly Guid _idToDelete = Guid.Parse("123e4567-e89b-12d3-a456-426614174007");
 
+        public CodeBaseServiceTests(CodeBaseServiceWebApplicationFactory<Program> factory)
+        {
+            _client = factory.CreateClient();
+        }
 
         #region Add CodeBase Tests
 
         [Fact]
-        public async Task AddCodeBase_Success_ShouldReturnSuccess()
+        public async Task AddCodeBase_ShouldReturnSuccess_WhenDataIsValid()
         {
             // Arrange
             var expectedCodeBaseUserId = _commonId;
@@ -46,10 +48,9 @@ namespace CodeBase.Tests
         }
 
         [Fact]
-        public async Task AddCodeBaseWithInvalidData_Fail_ShouldReturnBadRequest()
+        public async Task AddCodeBase_ShouldReturnBadRequest_WhenDataIsInvalid()
         {
             // Arrange
-            const HttpStatusCode expectedStatusCode = HttpStatusCode.BadRequest;
             var codeBase = new { };
             var content = DeserializationHelper.CreateJsonContent(codeBase);
 
@@ -57,7 +58,7 @@ namespace CodeBase.Tests
             var response = await _client.PostAsync("/code-base/add", content);
 
             // Assert
-            response.StatusCode.Should().Be(expectedStatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
         }
 
         #endregion
@@ -65,7 +66,7 @@ namespace CodeBase.Tests
         #region Get CodeBase Tests
 
         [Fact]
-        public async Task GetCodeBases_Success_ShouldReturnCodeBases()
+        public async Task GetCodeBases_ShouldReturnCodeBases_WhenCalled()
         {
             // Arrange
             var requestContent = new ReadCodeBaseListRequest
@@ -88,7 +89,7 @@ namespace CodeBase.Tests
         }
 
         [Fact]
-        public async Task GetCodeBasesNoPaginationQuery_Success_ShouldReturnCodeBases()
+        public async Task GetCodeBases_ShouldReturnCodeBases_WhenNoPaginationQueryProvided()
         {
             // Arrange
             var requestContent = new ReadCodeBaseListRequest();
@@ -104,7 +105,7 @@ namespace CodeBase.Tests
         }
 
         [Fact]
-        public async Task GetCodeBasesByUserId_Success_ShouldReturnCodeBases()
+        public async Task GetCodeBasesByUserId_ShouldReturnCodeBases_WhenUserIdIsValid()
         {
             // Arrange
             var userId = MockData.MockId;
@@ -120,7 +121,7 @@ namespace CodeBase.Tests
         }
 
         [Fact]
-        public async Task GetCodeBasesByUserId_Fail_ShouldReturnResponseWithNullValues()
+        public async Task GetCodeBasesByUserId_ShouldReturnEmpty_WhenUserIdIsInvalid()
         {
             // Arrange
             var randomUserId = new Guid("5886293d-1569-4e50-881b-853abb880229");
@@ -136,34 +137,31 @@ namespace CodeBase.Tests
         }
 
         [Fact]
-        public async Task GetCodeBaseById_Success_ShouldReturnCodeBase()
+        public async Task GetCodeBaseById_ShouldReturnCodeBase_WhenCodeBaseExists()
         {
             // Arrange
             var existingId = _commonId;
-            const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
 
             // Act
             var response = await _client.GetAsync($"/code-base/{existingId}");
 
             // Assert
             var codeBaseResponse = await DeserializationHelper.DeserializeResponse<ReadCodeBaseResponse>(response);
-            response.StatusCode.Should().Be(expectedStatusCode);
-
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
             codeBaseResponse.Id.Should().Be(existingId);
         }
 
         [Fact]
-        public async Task GetCodeBaseById_Fail_ShouldReturnDbEntityNotFound()
+        public async Task GetCodeBaseById_ShouldReturnNotFound_WhenCodeBaseDoesNotExist()
         {
             // Arrange
             var nonExistingId = Guid.NewGuid();
-            const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
 
             // Act
             var response = await _client.GetAsync($"/code-base/{nonExistingId}");
 
             // Assert
-            response.StatusCode.Should().Be(expectedStatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         #endregion
@@ -171,10 +169,9 @@ namespace CodeBase.Tests
         #region Update CodeBase Tests
 
         [Fact]
-        public async Task UpdateCodeBase_Success_ShouldReturnSuccess()
+        public async Task UpdateCodeBase_ShouldReturnSuccess_WhenDataIsValid()
         {
             // Arrange
-            const HttpStatusCode expectedStatusCode = HttpStatusCode.OK;
             var codeBaseToUpdateId = _idToUpdate;
             var codeBaseToUpdate = new UpdateCodeBaseRequest
             {
@@ -190,8 +187,7 @@ namespace CodeBase.Tests
 
             // Assert
             var updatedCodeBase = await DeserializationHelper.DeserializeResponse<UpdateCodeBaseResponse>(response);
-            response.StatusCode.Should().Be(expectedStatusCode);
-
+            response.StatusCode.Should().Be(HttpStatusCode.OK);
             updatedCodeBase.Id.Should().Be(codeBaseToUpdateId);
         }
 
@@ -200,34 +196,31 @@ namespace CodeBase.Tests
         #region Delete CodeBase Tests
 
         [Fact]
-        public async Task DeleteCodeBase_Success_ShouldReturnEmptyContent()
+        public async Task DeleteCodeBase_ShouldReturnNoContent_WhenCodeBaseIsDeleted()
         {
             // Arrange
             var codeBaseToDeleteId = _idToDelete;
-            const HttpStatusCode expectedStatusCode = HttpStatusCode.NoContent;
 
             // Act
             var response = await _client.DeleteAsync($"/code-base/{codeBaseToDeleteId}");
 
             // Assert
-            response.StatusCode.Should().Be(expectedStatusCode);
-
+            response.StatusCode.Should().Be(HttpStatusCode.NoContent);
             var responseContent = await response.Content.ReadAsStringAsync();
             responseContent.Should().BeEmpty();
         }
 
         [Fact]
-        public async Task DeleteCodeBase_Fail_ShouldReturnDbEntityNotFound()
+        public async Task DeleteCodeBase_ShouldReturnNotFound_WhenCodeBaseDoesNotExist()
         {
             // Arrange
             var nonExistingId = Guid.NewGuid();
-            const HttpStatusCode expectedStatusCode = HttpStatusCode.NotFound;
 
             // Act
             var response = await _client.DeleteAsync($"/code-base/{nonExistingId}");
 
             // Assert
-            response.StatusCode.Should().Be(expectedStatusCode);
+            response.StatusCode.Should().Be(HttpStatusCode.NotFound);
         }
 
         #endregion
