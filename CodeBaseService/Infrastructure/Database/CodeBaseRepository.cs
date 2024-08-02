@@ -16,4 +16,9 @@ public class CodeBaseRepository(CodeBaseDbContext context,  ILogger<CodeBaseRepo
     {
         return await GetAllByParameterAsync("UserId", userId, paginationQuery);
     }
+
+    public async Task<int> GetCountByUserId(Guid userId)
+    {
+        return await GetCountByParameterAsync("UserId", userId);
+    }
 }

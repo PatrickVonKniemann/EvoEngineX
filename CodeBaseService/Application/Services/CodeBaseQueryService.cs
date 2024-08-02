@@ -27,18 +27,32 @@ public class CodeBaseQueryService(
         if (paginationQuery != null)
         {
             codebases = await codeBaseRepository.GetAllByUserIdAsync(userId, paginationQuery);
+            var itemsCount = await codeBaseRepository.GetCountByUserId(userId);
+            return new ReadCodeBaseListByUserIdResponse
+            {
+                Items =
+                {
+                    Values = _mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+                },
+                Pagination = new PaginationResponse
+                {
+                    PageNumber = paginationQuery.PageNumber,
+                    PageSize = paginationQuery.PageSize,
+                    ItemsCount = itemsCount,
+                    TotalPages = (int)Math.Ceiling((double)itemsCount / paginationQuery.PageSize)
+                }
+            };
         }
         else
         {
             codebases = await codeBaseRepository.GetAllByUserIdAsync(userId);
-        }
-
-        return new ReadCodeBaseListByUserIdResponse
-        {
-            Items =
+            return new ReadCodeBaseListByUserIdResponse
             {
-                Values = _mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
-            }
-        };
+                Items =
+                {
+                    Values = _mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+                }
+            };
+        }
     }
 }

@@ -13,7 +13,7 @@ Accept: application/json
 
 ###
 
-GET {{CodeBaseService_HostAddress}}/code-base/by-user-id/123e4567-e89b-12d3-a456-426614174003
+POST {{CodeBaseService_HostAddress}}/code-base/by-user-id/123e4567-e89b-12d3-a456-426614174003
 Content-Type: application/json
 Accept: application/json
 

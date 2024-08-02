@@ -26,6 +26,19 @@ namespace Generics.BaseEntities
             return _context.Set<TEntity>().CountAsync();
         }
 
+        protected async Task<int> GetCountByParameterAsync<TValue>(string parameterName, TValue parameterValue)
+        {
+            _logger.LogInformation("Getting count of {Entity} with {ParameterName} = {ParameterValue}", typeof(TEntity).Name, parameterName, parameterValue);
+
+            var parameter = Expression.Parameter(typeof(TEntity), "entity");
+            var property = Expression.Property(parameter, parameterName);
+            var value = Expression.Constant(parameterValue);
+            var equals = Expression.Equal(property, value);
+            var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
+
+            return await _context.Set<TEntity>().CountAsync(lambda);
+        }
+        
         public async Task<List<TEntity>> GetAllAsync()
         {
             _logger.LogInformation("Getting all {Entity}", typeof(TEntity).Name);
