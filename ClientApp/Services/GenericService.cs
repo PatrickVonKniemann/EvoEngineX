@@ -7,7 +7,7 @@ namespace ClientApp.Services
         HttpClient httpClient,
         string serviceEndpoint)
     {
-        public async Task<TListResponse?> GetDataAsync(int pageNumber = 1, int pageSize = 10)
+        public async Task<TListResponse?> GetDataAsync(string subPath, int pageNumber = 1, int pageSize = 10)
         {
             var paginationQuery = new PaginationQuery
             {
@@ -22,7 +22,7 @@ namespace ClientApp.Services
                 paginationProperty.SetValue(queryRequest, paginationQuery);
             }
 
-            var response = await httpClient.PostAsJsonAsync($"{serviceEndpoint}/all", queryRequest);
+            var response = await httpClient.PostAsJsonAsync($"{serviceEndpoint}/{subPath}", queryRequest);
             return await response.Content.ReadFromJsonAsync<TListResponse>();
         }
 

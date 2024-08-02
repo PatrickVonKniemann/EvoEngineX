@@ -65,10 +65,12 @@ namespace UserService.Tests
                     PageSize = expectedSize
                 }
             };
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var request = HttpRequestHelper.CreateGetRequestWithBody($"/user/all", requestContent);
-            var response = await _client.SendAsync(request);
+
+            // Act
+            var response = await _client.PostAsync("user/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -81,9 +83,10 @@ namespace UserService.Tests
         public async Task GetUsers_ShouldReturnUsers_NoPagination()
         {
             // Arrange
+            var content = DeserializationHelper.CreateJsonContent(new { });
 
             // Act
-            var response = await _client.GetAsync("user/all");
+            var response = await _client.PostAsync("user/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();

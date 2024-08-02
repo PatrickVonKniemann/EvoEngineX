@@ -11,7 +11,7 @@ public class ReadCodeBaseListEndpoint(ILogger<ReadCodeBaseListEndpoint> logger, 
 
     public override void Configure()
     {
-        Verbs(Http.GET);
+        Verbs(Http.POST);
         Routes("code-base/all");
         AllowAnonymous();
     }

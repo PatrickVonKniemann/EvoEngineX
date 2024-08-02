@@ -11,7 +11,7 @@ public class ReadCodeRunListByCodeBaseIdEndpoint(ILogger<ReadCodeRunListByCodeBa
 
     public override void Configure()
     {
-        Verbs(Http.GET);
+        Verbs(Http.POST);
         Routes("code-run/by-code-base-id/{CodeBaseId}");
         AllowAnonymous();
     }

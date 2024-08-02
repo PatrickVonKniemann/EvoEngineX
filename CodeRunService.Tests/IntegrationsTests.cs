@@ -70,11 +70,12 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
                 PageSize = expectedSize
             }
         };
-        
+
+        var content = DeserializationHelper.CreateJsonContent(requestContent);
+
         // Act
-        var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-run/all", requestContent);
-        var response = await _client.SendAsync(request);
-        
+        var response = await _client.PostAsync($"/code-run/all", content);
+
         // Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
@@ -87,9 +88,11 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
     {
         // Arrange
 
+        var content = DeserializationHelper.CreateJsonContent(new { });
+
         // Act
-        var response = await _client.GetAsync("/code-run/all");
-        
+        var response = await _client.PostAsync($"/code-run/all", content);
+
         // Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
@@ -103,7 +106,8 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         var codeBaseId = MockData.MockId;
 
         // Act
-        var response = await _client.GetAsync($"/code-run/by-code-base-id/{codeBaseId}");
+        var content = DeserializationHelper.CreateJsonContent(new { });
+        var response = await _client.PostAsync($"/code-run/by-code-base-id/{codeBaseId}", content);
 
         // Assert
         response.EnsureSuccessStatusCode();
@@ -119,7 +123,8 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         var codeBaseId = new Guid("133e4567-e39b-1233-a456-423314174009");
 
         // Act
-        var response = await _client.GetAsync($"/code-run/by-code-base-id/{codeBaseId}");
+        var content = DeserializationHelper.CreateJsonContent(new { });
+        var response = await _client.PostAsync($"/code-run/by-code-base-id/{codeBaseId}", content);
 
         // Assert
         response.EnsureSuccessStatusCode();

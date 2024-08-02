@@ -75,9 +75,10 @@ namespace CodeBase.Tests
                 }
             };
 
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+
             // Act
-            var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-base/all", requestContent);
-            var response = await _client.SendAsync(request);
+            var response = await _client.PostAsync("/code-base/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -91,10 +92,11 @@ namespace CodeBase.Tests
         {
             // Arrange
             var requestContent = new ReadCodeBaseListRequest();
-            
+
             // Act
-            var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-base/all", requestContent);
-            var response = await _client.SendAsync(request);
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+
+            var response = await _client.PostAsync($"/code-base/all", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -109,7 +111,8 @@ namespace CodeBase.Tests
             var userId = _commonId;
 
             // Act
-            var response = await _client.GetAsync($"/code-base/by-user-id/{userId}");
+            var content = DeserializationHelper.CreateJsonContent(new { });
+            var response = await _client.PostAsync($"/code-base/by-user-id/{userId}", content);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -134,8 +137,8 @@ namespace CodeBase.Tests
             };
 
             // Act
-            var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-base/by-user-id/{userId}", requestContent);
-            var response = await _client.SendAsync(request);
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+            var response = await _client.PostAsync($"/code-base/by-user-id/{userId}", content);
 
 
             // Assert
@@ -154,7 +157,9 @@ namespace CodeBase.Tests
             var randomUserId = new Guid("5886293d-1569-4e50-881b-853abb880229");
 
             // Act
-            var response = await _client.GetAsync($"/code-base/by-user-id/{randomUserId}");
+            var content = DeserializationHelper.CreateJsonContent(new { });
+            var response = await _client.PostAsync($"/code-base/by-user-id/{randomUserId}", content);
+
 
             // Assert
             response.EnsureSuccessStatusCode();

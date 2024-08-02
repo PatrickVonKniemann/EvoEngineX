@@ -11,7 +11,7 @@ public class ReadCodeBaseListByUserId(ILogger<ReadCodeBaseListByUserId> logger, 
 
     public override void Configure()
     {
-        Verbs(Http.GET);
+        Verbs(Http.POST);
         Routes("code-base/by-user-id/{UserID}");
         AllowAnonymous();
     }
