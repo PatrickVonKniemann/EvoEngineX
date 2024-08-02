@@ -58,27 +58,42 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
     #region Get CodeRun Tests
 
     [Fact]
-    public async Task GetCodeRuns_ShouldReturnCodeRuns_WhenCalled()
+    public async Task GetCodeRuns_ShouldReturnCodeRuns_WithPagination()
     {
         // Arrange
-        int pageSize = 10;
-        var requestContent = new ReadCodeRunListRequest
+        int expectedSize = 10;
+        var requestContent = new
         {
-            PaginationQuery = new PaginationQuery
+            paginationQuery = new PaginationQuery
             {
                 PageNumber = 1,
-                PageSize = pageSize
+                PageSize = expectedSize
             }
         };
-        var content = DeserializationHelper.CreateJsonContent(requestContent);
-
+        
         // Act
-        var response = await _client.PostAsync("/code-run", content);
-
+        var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-run/all", requestContent);
+        var response = await _client.SendAsync(request);
+        
         // Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
-        responseContent.Items.Values.Should().HaveCount(pageSize);
+        responseContent.Items.Values.Should().NotBeEmpty();
+        responseContent.Items.Values.Should().HaveCount(expectedSize);
+    }
+
+    [Fact]
+    public async Task GetCodeRuns_ShouldReturnCodeRuns_SuccessNoPagination()
+    {
+        // Arrange
+
+        // Act
+        var response = await _client.GetAsync("/code-run/all");
+        
+        // Assert
+        response.EnsureSuccessStatusCode();
+        var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
+        responseContent.Items.Values.Should().NotBeEmpty();
     }
 
     [Fact]

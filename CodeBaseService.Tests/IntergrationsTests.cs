@@ -71,18 +71,18 @@ namespace CodeBase.Tests
         {
             // Arrange
             int expectedSize = 10;
-            var requestContent = new ReadCodeBaseListRequest
+            var requestContent = new
             {
-                PaginationQuery = new PaginationQuery
+                paginationQuery = new PaginationQuery
                 {
                     PageNumber = 1,
                     PageSize = expectedSize
                 }
             };
-            var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/code-base/all", content);
+            var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-base/all", requestContent);
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -96,10 +96,10 @@ namespace CodeBase.Tests
         {
             // Arrange
             var requestContent = new ReadCodeBaseListRequest();
-            var content = DeserializationHelper.CreateJsonContent(requestContent);
-
+            
             // Act
-            var response = await _client.PostAsync("/code-base/all", content);
+            var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-base/all", requestContent);
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.EnsureSuccessStatusCode();
@@ -137,17 +137,11 @@ namespace CodeBase.Tests
                     PageSize = expectedSize
                 }
             };
-            var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var request = new HttpRequestMessage
-            {
-                Method = HttpMethod.Get,
-                RequestUri = new Uri($"/code-base/by-user-id/{userId}", UriKind.Relative),
-                Content = content
-            };
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var request = HttpRequestHelper.CreateGetRequestWithBody($"/code-base/by-user-id/{userId}", requestContent);
             var response = await _client.SendAsync(request);
+
 
             // Assert
             response.EnsureSuccessStatusCode();

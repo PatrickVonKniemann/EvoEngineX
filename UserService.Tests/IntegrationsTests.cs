@@ -4,6 +4,7 @@ using Common;
 using ExternalDomainEntities.UserDto.Command;
 using ExternalDomainEntities.UserDto.Query;
 using FluentAssertions;
+using Generics.Pagination;
 using Xunit;
 
 namespace UserService.Tests
@@ -57,38 +58,42 @@ namespace UserService.Tests
         #region Get User Tests
 
         [Fact]
-        public async Task GetUsers_ShouldReturnUsers_WhenCalled()
+        public async Task GetUsers_ShouldReturnUsers_WithPagination()
         {
             // Arrange
-            var requestContent = new ReadUserListRequest
+            int expectedSize = 10;
+            var requestContent = new
             {
-                PaginationQuery = MockData.MockPaginationQuery
+                paginationQuery = new PaginationQuery
+                {
+                    PageNumber = 1,
+                    PageSize = expectedSize
+                }
             };
-            var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/user/all", content);
+            var request = HttpRequestHelper.CreateGetRequestWithBody($"/user/all", requestContent);
+            var response = await _client.SendAsync(request);
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var userListResponse = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
-            userListResponse.Items.Values.Should().NotBeEmpty();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
+            responseContent.Items.Values.Should().NotBeEmpty();
+            responseContent.Items.Values.Should().HaveCount(expectedSize);
         }
 
         [Fact]
-        public async Task GetUsers_ShouldReturnUsers_WhenNoPaginationQueryProvided()
+        public async Task GetUsers_ShouldReturnUsers_NoPagination()
         {
             // Arrange
-            var requestContent = new ReadUserListRequest();
-            var content = DeserializationHelper.CreateJsonContent(requestContent);
 
             // Act
-            var response = await _client.PostAsync("/user/all", content);
+            var response = await _client.GetAsync("user/all");
 
             // Assert
             response.EnsureSuccessStatusCode();
-            var userListResponse = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
-            userListResponse.Items.Values.Should().NotBeEmpty();
+            var responseContent = await DeserializationHelper.DeserializeResponse<ReadUserListResponse>(response);
+            responseContent.Items.Values.Should().NotBeEmpty();
         }
 
         [Fact]
