@@ -4,9 +4,10 @@
 @using DomainModels
 @using ExternalDomainEntities.CodeBaseDto.Query
 @using ClientApp.Components
+@using Generics.Pagination
+@using Helpers
 
 <PageTitle>CodeBases</PageTitle>
-
 
 @if (_codeBases == null)
 {
@@ -19,32 +20,17 @@ else
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase">
                 <tr>
-                    <th scope="col" class="px-6 py-3">
-                        Name
-                    </th>
-                    <th scope="col" class="px-6 py-3">
-                        Valid
-                    </th>
-                    @* <th scope="col" class="px-6 py-3"> *@
-                    @*     Collaborators *@
-                    @* </th> *@
-                    <th scope="col" class="px-6 py-3">
-                    </th>
+                    <th scope="col" class="px-6 py-3">Name</th>
+                    <th scope="col" class="px-6 py-3">Valid</th>
+                    <th scope="col" class="px-6 py-3"></th>
                 </tr>
                 </thead>
                 <tbody>
                 @foreach (var codeBase in _codeBases.Items.Values)
                 {
                     <tr class="bg-white border-b text-gray-950 w-full">
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">
-                            @codeBase.Name
-                        </td>
-                        <td class="px-6 py-3">
-                            @codeBase.Valid
-                        </td>
-                        @* <td class="px-6 py-3"> *@
-                        @*     Collaborators list over here *@
-                        @* </td> *@
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeBase.Name</td>
+                        <td class="px-6 py-3">@codeBase.Valid</td>
                         <td class="px-6 py-3">
                             <BasicButton ButtonType=@ButtonType.secondary ButtonText="Setup" CustomClass="py-3 px-4" Link=@Links.CodeBaseDetail/>
                         </td>
@@ -53,15 +39,12 @@ else
                 </tbody>
             </table>
         </div>
-        <Pagination
-            PageNumber="@_codeBases.Pagination.PageNumber"
-            TotalPages="@_codeBases.Pagination.TotalPages"
-            OnPageChanged="HandlePageChanged"/>
+        <Pagination PageNumber="@_codeBases.Pagination.PageNumber" TotalPages="@_codeBases.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
     </div>
 }
 
 @code {
-    private ReadCodeBaseListResponse? _codeBases;
+    private ReadCodeBaseListByUserIdResponse? _codeBases;
     private int currentPage = 1;
     private int pageSize = 10;
 
@@ -72,7 +55,8 @@ else
 
     private async Task LoadDataAsync()
     {
-        _codeBases = await CodeBaseService.GetDataAsync(currentPage, pageSize);
+        var userId = "123e4567-e89b-12d3-a456-426614174008";
+        _codeBases = await CodeBaseService.GetDataAsync($"by-user-id/{userId}", currentPage, pageSize);
     }
 
     private async Task HandlePageChanged(int pageNumber)
@@ -80,5 +64,4 @@ else
         currentPage = pageNumber;
         await LoadDataAsync();
     }
-
 }

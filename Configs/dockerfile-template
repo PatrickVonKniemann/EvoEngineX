@@ -18,6 +18,7 @@ COPY ../Configs/SqlScripts ./SqlScripts
 COPY ./DomainEntities ./DomainEntities
 COPY ./DomainSharedModels ./DomainSharedModels
 COPY ./Generics ./Generics
+COPY ./Helpers ./Helpers
 COPY ./ExternalDomainEntities ./ExternalDomainEntities
 COPY ./Common ./Common
 
@@ -26,6 +27,7 @@ RUN echo "Contents of /app after copying service and external libraries:"
 RUN ls -la /app
 RUN ls -la /app/${SERVICE_NAME}
 RUN ls -la /app/DomainEntities
+RUN ls -la /app/Helpers
 RUN ls -la /app/DomainSharedModels
 RUN ls -la /app/Generics
 RUN ls -la /app/ExternalDomainEntities
