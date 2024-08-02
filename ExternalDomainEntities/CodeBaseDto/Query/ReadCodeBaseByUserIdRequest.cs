@@ -8,5 +8,5 @@ namespace ExternalDomainEntities.CodeBaseDto.Query;
 public class ReadCodeBaseListByUserIdRequest
 {
     public Guid UserId { get; set; }
-    public PaginationQuery PaginationQuery { get; set; }
+    public PaginationQuery? PaginationQuery { get; set; }
 }

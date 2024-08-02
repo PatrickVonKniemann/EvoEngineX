@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Http.Headers;
 using Common;
 using ExternalDomainEntities.CodeBaseDto.Command;
 using ExternalDomainEntities.CodeBaseDto.Query;
@@ -69,12 +70,13 @@ namespace CodeBase.Tests
         public async Task GetCodeBases_ShouldReturnCodeBases_WhenCalled()
         {
             // Arrange
+            int expectedSize = 10;
             var requestContent = new ReadCodeBaseListRequest
             {
                 PaginationQuery = new PaginationQuery
                 {
                     PageNumber = 1,
-                    PageSize = 10
+                    PageSize = expectedSize
                 }
             };
             var content = DeserializationHelper.CreateJsonContent(requestContent);
@@ -86,6 +88,7 @@ namespace CodeBase.Tests
             response.EnsureSuccessStatusCode();
             var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeBaseListResponse>(response);
             responseContent.Items.Values.Should().NotBeEmpty();
+            responseContent.Items.Values.Should().HaveCount(expectedSize);
         }
 
         [Fact]
@@ -105,10 +108,10 @@ namespace CodeBase.Tests
         }
 
         [Fact]
-        public async Task GetCodeBasesByUserId_ShouldReturnCodeBases_WhenUserIdIsValid()
+        public async Task GetCodeBasesByUserId_ShouldReturnCodeBases_WhenNoPaginationQueryProvided()
         {
             // Arrange
-            var userId = MockData.MockId;
+            var userId = _commonId;
 
             // Act
             var response = await _client.GetAsync($"/code-base/by-user-id/{userId}");
@@ -121,6 +124,41 @@ namespace CodeBase.Tests
         }
 
         [Fact]
+        public async Task GetCodeBasesByUserId_ShouldReturnCodeBases_WithPagination()
+        {
+            // Arrange
+            var userId = _commonId;
+            int expectedSize = 3;
+            var requestContent = new
+            {
+                paginationQuery = new PaginationQuery
+                {
+                    PageNumber = 1,
+                    PageSize = expectedSize
+                }
+            };
+            var content = DeserializationHelper.CreateJsonContent(requestContent);
+
+            // Act
+            var request = new HttpRequestMessage
+            {
+                Method = HttpMethod.Get,
+                RequestUri = new Uri($"/code-base/by-user-id/{userId}", UriKind.Relative),
+                Content = content
+            };
+            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            var response = await _client.SendAsync(request);
+
+            // Assert
+            response.EnsureSuccessStatusCode();
+            var responseContent =
+                await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
+            responseContent.Items.Values.Should().NotBeEmpty();
+            responseContent.Items.Values.Should().HaveCount(expectedSize);
+        }
+
+
+        [Fact]
         public async Task GetCodeBasesByUserId_ShouldReturnEmpty_WhenUserIdIsInvalid()
         {
             // Arrange
@@ -131,9 +169,11 @@ namespace CodeBase.Tests
 
             // Assert
             response.EnsureSuccessStatusCode();
+
+
             var responseContent =
                 await DeserializationHelper.DeserializeResponse<ReadCodeBaseListByUserIdResponse>(response);
-            responseContent.CodeBaseListResponseItems.Should().BeEmpty();
+            responseContent.Items.Values.Should().BeEmpty();
         }
 
         [Fact]

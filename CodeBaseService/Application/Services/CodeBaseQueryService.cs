@@ -19,13 +19,26 @@ public class CodeBaseQueryService(
     private readonly IMapper _mapper = mapper;
 
     // Any additional methods specific to CodeBaseQueryService can go here
-    public async Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId, PaginationQuery paginationQuery)
+    public async Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId,
+        PaginationQuery? paginationQuery)
     {
         logger.LogInformation($"{nameof(CodeBaseQueryService)} {nameof(GetAllByUserIdAsync)}");
-        var codebases = await codeBaseRepository.GetAllByUserIdAsync(userId, paginationQuery);
+        List<CodeBase> codebases;
+        if (paginationQuery != null)
+        {
+            codebases = await codeBaseRepository.GetAllByUserIdAsync(userId, paginationQuery);
+        }
+        else
+        {
+            codebases = await codeBaseRepository.GetAllByUserIdAsync(userId);
+        }
+
         return new ReadCodeBaseListByUserIdResponse
         {
-            CodeBaseListResponseItems = _mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+            Items =
+            {
+                Values = _mapper.Map<List<ReadCodeBaseListResponseItem>>(codebases)
+            }
         };
     }
 }

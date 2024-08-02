@@ -6,5 +6,5 @@ namespace CodebaseService.Application.Services;
 
 public interface ICodeBaseQueryService : IGenericEntityQueryService<ReadCodeBaseResponse, ReadCodeBaseListResponse>
 {
-    Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId, PaginationQuery paginationQuery);
+    Task<ReadCodeBaseListByUserIdResponse> GetAllByUserIdAsync(Guid userId, PaginationQuery? paginationQuery);
 }

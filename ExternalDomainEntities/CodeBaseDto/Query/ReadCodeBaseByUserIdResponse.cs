@@ -1,9 +1,5 @@
-﻿namespace ExternalDomainEntities.CodeBaseDto.Query;
+﻿using Generics.BaseEntities;
 
-/// <summary>
-///  User data transfer object.
-/// </summary>
-public class ReadCodeBaseListByUserIdResponse
-{
-    public List<ReadCodeBaseListResponseItem>? CodeBaseListResponseItems { get; set; }
-}
+namespace ExternalDomainEntities.CodeBaseDto.Query;
+
+public class ReadCodeBaseListByUserIdResponse : ListResponseDtoBase<ReadCodeBaseListResponseItem>;

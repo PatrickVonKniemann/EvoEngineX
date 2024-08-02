@@ -61,12 +61,13 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
     public async Task GetCodeRuns_ShouldReturnCodeRuns_WhenCalled()
     {
         // Arrange
+        int pageSize = 10;
         var requestContent = new ReadCodeRunListRequest
         {
             PaginationQuery = new PaginationQuery
             {
                 PageNumber = 1,
-                PageSize = 10
+                PageSize = pageSize
             }
         };
         var content = DeserializationHelper.CreateJsonContent(requestContent);
@@ -77,7 +78,7 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         // Assert
         response.EnsureSuccessStatusCode();
         var responseContent = await DeserializationHelper.DeserializeResponse<ReadCodeRunListResponse>(response);
-        responseContent.Items.Values.Should().NotBeEmpty();
+        responseContent.Items.Values.Should().HaveCount(pageSize);
     }
 
     [Fact]
