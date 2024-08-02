@@ -6,6 +6,7 @@ using Common;
 using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Helpers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

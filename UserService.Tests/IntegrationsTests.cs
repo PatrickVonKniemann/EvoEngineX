@@ -1,25 +1,20 @@
 using System.Net;
-using System.Threading.Tasks;
-using Common;
 using ExternalDomainEntities.UserDto.Command;
 using ExternalDomainEntities.UserDto.Query;
 using FluentAssertions;
 using Generics.Pagination;
+using Helpers;
 using Xunit;
 
 namespace UserService.Tests
 {
-    public class UserServiceTests : IClassFixture<UserServiceWebApplicationFactory<Program>>
+    public class UserServiceTests(UserServiceWebApplicationFactory<Program> factory)
+        : IClassFixture<UserServiceWebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _client = factory.CreateClient();
         private readonly Guid _commonId = new Guid("123e4567-e89b-12d3-a456-426614174003");
         private readonly Guid _commonIdToUpdate = new Guid("123e4567-e89b-12d3-a456-426614174004");
         private readonly Guid _commonIdToDelete = new Guid("123e4567-e89b-12d3-a456-426614174005");
-
-        public UserServiceTests(UserServiceWebApplicationFactory<Program> factory)
-        {
-            _client = factory.CreateClient();
-        }
 
         #region Add User Tests
 

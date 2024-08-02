@@ -2,7 +2,7 @@ using System.Text;
 using System.Text.Json;
 using FluentAssertions;
 
-namespace Common;
+namespace Helpers;
 
 public abstract class DeserializationHelper
 {

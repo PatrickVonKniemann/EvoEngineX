@@ -1,26 +1,21 @@
 using System.Net;
-using System.Net.Http.Headers;
-using Common;
 using ExternalDomainEntities.CodeBaseDto.Command;
 using ExternalDomainEntities.CodeBaseDto.Query;
 using FluentAssertions;
 using Generics.Enums;
 using Generics.Pagination;
+using Helpers;
 using Xunit;
 
 namespace CodeBase.Tests
 {
-    public class CodeBaseServiceTests : IClassFixture<CodeBaseServiceWebApplicationFactory<Program>>
+    public class CodeBaseServiceTests(CodeBaseServiceWebApplicationFactory<Program> factory)
+        : IClassFixture<CodeBaseServiceWebApplicationFactory<Program>>
     {
-        private readonly HttpClient _client;
+        private readonly HttpClient _client = factory.CreateClient();
         private readonly Guid _commonId = Guid.Parse("123e4567-e89b-12d3-a456-426614174008");
         private readonly Guid _idToUpdate = Guid.Parse("123e4567-e89b-12d3-a456-426614174011");
         private readonly Guid _idToDelete = Guid.Parse("123e4567-e89b-12d3-a456-426614174007");
-
-        public CodeBaseServiceTests(CodeBaseServiceWebApplicationFactory<Program> factory)
-        {
-            _client = factory.CreateClient();
-        }
 
         #region Add CodeBase Tests
 

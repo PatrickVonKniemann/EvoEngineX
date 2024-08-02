@@ -1,8 +1,8 @@
-namespace Common;
-using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using Newtonsoft.Json;
+
+namespace Helpers;
 
 public static class HttpRequestHelper
 {

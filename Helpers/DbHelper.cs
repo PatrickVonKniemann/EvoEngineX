@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using Npgsql;
 
-namespace Common;
+namespace Helpers;
 
 public static class DbHelper
 {

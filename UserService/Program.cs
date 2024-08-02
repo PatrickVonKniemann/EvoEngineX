@@ -2,6 +2,7 @@ using Common;
 using DomainEntities;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using Helpers;
 using Microsoft.EntityFrameworkCore;
 using UserService.Application.Services;
 using UserService.Infrastructure;
