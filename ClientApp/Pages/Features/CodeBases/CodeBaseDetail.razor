@@ -4,6 +4,7 @@
 @using ClientApp.Services
 @using ExternalDomainEntities.CodeRunDto.Query
 @using ClientApp.Components
+@using ExternalDomainEntities.CodeBaseDto.Query
 
 <PageTitle>CodeBase Detail Page</PageTitle>
 
@@ -14,8 +15,11 @@
 else
 {
     <div class="overflow-x-auto">
-        <CodeEditor></CodeEditor>
+        <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
+        <CodeEditor InitialCode="@_codeBase.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
         <div class="max-h-fit overflow-y-auto">
+            <h2 class="m-3 text-base font-semibold leading-7 text-indigo-600">Previous runs:</h2>
+
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase">
                 <tr>
@@ -49,6 +53,8 @@ else
     private ReadCodeRunListByCodeBaseIdResponse? _codeRuns;
     private int _currentPage = 1;
     private const int PageSize = 10;
+    private ReadCodeBaseResponse? _codeBase;
+
 
     protected override async Task OnInitializedAsync()
     {
@@ -58,6 +64,7 @@ else
     private async Task LoadDataAsync()
     {
         _codeRuns = await CodeRunService.GetDataAsync($"by-code-base-id/{CodeBaseId}", _currentPage, PageSize);
+        _codeBase = await CodeBaseService.GetEntityAsync(CodeBaseId);
     }
 
     private async Task HandlePageChanged(int pageNumber)
@@ -65,5 +72,12 @@ else
         _currentPage = pageNumber;
         await LoadDataAsync();
     }
+
+    private void HandleCodeChange(string newCode)
+    {
+        _codeBase.Code = newCode;
+    }
+
+}
 
 }

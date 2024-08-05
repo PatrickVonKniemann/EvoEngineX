@@ -5,5 +5,6 @@
 /// </summary>
 public class ReadCodeBaseResponse
 {
-    public Guid Id { get; set; }
+    public required Guid Id { get; set; }
+    public string? Code { get; set; }
 }

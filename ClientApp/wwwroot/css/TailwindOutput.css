@@ -750,6 +750,10 @@ video {
   margin: 1.75rem;
 }
 
+.m-3 {
+  margin: 0.75rem;
+}
+
 .-mx-3 {
   margin-left: -0.75rem;
   margin-right: -0.75rem;
@@ -986,6 +990,11 @@ video {
 
 .w-screen {
   width: 100vw;
+}
+
+.w-fit {
+  width: -moz-fit-content;
+  width: fit-content;
 }
 
 .max-w-2xl {
