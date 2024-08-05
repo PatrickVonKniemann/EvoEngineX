@@ -943,6 +943,10 @@ video {
   height: 0.5rem;
 }
 
+.h-full {
+  height: 100%;
+}
+
 .max-h-fit {
   max-height: -moz-fit-content;
   max-height: fit-content;
