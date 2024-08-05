@@ -36,7 +36,7 @@ else
                         <td class="px-6 py-3 font-medium whitespace-nowrap">@codeBase.SupportedPlatform</td>
                         <td class="px-6 py-3 font-medium whitespace-nowrap">@codeBase.UserId</td>
                         <td class="px-6 py-3">
-                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" CustomClass="mt-2 mb-2 py-3 px-4" Link=@Links.CodeBaseDetail/>
+                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" CustomClass="mt-2 mb-2 py-3 px-4" Link=@Links.GetCodeBaseDetailLink(codeBase.Id)/>
                         </td>
                     </tr>
                 }
@@ -74,5 +74,10 @@ else
         return isValid ? "bg-green-500" : "bg-red-500";
     }
 
+    private string GetCodeBaseDetailLink(Guid codeBaseId)
+    {
+        return $"code-bases/{codeBaseId}";
+    }
 
 }
+

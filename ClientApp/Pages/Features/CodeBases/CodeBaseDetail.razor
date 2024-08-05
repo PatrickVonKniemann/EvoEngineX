@@ -1,0 +1,68 @@
+﻿@page "/code-base/{codeBaseId}"
+@inject CodeBaseService CodeBaseService
+@inject CodeRunService CodeRunService
+@using ClientApp.Services
+@using ExternalDomainEntities.CodeRunDto.Query
+@using ClientApp.Components
+
+<PageTitle>CodeBase Detail Page</PageTitle>
+
+@if (_codeRuns == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div class="overflow-x-auto">
+        <div class="max-h-fit overflow-y-auto">
+            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
+                <thead class="text-xs text-gray-700 uppercase">
+                <tr>
+                    <th scope="col" class="px-6 py-3">Run ID</th>
+                    <th scope="col" class="px-6 py-3">Status</th>
+                    <th scope="col" class="px-6 py-3">Start Time</th>
+                    <th scope="col" class="px-6 py-3">End Time</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var codeRun in _codeRuns.Items.Values)
+                {
+                    <tr class="bg-white border-b text-gray-950 w-full">
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Id</td>
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Status</td>
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunStart</td>
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunFinish</td>
+                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Results</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+        <Pagination PageNumber="@_codeRuns.Pagination!.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
+    </div>
+}
+
+@code {
+    [Parameter] public required string CodeBaseId { get; set; }
+
+    private ReadCodeRunListByCodeBaseIdResponse? _codeRuns;
+    private int _currentPage = 1;
+    private const int PageSize = 10;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        _codeRuns = await CodeRunService.GetDataAsync($"by-code-base-id/{CodeBaseId}", _currentPage, PageSize);
+    }
+
+    private async Task HandlePageChanged(int pageNumber)
+    {
+        _currentPage = pageNumber;
+        await LoadDataAsync();
+    }
+
+}

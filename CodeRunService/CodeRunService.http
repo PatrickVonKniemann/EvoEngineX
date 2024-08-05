@@ -35,6 +35,20 @@ Accept: application/json
     }
   }
 }
+
+### Getall by CodeBaseId
+
+POST {{CodeRunService_HostAddress}}/code-run/by-code-base-id/123e4567-e89b-12d3-a456-426614174000
+Content-Type: application/json
+Accept: application/json
+
+{
+  "paginationQuery": {
+    "pageNumber": 1,
+    "pageSize": 3
+  }
+}
+
 ### Get existing id
 
 GET {{CodeRunService_HostAddress}}/code-run/123e4567-e89b-12d3-a456-426614174000

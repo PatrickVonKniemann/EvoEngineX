@@ -130,7 +130,7 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         response.EnsureSuccessStatusCode();
         var responseContent =
             await DeserializationHelper.DeserializeResponse<ReadCodeRunListByCodeBaseIdResponse>(response);
-        responseContent.CodeRunListResponseItems.Should().BeEmpty();
+        responseContent.Items.Values.Should().BeEmpty();
     }
 
     [Fact]

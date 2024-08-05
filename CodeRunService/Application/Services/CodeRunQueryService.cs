@@ -3,6 +3,7 @@ using Generics.BaseEntities;
 using CodeRunService.Infrastructure.Database;
 using DomainEntities;
 using ExternalDomainEntities.CodeRunDto.Query;
+using Generics.Pagination;
 
 namespace CodeRunService.Application.Services
 {
@@ -15,14 +16,41 @@ namespace CodeRunService.Application.Services
     {
         private readonly IMapper _mapper = mapper;
 
-        public async Task<ReadCodeRunListByCodeBaseIdResponse> GetAllByCodeBaseIdAsync(Guid codeBaseId)
+        public async Task<ReadCodeRunListByCodeBaseIdResponse> GetAllByCodeBaseIdAsync(Guid codeBaseId,
+            PaginationQuery? paginationQuery)
         {
             logger.LogInformation($"{nameof(CodeRunQueryService)} {nameof(GetAllByCodeBaseIdAsync)}");
-            var codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId);
-            return new ReadCodeRunListByCodeBaseIdResponse
+            List<CodeRun> codeRuns;
+            if (paginationQuery != null)
             {
-                CodeRunListResponseItems = _mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
-            };
+                codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId, paginationQuery);
+                var itemsCount = await codeRunRepository.GetCountByCodeBaseId(codeBaseId);
+                return new ReadCodeRunListByCodeBaseIdResponse
+                {
+                    Items =
+                    {
+                        Values = _mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
+                    },
+                    Pagination = new PaginationResponse
+                    {
+                        PageNumber = paginationQuery.PageNumber,
+                        PageSize = paginationQuery.PageSize,
+                        ItemsCount = itemsCount,
+                        TotalPages = (int)Math.Ceiling((double)itemsCount / paginationQuery.PageSize)
+                    }
+                };
+            }
+            else
+            {
+                codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId);
+                return new ReadCodeRunListByCodeBaseIdResponse
+                {
+                    Items =
+                    {
+                        Values = _mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
+                    }
+                };
+            }
         }
     }
 }
