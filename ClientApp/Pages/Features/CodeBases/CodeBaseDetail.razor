@@ -15,9 +15,18 @@
 else
 {
     <div class="overflow-x-auto">
-        <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
-        <CodeEditor InitialCode="@_codeBase.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
         <div class="max-h-fit overflow-y-auto">
+
+            <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
+            <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
+            <div class="my-8">
+                <span class="primary-basic text-center mx-3 px-5 py-4 text-white font-bold rounded-lg">
+                    Run
+                </span>
+                <span class="secondary-basic text-center mx-3 px-5 py-4 text-white font-bold rounded-lg">
+                    Save
+                </span>
+            </div>
             <h2 class="m-3 text-base font-semibold leading-7 text-indigo-600">Previous runs:</h2>
 
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
