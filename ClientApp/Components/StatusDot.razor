@@ -1,0 +1,24 @@
+@using Generics.Enums
+
+
+<div class="flex items-center space-x-2">
+    <span class="block w-4 h-4 @GetDotColor() rounded-full"></span>
+    <span>@Status</span>
+</div>
+
+@code {
+    [Parameter] public RunStatus Status { get; set; }
+
+    private string GetDotColor()
+    {
+        return Status switch
+        {
+            RunStatus.Ready => "bg-green-500",
+            RunStatus.Running => "bg-blue-500",
+            RunStatus.Paused => "bg-yellow-500",
+            RunStatus.Done => "bg-red-500",
+            _ => "bg-gray-500",
+        };
+    }
+
+}

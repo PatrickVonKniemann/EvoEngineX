@@ -1,0 +1,17 @@
+<div class="flex items-center justify-between p-4 border-b border-gray-700">
+    <div class="flex items-center">
+        <span class="block w-4 h-4 rounded-full @(StatusColor ?? "bg-gray-500") mr-2"></span>
+        <div class="flex flex-col">
+            <span class="font-semibold">@CodeBaseName / @Platform</span>
+            <span class="text-sm text-gray-400">Last run &bull; @TimeAgo minutes ago &bull; duration: @Duration</span>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public string CodeBaseName { get; set; } = string.Empty;
+    [Parameter] public string Platform { get; set; } = string.Empty;
+    [Parameter] public string StatusColor { get; set; } = string.Empty;
+    [Parameter] public string TimeAgo { get; set; } = string.Empty;
+    [Parameter] public string Duration { get; set; } = string.Empty;
+}

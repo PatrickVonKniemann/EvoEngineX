@@ -4,18 +4,12 @@
 @using DomainModels
 @using ExternalDomainEntities.CodeBaseDto.Query
 @using ClientApp.Components
-@using Generics.Pagination
-@using Helpers
 
 <PageTitle>CodeBases</PageTitle>
 
 @if (_codeBases == null)
 {
     <p>Loading...</p>
-}
-else if (_codeBases.Items == null)
-{
-    <p>No code bases available.</p>
 }
 else
 {
@@ -24,11 +18,11 @@ else
             <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
                 <thead class="text-xs text-gray-700 uppercase">
                 <tr>
-                    <th scope="col" class="px-6 py-3">Valid</th>
-                    <th scope="col" class="px-6 py-3">Name</th>
+                    <th scope="col" class="px-6 py-3"></th>
+                    <th scope="col" class="px-6 py-3">Project Name</th>
                     <th scope="col" class="px-6 py-3">Platform</th>
                     <th scope="col" class="px-6 py-3">Creator</th>
-                    <th scope="col" class="px-6 py-3">Valid</th>
+                    <th scope="col" class="px-6 py-3"></th>
                 </tr>
                 </thead>
                 <tbody>
@@ -36,20 +30,20 @@ else
                 {
                     <tr class="bg-white border-b text-gray-950 w-full">
                         <td class="px-6 py-3">
-                            <span class="inline-block w-4 h-4 rounded-full @GetValidityClass(codeBase.Valid)"></span>
+                            <span class="inline-block w-2 h-2 rounded-full @GetValidityClass(codeBase.Valid)"></span>
                         </td>
                         <td class="px-6 py-3 font-medium whitespace-nowrap">@codeBase.Name</td>
                         <td class="px-6 py-3 font-medium whitespace-nowrap">@codeBase.SupportedPlatform</td>
                         <td class="px-6 py-3 font-medium whitespace-nowrap">@codeBase.UserId</td>
                         <td class="px-6 py-3">
-                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" CustomClass="py-3 px-4" Link=@Links.CodeBaseDetail/>
+                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Detail" CustomClass="mt-2 mb-2 py-3 px-4" Link=@Links.CodeBaseDetail/>
                         </td>
                     </tr>
                 }
                 </tbody>
             </table>
         </div>
-        <Pagination PageNumber="@_codeBases.Pagination.PageNumber" TotalPages="@_codeBases.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
+        <Pagination PageNumber="@_codeBases.Pagination!.PageNumber" TotalPages="@_codeBases.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
     </div>
 }
 
@@ -74,9 +68,11 @@ else
         _currentPage = pageNumber;
         await LoadDataAsync();
     }
-    
+
     private string GetValidityClass(bool isValid)
     {
         return isValid ? "bg-green-500" : "bg-red-500";
     }
+
+
 }
