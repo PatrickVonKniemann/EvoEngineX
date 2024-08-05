@@ -1,0 +1,20 @@
+@inject IJSRuntime JSRuntime
+
+<div id="editor" class="w-full border border-gray-300" style="height: 400px"  @ref="editorElement"></div>
+
+@code {
+    private ElementReference editorElement;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await JSRuntime.InvokeVoidAsync("createMonacoEditor", editorElement, new
+            {
+                value = "// type your code here",
+                language = "javascript",
+                theme = "vs"
+            });
+        }
+    }
+}

@@ -1,12 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>EvoEngineX</title>
     <base href="/" />
-
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link href="css/basic.css" rel="stylesheet" />
@@ -14,7 +12,6 @@
     <link href="css/TailwindCustom.css" rel="stylesheet" />
     <link rel="icon" type="image/png" href="icon-192.png" />
 </head>
-
 <body>
 <div id="app">
     <svg class="loading-progress">
@@ -26,6 +23,14 @@
 
 <script src="_content/Microsoft.AspNetCore.Components.WebAssembly.Authentication/AuthenticationService.js"></script>
 <script src="_framework/blazor.webassembly.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/loader.min.js"></script>
+<script>
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' } });
+    window.createMonacoEditor = function (element, options) {
+        require(['vs/editor/editor.main'], function () {
+            window.monacoEditor = monaco.editor.create(element, options);
+        });
+    };
+</script>
 </body>
-
 </html>
