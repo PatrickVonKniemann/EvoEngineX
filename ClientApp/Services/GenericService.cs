@@ -3,7 +3,7 @@ using Generics.Pagination;
 
 namespace ClientApp.Services
 {
-    public class GenericService<TListResponse, TEntityResponse, TQueryRequest>(
+    public class GenericService<TListResponse, TEntityResponse, TQueryRequest, TCreateRequest, TUpdateRequest>(
         HttpClient httpClient,
         string serviceEndpoint)
     {
@@ -30,6 +30,18 @@ namespace ClientApp.Services
         {
             var response = await httpClient.GetAsync($"{serviceEndpoint}/{entityId}");
             return await response.Content.ReadFromJsonAsync<TEntityResponse>();
+        }
+
+        public async Task AddEntityAsync(TCreateRequest request)
+        {
+            var response = await httpClient.PostAsJsonAsync(serviceEndpoint, request);
+            response.EnsureSuccessStatusCode();
+        }
+
+        public async Task UpdateEntityAsync(string entityId, TUpdateRequest request)
+        {
+            var response = await httpClient.PutAsJsonAsync($"{serviceEndpoint}/{entityId}", request);
+            response.EnsureSuccessStatusCode();
         }
     }
 }

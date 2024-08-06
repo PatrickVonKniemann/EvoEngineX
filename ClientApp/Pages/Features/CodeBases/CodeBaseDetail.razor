@@ -5,6 +5,8 @@
 @using ExternalDomainEntities.CodeRunDto.Query
 @using ClientApp.Components
 @using ExternalDomainEntities.CodeBaseDto.Query
+@using ExternalDomainEntities.CodeBaseDto.Command
+@using ExternalDomainEntities.CodeRunDto.Command
 
 <PageTitle>CodeBase Detail Page</PageTitle>
 
@@ -20,10 +22,10 @@ else
             <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
             <div class="my-8">
-                <span class="primary-basic text-center mx-3 px-5 py-4 text-white font-bold rounded-lg">
+                <span class="primary-basic cursor-pointer text-center mx-3 px-5 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged">
                     Run
                 </span>
-                <span class="secondary-basic text-center mx-3 px-5 py-4 text-white font-bold rounded-lg">
+                <span class="secondary-basic cursor-pointer text-center mx-3 px-5 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged">
                     Save
                 </span>
             </div>
@@ -58,12 +60,10 @@ else
 
 @code {
     [Parameter] public required string CodeBaseId { get; set; }
-
     private ReadCodeRunListByCodeBaseIdResponse? _codeRuns;
     private int _currentPage = 1;
     private const int PageSize = 10;
     private ReadCodeBaseResponse? _codeBase;
-
 
     protected override async Task OnInitializedAsync()
     {
@@ -84,9 +84,43 @@ else
 
     private void HandleCodeChange(string newCode)
     {
-        _codeBase.Code = newCode;
+        if (_codeBase != null)
+        {
+            _codeBase.Code = newCode;
+        }
     }
+    
+    private async Task HandleRunChanged()
+    {
+        if (_codeBase != null)
+        {
+            if (_codeBase.Code != null)
+            {
+                var newRun = new CreateCodeRunRequest
+                {
+                    CodeBaseId = _codeBase.Id,
+                    Code = _codeBase.Code
+                };
 
-}
+                await CodeRunService.AddEntityAsync(newRun);
+            }
 
+            await LoadDataAsync();
+        }
+    } 
+    
+    private async Task HandleSaveChanged()
+    {
+        if (_codeBase != null)
+        {
+            var updateRequest = new UpdateCodeBaseRequest
+            {
+                Id = _codeBase.Id,
+                Code = _codeBase.Code,
+                // Map other necessary properties from _codeBase to updateRequest
+            };
+
+            await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
+        }
+    }
 }

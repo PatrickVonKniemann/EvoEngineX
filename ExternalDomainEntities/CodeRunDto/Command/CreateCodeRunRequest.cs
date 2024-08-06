@@ -6,4 +6,5 @@
 public class CreateCodeRunRequest
 {
     public required Guid CodeBaseId { get; set; }
+    public required string Code { get; set; }
 }
