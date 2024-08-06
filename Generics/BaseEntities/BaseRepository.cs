@@ -133,10 +133,21 @@ namespace Generics.BaseEntities
             if (entity == null)
                 throw new DbEntityNotFoundException(nameof(TEntity), entityId);
 
-            _context.Entry(entity).CurrentValues.SetValues(updatedEntity);
+            foreach (var property in typeof(TEntity).GetProperties())
+            {
+                var currentValue = property.GetValue(entity);
+                var updatedValue = property.GetValue(updatedEntity);
+
+                if (updatedValue != null && !updatedValue.Equals(currentValue))
+                {
+                    property.SetValue(entity, updatedValue);
+                }
+            }
+
             await _context.SaveChangesAsync();
-            return updatedEntity;
+            return entity;
         }
+
 
         public async Task DeleteAsync(Guid entityId)
         {

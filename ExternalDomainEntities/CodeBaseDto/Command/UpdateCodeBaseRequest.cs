@@ -8,9 +8,9 @@ namespace ExternalDomainEntities.CodeBaseDto.Command;
 public class UpdateCodeBaseRequest
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
-    public SupportedPlatformType SupportedPlatform { get; set; }
-    public bool Valid { get; set; }
+    public string? Name { get; set; }
+    public SupportedPlatformType? SupportedPlatform { get; set; }
+    public bool? Valid { get; set; }
     public string? Code { get; set; }
     public Dictionary<string, string>? Parameters { get; set; }
 }

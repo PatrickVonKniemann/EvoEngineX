@@ -7,6 +7,7 @@
 @using ExternalDomainEntities.CodeBaseDto.Query
 @using ExternalDomainEntities.CodeBaseDto.Command
 @using ExternalDomainEntities.CodeRunDto.Command
+@using Generics.Enums
 
 <PageTitle>CodeBase Detail Page</PageTitle>
 
@@ -18,41 +19,18 @@ else
 {
     <div class="overflow-x-auto">
         <div class="max-h-fit overflow-y-auto">
-
             <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
             <div class="my-8">
-                <span class="primary-basic cursor-pointer text-center mx-3 px-5 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged">
+                <button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged">
                     Run
-                </span>
-                <span class="secondary-basic cursor-pointer text-center mx-3 px-5 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged">
+                </button>
+                <button class="secondary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged">
                     Save
-                </span>
+                </button>
             </div>
             <h2 class="m-3 text-base font-semibold leading-7 text-indigo-600">Previous runs:</h2>
-
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400">
-                <thead class="text-xs text-gray-700 uppercase">
-                <tr>
-                    <th scope="col" class="px-6 py-3">Run ID</th>
-                    <th scope="col" class="px-6 py-3">Status</th>
-                    <th scope="col" class="px-6 py-3">Start Time</th>
-                    <th scope="col" class="px-6 py-3">End Time</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var codeRun in _codeRuns.Items.Values)
-                {
-                    <tr class="bg-white border-b text-gray-950 w-full">
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Id</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Status</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunStart</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunFinish</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Results</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+            <CodeBaseTable CodeRuns="@_codeRuns" GetColorByStatus="GetColorByStatus" />
         </div>
         <Pagination PageNumber="@_codeRuns.Pagination!.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
     </div>
@@ -82,33 +60,30 @@ else
         await LoadDataAsync();
     }
 
-    private void HandleCodeChange(string newCode)
+    private async Task HandleCodeChange(string newCode)
     {
         if (_codeBase != null)
         {
             _codeBase.Code = newCode;
+            await InvokeAsync(StateHasChanged); // Ensures the component is re-rendered
         }
     }
-    
+
     private async Task HandleRunChanged()
     {
-        if (_codeBase != null)
+        if (_codeBase != null && _codeBase.Code != null)
         {
-            if (_codeBase.Code != null)
+            var newRun = new CreateCodeRunRequest
             {
-                var newRun = new CreateCodeRunRequest
-                {
-                    CodeBaseId = _codeBase.Id,
-                    Code = _codeBase.Code
-                };
+                CodeBaseId = _codeBase.Id,
+                Code = _codeBase.Code
+            };
 
-                await CodeRunService.AddEntityAsync(newRun);
-            }
-
+            await CodeRunService.AddEntityAsync(newRun);
             await LoadDataAsync();
         }
-    } 
-    
+    }
+
     private async Task HandleSaveChanged()
     {
         if (_codeBase != null)
@@ -123,4 +98,6 @@ else
             await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
         }
     }
+
+
 }

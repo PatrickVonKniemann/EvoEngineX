@@ -1,25 +1,25 @@
-@inject IJSRuntime JSRuntime
+@inject IJSRuntime JsRuntime
 
-<div id="editor" class="w-full border border-gray-300 mb-5" style="height: 400px" @ref="editorElement"></div>
+<div id="editor" class="w-full border border-gray-300 mb-5" style="height: 400px" @ref="_editorElement"></div>
 
 @code {
     [Parameter] public string InitialCode { get; set; } = string.Empty;
     [Parameter] public EventCallback<string> OnCodeChange { get; set; }
 
-    private ElementReference editorElement;
+    private ElementReference _editorElement;
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            await JSRuntime.InvokeVoidAsync("createMonacoEditor", editorElement, new
+            await JsRuntime.InvokeVoidAsync("createMonacoEditor", _editorElement, new
             {
                 value = InitialCode,
                 language = "javascript",
                 theme = "vs"
             });
 
-            await JSRuntime.InvokeVoidAsync("monacoEditor.onDidChangeModelContent", DotNetObjectReference.Create(this));
+            await JsRuntime.InvokeVoidAsync("monacoEditor.onDidChangeModelContent", DotNetObjectReference.Create(this));
         }
     }
 
@@ -27,6 +27,6 @@
     public async Task UpdateCode(string code)
     {
         InitialCode = code;
-        await OnCodeChange.InvokeAsync(code);
+        await OnCodeChange.InvokeAsync(code); // Trigger the callback to update the parent
     }
 }

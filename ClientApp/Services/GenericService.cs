@@ -1,5 +1,6 @@
 using System.Net.Http.Json;
 using Generics.Pagination;
+using Helpers;
 
 namespace ClientApp.Services
 {
@@ -40,7 +41,9 @@ namespace ClientApp.Services
 
         public async Task UpdateEntityAsync(string entityId, TUpdateRequest request)
         {
-            var response = await httpClient.PutAsJsonAsync($"{serviceEndpoint}/{entityId}", request);
+            var content =
+                DeserializationHelper.CreateJsonContent(request ?? throw new ArgumentNullException(nameof(request)));
+            var response = await httpClient.PatchAsync($"{serviceEndpoint}/{entityId}", content);
             response.EnsureSuccessStatusCode();
         }
     }

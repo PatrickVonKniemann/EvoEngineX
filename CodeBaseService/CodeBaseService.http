@@ -49,10 +49,10 @@ Accept: application/json
 
 ###
 
-PATCH {{CodeBaseService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174000
+PATCH {{CodeBaseService_HostAddress}}/code-base/123e4567-e89b-12d3-a456-426614174116
 Content-Type: application/json
 Accept: application/json
 
 {
-  "status": 1
+  "code": "code_sample_4 from http"
 }

@@ -25,12 +25,22 @@
 <script src="_framework/blazor.webassembly.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs/loader.min.js"></script>
 <script>
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' } });
-    window.createMonacoEditor = function (element, options) {
+    function createMonacoEditor(element, options) {
+        require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor/min/vs' }});
         require(['vs/editor/editor.main'], function () {
-            window.monacoEditor = monaco.editor.create(element, options);
+            var editor = monaco.editor.create(element, {
+                value: options.value,
+                language: options.language,
+                theme: options.theme
+            });
+
+            window.monacoEditor = editor;
+
+            editor.onDidChangeModelContent(function () {
+                DotNet.invokeMethodAsync('ClientApp', 'UpdateCode', editor.getValue());
+            });
         });
-    };
+    }
 </script>
 </body>
 </html>
