@@ -35,7 +35,7 @@ namespace ClientApp.Services
 
         public async Task AddEntityAsync(TCreateRequest request)
         {
-            var response = await httpClient.PostAsJsonAsync(serviceEndpoint, request);
+            var response = await httpClient.PostAsJsonAsync($"{serviceEndpoint}/add", request);
             response.EnsureSuccessStatusCode();
         }
 
