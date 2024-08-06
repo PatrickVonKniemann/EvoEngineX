@@ -29,31 +29,10 @@ else
                     Save
                 </button>
             </div>
-            <h2 class="m-3 text-base font-semibold leading-7 text-indigo-600">Previous runs:</h2>
-            <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mb-10">
-                <thead class="text-xs text-gray-700 uppercase">
-                <tr>
-                    <th scope="col" class="px-6 py-3">Run ID</th>
-                    <th scope="col" class="px-6 py-3">Status</th>
-                    <th scope="col" class="px-6 py-3">Start Time</th>
-                    <th scope="col" class="px-6 py-3">End Time</th>
-                </tr>
-                </thead>
-                <tbody>
-                @foreach (var codeRun in _codeRuns.Items.Values)
-                {
-                    <tr class="bg-white border-b text-gray-950 w-full">
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Id</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap @GetColorByStatus(codeRun.Status)">@codeRun.Status</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunStart</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunFinish</td>
-                        <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Results</td>
-                    </tr>
-                }
-                </tbody>
-            </table>
+            <CodeRunTable CodeRuns="_codeRuns"/>
+            <Pagination PageNumber="@_codeRuns.Pagination!.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
+
         </div>
-        <Pagination PageNumber="@_codeRuns.Pagination!.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
     </div>
 }
 
@@ -72,14 +51,27 @@ else
 
     private async Task LoadDataAsync()
     {
-        _codeRuns = await CodeRunService.GetDataAsync($"by-code-base-id/{CodeBaseId}", _currentPage, PageSize);
+        await LoadCodeBase();
+        await LoadCodeRuns();
+    }
+
+
+    private async Task LoadCodeBase()
+    {
         _codeBase = await CodeBaseService.GetEntityAsync(CodeBaseId);
+        StateHasChanged();
+    }
+
+    private async Task LoadCodeRuns()
+    {
+        _codeRuns = await CodeRunService.GetDataAsync($"by-code-base-id/{CodeBaseId}", _currentPage, PageSize);
+        StateHasChanged();
     }
 
     private async Task HandlePageChanged(int pageNumber)
     {
         _currentPage = pageNumber;
-        await LoadDataAsync();
+        await LoadCodeRuns();
     }
 
     private async Task HandleCodeChange(string newCode)
@@ -101,7 +93,7 @@ else
             };
 
             await CodeRunService.AddEntityAsync(newRun);
-            await LoadDataAsync();
+            await LoadCodeRuns();
         }
     }
 
@@ -119,15 +111,5 @@ else
             await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
         }
     }
-
-
-    private string GetColorByStatus(RunStatus status) => status switch
-    {
-        RunStatus.Ready => "text-cyan-400",
-        RunStatus.Running => "text-indigo-600",
-        RunStatus.Paused => "text-orange-500",
-        RunStatus.Done => "text-green-500",
-        _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
-    };
 
 }
