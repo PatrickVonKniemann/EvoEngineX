@@ -1,4 +1,27 @@
 @inject IJSRuntime JsRuntime
+@using Microsoft.JSInterop
+
+<script>
+    window.setDotNetHelper = (dotNetHelper) => {
+        window.dotNetHelper = dotNetHelper;
+    };
+
+    window.createMonacoEditor = (element, options) => {
+        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' } });
+        require(['vs/editor/editor.main'], function () {
+            window.monacoEditor = monaco.editor.create(element, options);
+
+            window.monacoEditor.onDidChangeModelContent(() => {
+                let code = window.monacoEditor.getValue();
+                console.log('Editor content changed:', code);
+                window.dotNetHelper.invokeMethodAsync('UpdateCode', code)
+                    .then(() => console.log('UpdateCode invoked successfully'))
+                    .catch(err => console.error('Error invoking UpdateCode:', err));
+            });
+        });
+    };
+
+</script>
 
 <div id="editor" class="w-full border border-gray-300 mb-5" style="height: 400px" @ref="_editorElement"></div>
 
@@ -12,21 +35,21 @@
     {
         if (firstRender)
         {
+            var dotNetRef = DotNetObjectReference.Create(this);
             await JsRuntime.InvokeVoidAsync("createMonacoEditor", _editorElement, new
             {
                 value = InitialCode,
                 language = "javascript",
                 theme = "vs"
             });
-
-            await JsRuntime.InvokeVoidAsync("monacoEditor.onDidChangeModelContent", DotNetObjectReference.Create(this));
+            await JsRuntime.InvokeVoidAsync("setDotNetHelper", dotNetRef); // Pass the reference to JS
         }
     }
 
-    [JSInvokable]
+    [JSInvokable("UpdateCode")]
     public async Task UpdateCode(string code)
     {
-        InitialCode = code;
-        await OnCodeChange.InvokeAsync(code); // Trigger the callback to update the parent
+        await OnCodeChange.InvokeAsync(code);
     }
+
 }
