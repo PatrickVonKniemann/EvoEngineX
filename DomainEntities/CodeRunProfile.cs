@@ -13,6 +13,7 @@ public class CodeRunProfile : Profile
         // Create
         CreateMap<CreateCodeRunResponse, ReadCodeRunResponse>().ReverseMap();
         CreateMap<CodeRun, CreateCodeRunResponse>().ReverseMap();
+        CreateMap<CodeRun, CreateCodeRunDetailRequest>().ReverseMap();
         CreateMap<CreateCodeRunRequest, CreateCodeRunResponse>().ReverseMap();
         CreateMap<CodeRun, CreateCodeRunRequest>().ReverseMap();
 

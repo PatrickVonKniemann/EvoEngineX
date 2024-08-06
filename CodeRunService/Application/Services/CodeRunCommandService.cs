@@ -10,7 +10,7 @@ public class CodeRunCommandService(
     ILogger<CodeRunCommandService> logger,
     IMapper mapper,
     ICodeRunRepository codeRunRepository)
-    : BaseCommandService<CodeRun, CreateCodeRunRequest, CreateCodeRunResponse, UpdateCodeRunRequest,
+    : BaseCommandService<CodeRun, CreateCodeRunDetailRequest, CreateCodeRunResponse, UpdateCodeRunRequest,
         UpdateCodeRunResponse>(mapper, codeRunRepository, logger), ICodeRunCommandService
 {
     // Any additional methods specific to CodeRunCommandService can go here

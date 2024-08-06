@@ -3,4 +3,4 @@ using Generics.BaseEntities;
 
 namespace CodeRunService.Application.Services;
 
-public interface ICodeRunCommandService : IGenericEntityCommandService<CreateCodeRunRequest, CreateCodeRunResponse, UpdateCodeRunRequest, UpdateCodeRunResponse>;
+public interface ICodeRunCommandService : IGenericEntityCommandService<CreateCodeRunDetailRequest, CreateCodeRunResponse, UpdateCodeRunRequest, UpdateCodeRunResponse>;

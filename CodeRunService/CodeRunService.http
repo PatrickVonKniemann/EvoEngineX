@@ -36,6 +36,16 @@ Accept: application/json
   }
 }
 
+###
+
+POST {{CodeRunService_HostAddress}}/code-run/add
+Content-Type: application/json
+Accept: application/json
+
+{
+  "codeBaseId": "123e4567-e89b-12d3-a456-426614174009"
+}
+
 ### Getall by CodeBaseId
 
 POST {{CodeRunService_HostAddress}}/code-run/by-code-base-id/123e4567-e89b-12d3-a456-426614174000

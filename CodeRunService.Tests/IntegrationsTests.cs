@@ -26,7 +26,7 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         var expectedCodeBaseId = _commonId;
         var codeRun = new CreateCodeRunRequest
         {
-            CodeBaseId = expectedCodeBaseId
+            CodeBaseId = expectedCodeBaseId,
         };
         var content = DeserializationHelper.CreateJsonContent(codeRun);
 
