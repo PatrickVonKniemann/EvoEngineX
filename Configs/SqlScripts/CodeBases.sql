@@ -6,7 +6,7 @@ VALUES
     ('123e4567-e89b-12d3-a456-426614174006', 'code_sample_1 newest', '123e4567-e89b-12d3-a456-426614174005', 'Sample 1 newest', 1, true, NOW() - INTERVAL '1 day'),
     ('123e4567-e89b-12d3-a456-426614174007', 'code_sample_2', '123e4567-e89b-12d3-a456-426614174006', 'Sample 2', 2, false, NOW() - INTERVAL '2 days'),
     ('123e4567-e89b-12d3-a456-426614174008', 'code_sample_3', '123e4567-e89b-12d3-a456-426614174007', 'Sample 3', 3, true, NOW() - INTERVAL '3 days'),
-    ('123e4567-e89b-12d3-a456-426614174009', 'code_sample_4', '123e4567-e89b-12d3-a456-426614174008', 'Sample 4', 1, false, NOW() - INTERVAL '4 days'),
+    ('123e4567-e89b-12d3-a456-426614174009', 'code_sample_4 newer', '123e4567-e89b-12d3-a456-426614174008', 'Sample 4 Newer', 1, false, NOW() - INTERVAL '4 days'),
     ('123e4567-e89b-12d3-a456-426614174010', 'code_sample_5', '123e4567-e89b-12d3-a456-426614174009', 'Sample 5', 2, false, NOW() - INTERVAL '5 days'),
     ('123e4567-e89b-12d3-a456-426614174011', 'code_sample_6', '123e4567-e89b-12d3-a456-426614174010', 'Sample 6', 3, false, NOW() - INTERVAL '6 days'),
     ('123e4567-e89b-12d3-a456-426614174012', 'code_sample_7', '123e4567-e89b-12d3-a456-426614174011', 'Sample 7', 1, false, NOW() - INTERVAL '7 days'),
