@@ -3,9 +3,9 @@ using Generics.Enums;
 
 namespace DomainEntities;
 
-public class CodeRun
+public class CodeRun : CommonEntityObject
 {
-    [Key] public Guid Id { get; set; }
+    [Key] public Guid Id { get; init; }
     public required Guid CodeBaseId { get; init; }
     public required RunStatus Status { get; set; }
     public required DateTime RunStart { get; set; }

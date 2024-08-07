@@ -2,6 +2,6 @@ namespace Generics.Pagination;
 
 public class SortingQuery
 {
-    public string SortParam => string.Empty;
-    public SortDirection SortDirection => SortDirection.Asc;
+    public required string SortParam { get; init; }
+    public SortDirection SortDirection { get; init; }
 }

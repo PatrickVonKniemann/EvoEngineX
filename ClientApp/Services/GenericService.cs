@@ -13,7 +13,12 @@ namespace ClientApp.Services
             var paginationQuery = new PaginationQuery
             {
                 PageNumber = pageNumber,
-                PageSize = pageSize
+                PageSize = pageSize,
+                SortingQuery = new SortingQuery
+                {
+                    SortParam = "CreatedAt",
+                    SortDirection = SortDirection.Asc
+                }
             };
 
             var queryRequest = Activator.CreateInstance<TQueryRequest>();
