@@ -22,16 +22,33 @@ else
             <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
             <div class="my-8">
-                <button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged">
-                    Run
+                <button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
+                    @if (_isRunning)
+                    {
+                        <span>Running...</span>
+                    }
+                    else
+                    {
+                        <span>Run </span>
+                    }
                 </button>
-                <button class="secondary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged">
-                    Save
+                <button class="secondary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged" disabled="@_isSaving">
+                    @if (_isSaving)
+                    {
+                        <span>Saving... </span>
+                    }
+                    else if (_saveSuccess)
+                    {
+                        <span>Saved</span>
+                    }
+                    else
+                    {
+                        <span>Save </span>
+                    }
                 </button>
             </div>
             <CodeRunTable CodeRuns="_codeRuns"/>
             <Pagination PageNumber="@_codeRuns.Pagination!.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
-
         </div>
     </div>
 }
@@ -43,6 +60,10 @@ else
     private int _currentPage = 1;
     private const int PageSize = 10;
     private ReadCodeBaseResponse? _codeBase;
+    private bool _isRunning = false;
+    private bool _isSaving = false;
+    private bool _saveSuccess = false;
+    private bool _runSuccess = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -54,7 +75,6 @@ else
         await LoadCodeBase();
         await LoadCodeRuns();
     }
-
 
     private async Task LoadCodeBase()
     {
@@ -87,13 +107,25 @@ else
     {
         if (_codeBase != null && _codeBase.Code != null)
         {
-            var newRun = new CreateCodeRunRequest
+            _isRunning = true;
+            _runSuccess = false;
+            try
             {
-                CodeBaseId = _codeBase.Id
-            };
+                var newRun = new CreateCodeRunRequest
+                {
+                    CodeBaseId = _codeBase.Id
+                };
 
-            await CodeRunService.AddEntityAsync(newRun);
-            await LoadCodeRuns();
+                await CodeRunService.AddEntityAsync(newRun);
+                await LoadCodeRuns();
+                _runSuccess = true;
+                await Task.Delay(2000); // Show the "Running..." message for 2 seconds
+            }
+            finally
+            {
+                _isRunning = false;
+                _runSuccess = false;
+            }
         }
     }
 
@@ -101,16 +133,28 @@ else
     {
         if (_codeBase != null)
         {
-            var updateRequest = new UpdateCodeBaseRequest
+            _isSaving = true;
+            _saveSuccess = false;
+            try
             {
-                Id = _codeBase.Id,
-                Code = _codeBase.Code,
-                SupportedPlatform = _codeBase.SupportedPlatform,
-                UserId = _codeBase.UserId
-                // Map other necessary properties from _codeBase to updateRequest
-            };
+                var updateRequest = new UpdateCodeBaseRequest
+                {
+                    Id = _codeBase.Id,
+                    Code = _codeBase.Code,
+                    SupportedPlatform = _codeBase.SupportedPlatform,
+                    UserId = _codeBase.UserId
+                    // Map other necessary properties from _codeBase to updateRequest
+                };
 
-            await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
+                await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
+                _saveSuccess = true;
+                await Task.Delay(2000); // Show the "Saved" message for 2 seconds
+            }
+            finally
+            {
+                _isSaving = false;
+                _saveSuccess = false;
+            }
         }
     }
 
