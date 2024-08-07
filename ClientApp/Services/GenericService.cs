@@ -17,7 +17,7 @@ namespace ClientApp.Services
                 SortingQuery = new SortingQuery
                 {
                     SortParam = "CreatedAt",
-                    SortDirection = SortDirection.Asc
+                    SortDirection = SortDirection.Desc
                 }
             };
 
