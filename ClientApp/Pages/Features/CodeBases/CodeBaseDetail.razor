@@ -19,13 +19,16 @@ else
 {
     <div class="overflow-x-auto">
         <div class="max-h-fit overflow-y-auto">
-            <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
+            <div class="inline-flex">
+                <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
+                <h2 class="m-3 text-base font-semibold leading-7 "><span class="text-indigo-600">@_codeBase.Name</span> / <span class="text-indigo-900">@_codeBase.SupportedPlatform</span></h2>
+            </div>
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange"></CodeEditor>
             <div class="my-8">
                 <button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
                     @if (_isRunning)
                     {
-                        <span>Running...</span>
+                        <span>...</span>
                     }
                     else
                     {
@@ -35,11 +38,7 @@ else
                 <button class="secondary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged" disabled="@_isSaving">
                     @if (_isSaving)
                     {
-                        <span>Saving... </span>
-                    }
-                    else if (_saveSuccess)
-                    {
-                        <span>Saved</span>
+                        <span>.... </span>
                     }
                     else
                     {
@@ -62,8 +61,6 @@ else
     private ReadCodeBaseResponse? _codeBase;
     private bool _isRunning = false;
     private bool _isSaving = false;
-    private bool _saveSuccess = false;
-    private bool _runSuccess = false;
 
     protected override async Task OnInitializedAsync()
     {
@@ -108,7 +105,6 @@ else
         if (_codeBase != null && _codeBase.Code != null)
         {
             _isRunning = true;
-            _runSuccess = false;
             try
             {
                 var newRun = new CreateCodeRunRequest
@@ -118,13 +114,11 @@ else
 
                 await CodeRunService.AddEntityAsync(newRun);
                 await LoadCodeRuns();
-                _runSuccess = true;
                 await Task.Delay(2000); // Show the "Running..." message for 2 seconds
             }
             finally
             {
                 _isRunning = false;
-                _runSuccess = false;
             }
         }
     }
@@ -134,7 +128,6 @@ else
         if (_codeBase != null)
         {
             _isSaving = true;
-            _saveSuccess = false;
             try
             {
                 var updateRequest = new UpdateCodeBaseRequest
@@ -147,13 +140,11 @@ else
                 };
 
                 await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
-                _saveSuccess = true;
                 await Task.Delay(2000); // Show the "Saved" message for 2 seconds
             }
             finally
             {
                 _isSaving = false;
-                _saveSuccess = false;
             }
         }
     }

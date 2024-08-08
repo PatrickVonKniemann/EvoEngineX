@@ -1,0 +1,5 @@
+
+
+AlgName|    Running Fun | Dimensions | Run rep  |  F    |   MaxFes |    CurFes  |   Results: 
+CoDEfcr	        1	        10	           1	   69	    100050	    12526	    614	    520	    4133	1194	605	    2633	483	    309	    2035	0
+CoDEfcr	        1	        10	           2	   69	    100050	    13345	    675	    577	    4357	1152	697	    2794	515	    338	    2240	0
