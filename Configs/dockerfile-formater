@@ -1,0 +1,35 @@
+# Use the official .NET 8 SDK image as the build image
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /app
+
+# Log the current step
+RUN echo "Step 1: Copying the csproj file and restoring dependencies"
+
+# Copy the csproj and restore as distinct layers
+COPY ../CodeFormaterService/CodeFormaterService.csproj ./
+RUN dotnet restore
+
+# Log the current step
+RUN echo "Step 2: Copying the remaining source code and building the application"
+
+# Copy the remaining source code and build the application
+COPY ../CodeFormaterService/ ./
+RUN dotnet publish -c Release -o out
+
+# Log the current step
+RUN echo "Step 3: Using the official .NET runtime image as the base runtime image"
+
+# Use the official .NET runtime image as the base runtime image
+FROM mcr.microsoft.com/dotnet/aspnet:8.0
+WORKDIR /app
+
+# Log the current step
+RUN echo "Step 4: Copying the published output from the build environment"
+
+COPY --from=build-env /app/out .
+
+# Log the current step
+RUN echo "Step 5: Setting the entry point for the application"
+
+# Set the entry point for the application
+ENTRYPOINT ["dotnet", "CodeFormaterService.dll"]

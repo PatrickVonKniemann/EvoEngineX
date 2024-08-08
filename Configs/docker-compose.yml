@@ -84,6 +84,15 @@ services:
     networks:
       - development-network
 
+  code-formater-service:
+    build:
+      context: ..
+      dockerfile: ./Configs/dockerfile-formater
+    ports:
+      - "5004:8080"
+    networks:
+      - development-network
+
 volumes:
   postgres_data:
   postgres_integration_data:

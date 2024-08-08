@@ -1,0 +1,11 @@
+@CodeFormaterService_HostAddress = http://localhost:5004
+
+POST {{CodeFormaterService_HostAddress}}/format/csharp
+Content-Type: application/json
+Accept: application/json
+
+{
+    "code": "TestCode"
+}
+
+###

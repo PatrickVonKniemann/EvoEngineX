@@ -1,34 +1,14 @@
 @inject IJSRuntime JsRuntime
 @using Microsoft.JSInterop
 
-<script>
-    window.setDotNetHelper = (dotNetHelper) => {
-        window.dotNetHelper = dotNetHelper;
-    };
-
-    window.createMonacoEditor = (element, options) => {
-        require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' } });
-        require(['vs/editor/editor.main'], function () {
-            window.monacoEditor = monaco.editor.create(element, options);
-
-            window.monacoEditor.onDidChangeModelContent(() => {
-                let code = window.monacoEditor.getValue();
-                console.log('Editor content changed:', code);
-                window.dotNetHelper.invokeMethodAsync('UpdateCode', code)
-                    .then(() => console.log('UpdateCode invoked successfully'))
-                    .catch(err => console.error('Error invoking UpdateCode:', err));
-            });
-        });
-    };
-
-</script>
-
 <div id="editor" class="w-full border border-gray-300 mb-5" style="height: 400px" @ref="_editorElement"></div>
+<button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="FormatCode">Format Code</button>
 
 @code {
     [Parameter] public string InitialCode { get; set; } = string.Empty;
     [Parameter] public string PlatformLanguage { get; set; } = string.Empty;
     [Parameter] public EventCallback<string> OnCodeChange { get; set; }
+    [Parameter] public EventCallback<string> OnCodeFormat { get; set; }
 
     private ElementReference _editorElement;
 
@@ -47,10 +27,22 @@
         }
     }
 
+    private async Task FormatCode()
+    {
+        var code = await JsRuntime.InvokeAsync<string>("getMonacoEditorValue");
+        await OnCodeFormat.InvokeAsync(code);
+    }
+
     [JSInvokable("UpdateCode")]
     public async Task UpdateCode(string code)
     {
         await OnCodeChange.InvokeAsync(code);
+    }
+
+    [JSInvokable("FormatCode")]
+    public async Task FormatCode(string code)
+    {
+        await OnCodeFormat.InvokeAsync(code);
     }
 
 }

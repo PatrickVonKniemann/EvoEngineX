@@ -3,7 +3,7 @@ window.setDotNetHelper = (dotNetHelper) => {
 };
 
 window.createMonacoEditor = (element, options) => {
-    require.config({paths: {'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs'}});
+    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' } });
     require(['vs/editor/editor.main'], function () {
         // Register the MATLAB language
         monaco.languages.register({id: 'matlab'});
@@ -46,5 +46,20 @@ window.createMonacoEditor = (element, options) => {
                 ],
             }
         });
+
+        // Create the Monaco Editor instance
+        window.monacoEditor = monaco.editor.create(element, options);
+
+        window.monacoEditor.onDidChangeModelContent(() => {
+            let code = window.monacoEditor.getValue();
+            console.log('Editor content changed:', code);
+            window.dotNetHelper.invokeMethodAsync('UpdateCode', code)
+                .then(() => console.log('UpdateCode invoked successfully'))
+                .catch(err => console.error('Error invoking UpdateCode:', err));
+        });
     });
+};
+
+window.getMonacoEditorValue = () => {
+    return window.monacoEditor.getValue();
 };
