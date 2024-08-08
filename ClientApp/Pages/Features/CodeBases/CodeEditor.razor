@@ -27,6 +27,7 @@
 
 @code {
     [Parameter] public string InitialCode { get; set; } = string.Empty;
+    [Parameter] public string PlatformLanguage { get; set; } = string.Empty;
     [Parameter] public EventCallback<string> OnCodeChange { get; set; }
 
     private ElementReference _editorElement;
@@ -39,7 +40,7 @@
             await JsRuntime.InvokeVoidAsync("createMonacoEditor", _editorElement, new
             {
                 value = InitialCode,
-                language = "javascript",
+                language = PlatformLanguage,
                 theme = "vs"
             });
             await JsRuntime.InvokeVoidAsync("setDotNetHelper", dotNetRef); // Pass the reference to JS
