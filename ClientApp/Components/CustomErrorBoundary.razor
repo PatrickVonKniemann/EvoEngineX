@@ -1,0 +1,40 @@
+@using ClientApp.Services
+@inject ToastService ToastService
+
+@if (HasError)
+{
+    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+        <strong class="font-bold">An error occurred:</strong>
+        <span class="block sm:inline">@ErrorMessage</span>
+    </div>
+}
+else
+{
+    @ChildContent
+}
+
+@code {
+    [Parameter] public RenderFragment ChildContent { get; set; }
+
+    private bool HasError { get; set; }
+    private string ErrorMessage { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        // Reset error state before rendering child content
+        HasError = false;
+        ErrorMessage = string.Empty;
+    }
+
+    public void HandleError(Exception exception)
+    {
+        // Set the error state
+        HasError = true;
+        ErrorMessage = exception.Message;
+
+        // Show a toast notification
+        ToastService.ShowToast("An unexpected error occurred. Please try again later.", "error");
+
+        // Optionally log the error or perform other actions
+    }
+}
