@@ -15,7 +15,8 @@
 
 @if (_codeRuns == null)
 {
-    <p>Loading...</p>
+    <Spinner Size="h-16 w-16" AdditionalClasses="border-indigo-500" LoadingText="Loading user data..."/>
+
 }
 else
 {
@@ -49,7 +50,7 @@ else
                 </button>
             </div>
             <CodeRunTable CodeRuns="_codeRuns"/>
-            <Pagination PageNumber="@_codeRuns.Pagination!.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
+            <Pagination PageNumber="@_codeRuns.Pagination.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
         </div>
     </div>
 }

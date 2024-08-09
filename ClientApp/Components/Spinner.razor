@@ -1,0 +1,14 @@
+@code {
+    [Parameter] public string Size { get; set; } = "h-8 w-8"; // Default size
+    [Parameter] public string AdditionalClasses { get; set; } = ""; // Any additional classes
+    [Parameter] public string LoadingText { get; set; } = "Loading..."; // Default loading text
+}
+
+<div class="flex justify-center items-center h-screen">
+    <div class="flex flex-col items-center">
+        <div class="@($"{Size} border-t-transparent border-solid animate-spin rounded-full border-4 {AdditionalClasses}")" role="status">
+            <span class="sr-only">@LoadingText</span>
+        </div>
+        <p class="mt-4 text-indigo-500">@LoadingText</p>
+    </div>
+</div>

@@ -11,7 +11,7 @@
 
 @if (_users == null)
 {
-    <p>Loading...</p>
+    <Spinner Size="h-16 w-16" AdditionalClasses="border-indigo-500" LoadingText="Loading users data..."/>
 }
 else
 {
@@ -74,7 +74,7 @@ else
 
     private async Task LoadDataAsync()
     {
-        _users = await UserService.GetDataAsync("all",currentPage, pageSize);
+        _users = await UserService.GetDataAsync("all", currentPage, pageSize);
     }
 
     private async Task HandlePageChanged(int pageNumber)

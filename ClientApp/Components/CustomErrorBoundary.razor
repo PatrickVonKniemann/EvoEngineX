@@ -1,40 +1,30 @@
 @using ClientApp.Services
 @inject ToastService ToastService
 
-@if (HasError)
-{
-    <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-        <strong class="font-bold">An error occurred:</strong>
-        <span class="block sm:inline">@ErrorMessage</span>
-    </div>
-}
-else
-{
-    @ChildContent
-}
+<ErrorBoundary @ref="errorBoundary" OnAfterRenderAsync="CheckForErrors">
+    <ChildContent>
+        @ChildContent
+    </ChildContent>
+    <ErrorContent>
+        <p>Oops! Something went wrong. Please try again later.</p>
+        <button class="btn btn-warning" @onclick="ResetError">Try Again</button>
+    </ErrorContent>
+</ErrorBoundary>
 
 @code {
+    private ErrorBoundary? errorBoundary;
+
     [Parameter] public RenderFragment ChildContent { get; set; }
 
-    private bool HasError { get; set; }
-    private string ErrorMessage { get; set; }
-
-    protected override void OnParametersSet()
+    protected override async Task OnAfterRenderAsync(bool firstRender)
     {
-        // Reset error state before rendering child content
-        HasError = false;
-        ErrorMessage = string.Empty;
-    }
-
-    public void HandleError(Exception exception)
-    {
-        // Set the error state
-        HasError = true;
-        ErrorMessage = exception.Message;
-
-        // Show a toast notification
+        // Show a toast notification when an error occurs
         ToastService.ShowToast("An unexpected error occurred. Please try again later.", "error");
-
-        // Optionally log the error or perform other actions
     }
+
+    private void ResetError()
+    {
+        errorBoundary?.Recover();
+    }
+
 }
