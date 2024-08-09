@@ -3,14 +3,15 @@
 @using DomainModels
 @using ExternalDomainEntities.UserDto.Query
 @using ClientApp.Components
+@using Microsoft.EntityFrameworkCore.Diagnostics
 @inject UserService UserService
+@inject NotificationService NotificationService
 
 <PageTitle>User Profile</PageTitle>
 
 @if (_user == null)
 {
     <Spinner Size="h-16 w-16" AdditionalClasses="border-indigo-500" LoadingText="Loading user data..."/>
-
 }
 else
 {
@@ -77,7 +78,9 @@ else
                     </div>
                     <div class="flex flex-wrap mb-6">
                         <div class="w-full mb-6 md:mb-0">
-                            <BasicButton ButtonType=@ButtonType.secondary ButtonText="Update" Link="Update" CustomClass="py-4 px-6"/>
+                            <span @onclick="UpdateData" class="@ButtonType.secondary-basic text-white font-bold rounded-lg py-4 px-6">
+                                Update
+                            </span>
                         </div>
                     </div>
                 </form>
@@ -98,6 +101,18 @@ else
     private async Task LoadDataAsync()
     {
         _user = await UserService.GetEntityAsync("123e4567-e89b-12d3-a456-426614174003");
+    }
+
+    private async Task UpdateData()
+    {
+        try
+        {
+            throw new Exception("An error occurred while updating the entity. Please try again later.");
+        }
+        catch (Exception ex)
+        {
+            NotificationService.ShowMessage(ex.Message);
+        }
     }
 
 }

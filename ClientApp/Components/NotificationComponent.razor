@@ -1,0 +1,50 @@
+@using ClientApp.Services
+@inject NotificationService NotificationService
+
+@if (showNotification)
+{
+    <div class="fixed bottom-4 right-4 bg-red-500 text-white p-4 rounded flex items-center justify-between">
+        <span>@NotificationService.Message</span>
+        <button @onclick="CloseNotification" class="ml-4 align-top text-white">
+            &times;
+        </button>
+    </div>
+}
+
+@code {
+    private bool showNotification = false;
+    private Timer? hideTimer;
+
+    protected override void OnInitialized()
+    {
+        NotificationService.OnChange += ShowNotification;
+    }
+
+    private void ShowNotification()
+    {
+        showNotification = true;
+        StateHasChanged();
+
+        // Start or reset the timer
+        hideTimer?.Dispose();
+        hideTimer = new Timer(HideNotification, null, 3000, Timeout.Infinite);
+    }
+
+    private void HideNotification(object? state)
+    {
+        showNotification = false;
+        InvokeAsync(StateHasChanged);
+    }
+
+    private void CloseNotification()
+    {
+        hideTimer?.Dispose();
+        showNotification = false;
+    }
+
+    public void Dispose()
+    {
+        NotificationService.OnChange -= ShowNotification;
+        hideTimer?.Dispose();
+    }
+}
