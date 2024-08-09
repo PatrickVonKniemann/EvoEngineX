@@ -5,16 +5,22 @@ WORKDIR /app
 # Log the current step
 RUN echo "Step 1: Copying the csproj file and restoring dependencies"
 
-# Copy the csproj and restore as distinct layers
-COPY ../CodeFormaterService/CodeFormaterService.csproj ./
-RUN dotnet restore
+# Copy the project files and restore dependencies as distinct layers
+COPY ../CodeFormaterService/CodeFormaterService.csproj ./CodeFormaterService/
+COPY ../ExternalDomainEntities/ExternalDomainEntities.csproj ./ExternalDomainEntities/
+COPY ../Generics/Generics.csproj ./Generics/
+
+RUN dotnet restore ./CodeFormaterService/CodeFormaterService.csproj
 
 # Log the current step
 RUN echo "Step 2: Copying the remaining source code and building the application"
 
 # Copy the remaining source code and build the application
-COPY ../CodeFormaterService/ ./
-RUN dotnet publish -c Release -o out
+COPY ../CodeFormaterService/ ./CodeFormaterService/
+COPY ../ExternalDomainEntities/ ./ExternalDomainEntities/
+COPY ../Generics ./Generics
+
+RUN dotnet publish ./CodeFormaterService/CodeFormaterService.csproj -c Release -o out
 
 # Log the current step
 RUN echo "Step 3: Using the official .NET runtime image as the base runtime image"

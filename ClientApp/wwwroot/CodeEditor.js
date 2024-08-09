@@ -58,8 +58,18 @@ window.createMonacoEditor = (element, options) => {
                 .catch(err => console.error('Error invoking UpdateCode:', err));
         });
     });
+    
+};
+
+window.setMonacoEditorValue = (formattedCode) => {
+    if (window.monacoEditor) {
+        window.monacoEditor.setValue(formattedCode);
+    }
 };
 
 window.getMonacoEditorValue = () => {
-    return window.monacoEditor.getValue();
+    if (window.monacoEditor) {
+        return window.monacoEditor.getValue();
+    }
+    return '';
 };

@@ -1,9 +1,11 @@
 ﻿@page "/code-base/{codeBaseId}"
+@inject IJSRuntime JsRuntime
 @inject CodeBaseService CodeBaseService
 @inject CodeRunService CodeRunService
 @using ClientApp.Services
 @using ExternalDomainEntities.CodeRunDto.Query
 @using ClientApp.Components
+@using ExternalDomainEntities
 @using ExternalDomainEntities.CodeBaseDto.Query
 @using ExternalDomainEntities.CodeBaseDto.Command
 @using ExternalDomainEntities.CodeRunDto.Command
@@ -99,7 +101,7 @@ else
             await InvokeAsync(StateHasChanged); // Ensures the component is re-rendered
         }
     }
-    
+
     private async Task HandleCodeFormat(string codeToFormat)
     {
         if (!string.IsNullOrWhiteSpace(codeToFormat))
@@ -107,8 +109,12 @@ else
             try
             {
                 // Call the formatting service
-                var formattedCode = await CodeBaseService.FormatCodeAsync(codeToFormat, _codeBase?.SupportedPlatform.ToString());
-                // Update the code in the editor with the formatted code
+                var formattedCode = await CodeBaseService.FormatCodeAsync(codeToFormat, _codeBase.SupportedPlatform.ToString());
+
+                // Update the editor with the formatted code
+                await JsRuntime.InvokeVoidAsync("setMonacoEditorValue", formattedCode);
+
+                // Ensure Blazor state is also updated
                 await HandleCodeChange(formattedCode);
             }
             catch (Exception ex)
@@ -167,4 +173,5 @@ else
             }
         }
     }
+
 }

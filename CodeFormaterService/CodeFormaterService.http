@@ -1,6 +1,6 @@
 @CodeFormaterService_HostAddress = http://localhost:5004
 
-POST {{CodeFormaterService_HostAddress}}/format/csharp
+POST {{CodeFormaterService_HostAddress}}/format/java
 Content-Type: application/json
 Accept: application/json
 

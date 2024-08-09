@@ -29,8 +29,15 @@
 
     private async Task FormatCode()
     {
-        var code = await JsRuntime.InvokeAsync<string>("getMonacoEditorValue");
-        await OnCodeFormat.InvokeAsync(code);
+        try
+        {
+            var code = await JsRuntime.InvokeAsync<string>("getMonacoEditorValue");
+            await OnCodeFormat.InvokeAsync(code);
+        }
+        catch (JSException ex)
+        {
+            Console.Error.WriteLine($"JavaScript error: {ex.Message}");
+        }
     }
 
     [JSInvokable("UpdateCode")]
