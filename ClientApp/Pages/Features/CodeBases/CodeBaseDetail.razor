@@ -16,7 +16,6 @@
 @if (_codeRuns == null)
 {
     <Spinner Size="h-16 w-16" AdditionalClasses="border-indigo-500" LoadingText="Loading user data..."/>
-
 }
 else
 {
@@ -27,6 +26,7 @@ else
                 <h2 class="m-3 text-base font-semibold leading-7 "><span class="text-indigo-600">@_codeBase.Name</span> / <span class="text-indigo-900">@_codeBase.SupportedPlatform</span></h2>
             </div>
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange" OnCodeFormat="HandleCodeFormat" PlatformLanguage=@_codeBase.SupportedPlatform.ToString().ToLower()></CodeEditor>
+
             <div class="my-8">
                 <button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
                     @if (_isRunning)

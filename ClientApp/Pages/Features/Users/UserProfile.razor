@@ -103,7 +103,7 @@ else
         _user = await UserService.GetEntityAsync("123e4567-e89b-12d3-a456-426614174003");
     }
 
-    private async Task UpdateData()
+    private Task UpdateData()
     {
         try
         {
@@ -113,6 +113,8 @@ else
         {
             NotificationService.ShowMessage(ex.Message);
         }
+
+        return Task.CompletedTask;
     }
 
 }

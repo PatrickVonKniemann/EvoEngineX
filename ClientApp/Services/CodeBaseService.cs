@@ -8,7 +8,10 @@ using Microsoft.Extensions.Logging;
 
 namespace ClientApp.Services;
 
-public class CodeBaseService(HttpClient httpClient, ILogger<CodeBaseService> logger)
+public class CodeBaseService(
+    HttpClient httpClient,
+    ILogger<CodeBaseService> logger,
+    NotificationService notificationService)
     : GenericService<ReadCodeBaseListByUserIdResponse, ReadCodeBaseResponse, ReadCodeBaseListRequest,
         CreateCodeBaseRequest, UpdateCodeBaseRequest>(httpClient, "http://localhost:5002/code-base", logger)
 {
@@ -30,15 +33,16 @@ public class CodeBaseService(HttpClient httpClient, ILogger<CodeBaseService> log
         }
         catch (HttpRequestException httpEx)
         {
-            logger.LogError(httpEx,
-                "An HTTP request error occurred while formatting code for language {PlatformLanguage}",
-                platformLanguage);
-            throw new Exception("An error occurred while formatting the code. Please try again later.");
+            var msg = $"An HTTP request error occurred while formatting code for language {platformLanguage}";
+            logger.LogError(httpEx, msg);
+            notificationService.ShowMessage(msg);
+            throw new Exception("An unexpected error occurred. Please try again later.");
         }
         catch (Exception ex)
         {
-            logger.LogError(ex, "An unexpected error occurred while formatting code for language {PlatformLanguage}",
-                platformLanguage);
+            var msg = $"An HTTP request error occurred while formatting code for language {platformLanguage}";
+            logger.LogError(ex, msg);
+            notificationService.ShowMessage(msg);
             throw new Exception("An unexpected error occurred. Please try again later.");
         }
     }

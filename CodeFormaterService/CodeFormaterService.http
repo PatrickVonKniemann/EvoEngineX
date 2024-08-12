@@ -1,11 +1,11 @@
-@CodeFormaterService_HostAddress = http://localhost:5004
+@CodeFormaterService_HostAddress = http://localhost:5193
 
-POST {{CodeFormaterService_HostAddress}}/format/java
+POST {{CodeFormaterService_HostAddress}}/format/csharp
 Content-Type: application/json
 Accept: application/json
 
 {
-    "code": "TestCode"
+    "code": "using System; class DE { static void Main() { int popSize = 50, dimensions = 10, maxIter = 1000; double F = 0.8, CR = 0.9; Random rand = new Random(); double[][] pop = new double[popSize][]; for (int i = 0; i < popSize; i++) { pop[i] = new double[dimensions]; for (int j = 0; j < dimensions; j++) pop[i][j] = rand.NextDouble(); } Func<double[], double> evaluate = (sol) => { double sum = 0; foreach (var x in sol) sum += x * x; return sum; }; double[] best = pop[0]; for (int iter = 0; iter < maxIter; iter++) { for (int i = 0; i < popSize; i++) { int r1, r2, r3; do { r1 = rand.Next(popSize); } while (r1 == i); do { r2 = rand.Next(popSize); } while (r2 == i || r2 == r1); do { r3 = rand.Next(popSize); } while (r3 == i || r3 == r1 || r3 == r2); double[] mutant = new double[dimensions], trial = new double[dimensions]; for (int j = 0; j < dimensions; j++) mutant[j] = pop[r1][j] + F * (pop[r2][j] - pop[r3][j]); for (int j = 0; j < dimensions; j++) trial[j] = rand.NextDouble() < CR ? mutant[j] : pop[i][j]; if (evaluate(trial) < evaluate(pop[i])) { pop[i] = trial; if (evaluate(trial) < evaluate(best)) best = trial; } } } Console.WriteLine(); } }"
 }
 
 ###
