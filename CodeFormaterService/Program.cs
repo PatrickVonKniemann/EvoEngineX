@@ -1,6 +1,10 @@
 using System.Diagnostics;
 using System.Text;
 using ExternalDomainEntities;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Formatting;
+using Microsoft.CodeAnalysis.Formatting;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -49,180 +53,28 @@ app.MapPost("/format/csharp", async (CodeRequest request) =>
 
 await app.RunAsync();
 
-async Task<string> FormatMatlabCodeAsync(string code)
-{
-    // Validate MATLAB code
-    bool isValid = await ValidateMatlabCodeAsync(code);
-    if (!isValid)
-    {
-        throw new ArgumentException("The provided MATLAB code is invalid.");
-    }
-
-    // Implement MATLAB code formatting logic here
-    // Placeholder implementation
-    await Task.Delay(10); // Simulate async work
-    return code; // Replace with actual formatted code
-}
-
-async Task<bool> ValidateMatlabCodeAsync(string code)
-{
-    var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            FileName = "matlab",
-            Arguments = "-batch \"try, eval('" + code.Replace("'", "''") + "'), catch, exit(1), end, exit(0)\"",
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-
-    process.Start();
-    string errors = await process.StandardError.ReadToEndAsync();
-    await process.WaitForExitAsync();
-
-    return process.ExitCode == 0 && string.IsNullOrEmpty(errors);
-}
-
-async Task<string> FormatJavaCodeAsync(string code)
-{
-    // Validate Java code
-    bool isValid = await ValidateJavaCodeAsync(code);
-    if (!isValid)
-    {
-        throw new ArgumentException("The provided Java code is invalid.");
-    }
-
-    // Implement Java code formatting logic here
-    // Placeholder implementation using google-java-format
-    var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            FileName = "java",
-            Arguments = $"-jar path/to/google-java-format.jar -",
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-
-    process.Start();
-    await process.StandardInput.WriteAsync(code);
-    process.StandardInput.Close();
-    string formattedCode = await process.StandardOutput.ReadToEndAsync();
-    await process.WaitForExitAsync();
-    return formattedCode;
-}
-
-async Task<bool> ValidateJavaCodeAsync(string code)
-{
-    var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            FileName = "javac",
-            Arguments = "-Xlint -d . -",
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-
-    process.Start();
-    await process.StandardInput.WriteAsync(code);
-    process.StandardInput.Close();
-    string errors = await process.StandardError.ReadToEndAsync();
-    await process.WaitForExitAsync();
-
-    return string.IsNullOrEmpty(errors);
-}
-
 async Task<string> FormatCSharpCodeAsync(string code)
 {
-    // Validate C# code
-    bool isValid = await ValidateCSharpCodeAsync(code);
-    if (!isValid)
-    {
-        throw new ArgumentException("The provided C# code is invalid.");
-    }
+    // Create a syntax tree from the code
+    var tree = CSharpSyntaxTree.ParseText(code);
 
-    StringBuilder formattedCode = new StringBuilder();
-    int indentLevel = 0;
-    bool newLine = false;
+    // Create a workspace
+    using var workspace = new AdhocWorkspace();
 
-    foreach (var line in code.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries))
-    {
-        string trimmedLine = line.Trim();
+    // Retrieve the root of the syntax tree
+    var root = await tree.GetRootAsync();
 
-        // Adjust indent level for closing braces
-        if (trimmedLine.StartsWith('}'))
-        {
-            indentLevel--;
-        }
+    // Create options for formatting based on standard conventions
+    var options = workspace.Options
+        .WithChangedOption(CSharpFormattingOptions.NewLinesForBracesInMethods, true)
+        .WithChangedOption(CSharpFormattingOptions.IndentBraces, true)
+        .WithChangedOption(FormattingOptions.UseTabs, LanguageNames.CSharp, false)  // Using spaces instead of tabs
+        .WithChangedOption(FormattingOptions.TabSize, LanguageNames.CSharp, 4)
+        .WithChangedOption(FormattingOptions.IndentationSize, LanguageNames.CSharp, 4);
 
-        // Apply indentation
-        if (newLine)
-        {
-            formattedCode.AppendLine();
-            formattedCode.Append(new string('\t', indentLevel));
-        }
+    // Format the root node
+    var formattedRoot = Formatter.Format(root, workspace, options);
 
-        formattedCode.Append(trimmedLine);
-        newLine = true;
-
-        // Adjust indent level for opening braces
-        if (trimmedLine.EndsWith('{'))
-        {
-            indentLevel++;
-        }
-        else if (trimmedLine.EndsWith(';'))
-        {
-            // After semicolon, we start a new line
-            newLine = true;
-        }
-        else if (trimmedLine.EndsWith('}'))
-        {
-            // After closing brace, we start a new line
-            newLine = true;
-        }
-        else
-        {
-            // Handle inline statements
-            newLine = false;
-        }
-    }
-
-    return formattedCode.ToString();
-}
-
-async Task<bool> ValidateCSharpCodeAsync(string code)
-{
-    var process = new Process
-    {
-        StartInfo = new ProcessStartInfo
-        {
-            FileName = "csc",
-            Arguments = "-nologo -t:library -",
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false,
-            CreateNoWindow = true
-        }
-    };
-
-    process.Start();
-    await process.StandardInput.WriteAsync(code);
-    process.StandardInput.Close();
-    string errors = await process.StandardError.ReadToEndAsync();
-    await process.WaitForExitAsync();
-
-    return process.ExitCode == 0 && string.IsNullOrEmpty(errors);
+    // Return the formatted code as a string
+    return formattedRoot.ToFullString();
 }
