@@ -1,6 +1,7 @@
 ﻿@page "/code-base/{codeBaseId}"
 @inject IJSRuntime JsRuntime
 @inject CodeBaseService CodeBaseService
+@inject NotificationService NotificationService
 @inject CodeRunService CodeRunService
 @using ClientApp.Services
 @using ExternalDomainEntities.CodeRunDto.Query
@@ -28,7 +29,7 @@ else
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange" OnCodeFormat="HandleCodeFormat" PlatformLanguage=@_codeBase.SupportedPlatform.ToString().ToLower()></CodeEditor>
 
             <div class="my-8">
-                <button class="primary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
+                <button class="primary-gradient cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
                     @if (_isRunning)
                     {
                         <span>...</span>
@@ -120,8 +121,7 @@ else
             }
             catch (Exception ex)
             {
-                // Handle the exception appropriately (e.g., show a notification)
-                Console.Error.WriteLine($"Code formatting failed: {ex.Message}");
+                NotificationService.ShowMessage($"Code formatting failed: {ex.Message}");
             }
         }
     }
