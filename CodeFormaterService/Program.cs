@@ -30,25 +30,22 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapPost("/format/matlab", async (CodeRequest request) =>
-{
-    // string formattedCode = await FormatMatlabCodeAsync(request.Code);
-    // return Results.Ok(new { formattedCode });
-    return Results.Ok(new CodeResponse { Code = "TODO implement matlab support" });
-});
+app.MapPost("/format/matlab", async (CodeRequest request) => Results.Ok(new CodeResponse { Code = "TODO implement matlab support" }));
 
-app.MapPost("/format/java", async (CodeRequest request) =>
-{
-    // string formattedCode = await FormatJavaCodeAsync(request.Code);
-    // return Results.Ok(new { formattedCode });
-    return Results.Ok(new CodeResponse { Code = "TODO implement java support" });
-});
+// TODO implement java support
+app.MapPost("/format/java", async (CodeRequest request) => Results.Ok(new CodeResponse { Code = "TODO implement java support" }));
 
+// TODO implement csharp support
 app.MapPost("/format/csharp", async (CodeRequest request) =>
 {
     string formattedCode = await FormatCSharpCodeAsync(request.Code);
     return Results.Ok(new CodeResponse { Code = formattedCode });
 });
+
+// TODO implement validation
+app.MapPost("/validate/java", async (CodeRequest request) => Results.Ok(true));
+app.MapPost("/validate/csharp", async (CodeRequest request) => Results.Ok(true));
+app.MapPost("/validate/matlab", async (CodeRequest request) => Results.Ok(true));
 
 
 await app.RunAsync();
