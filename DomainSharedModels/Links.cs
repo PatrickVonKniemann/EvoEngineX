@@ -21,6 +21,7 @@ public static class Links
     {
         { "home", "Home" },
         { "code-bases", "Projects" },
+        { "code-base", "Projects" },
         { "cloud-profile", "Cloud Profiles" },
         { "user-profile", "Settings" },
         { "admin", "Admin" },

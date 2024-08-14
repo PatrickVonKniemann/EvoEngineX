@@ -44,19 +44,38 @@
 
         var segments = Navigation.ToBaseRelativePath(CurrentUri).Split('/', StringSplitOptions.RemoveEmptyEntries);
         var currentUrl = "/";
-        foreach (var segment in segments)
+
+        for (int i = 0; i < segments.Length; i++)
         {
-            currentUrl += segment + "/";
+            var segment = segments[i];
+            var isLastSegment = (i == segments.Length - 1);
 
-            Links.SegmentAliases.TryGetValue(segment, out var alias);
-            alias ??= segment;
-
-            BreadcrumbItems.Add(new BreadcrumbItem
+            // Check if this segment is a GUID, which indicates a code-base detail page
+            if (Guid.TryParse(segment, out var guid))
             {
-                Title = alias,
-                Url = currentUrl,
-                IsCurrent = (currentUrl == Navigation.ToBaseRelativePath(CurrentUri) + "/")
-            });
+                // If this is a code-base detail, replace the segment with the appropriate text
+                currentUrl += guid.ToString() + "/";
+
+                BreadcrumbItems.Add(new BreadcrumbItem
+                {
+                    Title = "Detail",
+                    Url = currentUrl,
+                    IsCurrent = isLastSegment
+                });
+            }
+            else
+            {
+                currentUrl += segment + "/";
+                Links.SegmentAliases.TryGetValue(segment, out var alias);
+                alias ??= segment;
+
+                BreadcrumbItems.Add(new BreadcrumbItem
+                {
+                    Title = alias,
+                    Url = currentUrl,
+                    IsCurrent = isLastSegment
+                });
+            }
         }
     }
 
@@ -66,5 +85,4 @@
         public string Url { get; set; }
         public bool IsCurrent { get; set; }
     }
-
 }
