@@ -75,9 +75,7 @@ window.getMonacoEditorValue = () => {
 };
 
 window.highlightWords = (words) => {
-    console.log("Highlight words");
     if (window.monacoEditor) {
-        console.log(`monacoEditor is setup search sing texts:`);
 
         const model = window.monacoEditor.getModel();
         const fullText = model.getValue();
@@ -91,9 +89,7 @@ window.highlightWords = (words) => {
 
         words.forEach((word) => {
             let matchIndex = fullText.indexOf(word);
-            console.log(`Searching for word: ${word}`);
             while (matchIndex !== -1) {
-                console.log(`Word '${word}' found at index: ${matchIndex}`);
 
                 const startPosition = model.getPositionAt(matchIndex);
                 const endPosition = model.getPositionAt(matchIndex + word.length);

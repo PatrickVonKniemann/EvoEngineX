@@ -1,0 +1,102 @@
+@using Generics.Enums
+
+<nav aria-label="Progress">
+    <ol class="inline-flex items-center space-x-4">
+        @foreach (var step in ProgressSteps)
+        {
+            <li class="items-center">
+                @if (step.Status == RunStatus.Done)
+                {
+                    <span class="inline-flex text-sm font-medium text-indigo-500 cursor-pointer">
+                        <i class="fas fa-circle-check text-indigo-500 mr-2"></i>@step.Title
+                    </span>
+                }
+                else if (step.Status == RunStatus.Paused)
+                {
+                    <span class="inline-flex text-sm font-medium text-yellow-600 cursor-pointer">
+                        <i class="fas fa-pause-circle text-yellow-600 mr-2"></i>@step.Title
+                    </span>
+                }
+                else if (step.Status == RunStatus.Running)
+                {
+                    <span class="inline-flex text-sm font-medium text-indigo-600 cursor-pointer">
+                        <Spinner Size="h-3 w-3" AdditionalClasses="border-indigo-600 mr-2" LoadingText="@step.Title"/>
+                    </span>
+                }
+                else if (step.Status == RunStatus.Ready)
+                {
+                    <span class="inline-flex text-sm font-medium text-gray-400 cursor-pointer">
+                        <Spinner Size="h-3 w-3" AdditionalClasses="border-gray-400 mr-2" LoadingText="@step.Title"/>
+                    </span>
+                }
+
+                @if (!step.IsLast)
+                {
+                    <i class="fas fa-chevron-right mx-4 text-gray-900"></i>
+                }
+            </li>
+        }
+    </ol>
+</nav>
+
+@code {
+    [Parameter] public RunStatus ParentRunStatus { get; set; } // This parameter comes from the parent component
+
+    private List<ProgressStep> ProgressSteps { get; set; } = new();
+
+    protected override void OnParametersSet()
+    {
+        BuildProgressSteps();
+    }
+
+    private void BuildProgressSteps()
+    {
+        ProgressSteps.Clear();
+
+        if (ParentRunStatus == RunStatus.Done)
+        {
+            ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Done });
+            ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Done });
+            ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Done });
+        }
+        else if (ParentRunStatus == RunStatus.Running)
+        {
+            ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Done });
+            ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Running });
+            ProgressSteps.Add(new ProgressStep { Title = "Finished", Status = RunStatus.Ready });
+        }
+        else if (ParentRunStatus == RunStatus.Paused)
+        {
+            ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Done });
+            ProgressSteps.Add(new ProgressStep { Title = "Paused", Status = RunStatus.Paused });
+            ProgressSteps.Add(new ProgressStep { Title = "Finished", Status = RunStatus.Ready });
+        }
+        else if (ParentRunStatus == RunStatus.Ready)
+        {
+            ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Ready });
+        }
+        else
+        {
+// Default case for initial or unknown status
+            ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Ready });
+        }
+
+// Mark the last step in the list
+        if (ProgressSteps.Count > 0)
+        {
+            ProgressSteps.Last().IsLast = true;
+        }
+    }
+
+    public class ProgressStep
+    {
+        public string Title { get; set; }
+        public RunStatus Status { get; set; }
+        public bool IsLast { get; set; } = false;
+    }
+
+}
