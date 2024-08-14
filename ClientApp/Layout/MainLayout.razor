@@ -1,17 +1,41 @@
 ﻿@using ClientApp.Components
 @inherits LayoutComponentBase
+@inject NavigationManager Navigation
 
-<div class="flex ">
-    <Sider/>
-    <div class="h-screen w-screen overflow-y-hidden">
-        <div class="flex-auto flex-col">
-            <Header></Header>
-            <div class="bg-gray-100">
-                <div class="h-screen overflow-y-auto">
-                    @Body
+<CascadingValue Value="currentUri">
+    <div class="flex">
+        <Sider />
+        <div class="h-screen w-screen overflow-y-hidden">
+            <div class="flex-auto flex-col">
+                <Header></Header>
+                <div class="bg-gray-100">
+                    <div class="h-screen overflow-y-auto">
+                        @Body
+                    </div>
+                    <NotificationComponent />
                 </div>
-                <NotificationComponent></NotificationComponent>
             </div>
         </div>
     </div>
-</div>
+</CascadingValue>
+
+@code {
+    private string currentUri;
+
+    protected override void OnInitialized()
+    {
+        currentUri = Navigation.Uri;
+        Navigation.LocationChanged += HandleLocationChanged;
+    }
+
+    private void HandleLocationChanged(object sender, LocationChangedEventArgs e)
+    {
+        currentUri = Navigation.Uri;
+        StateHasChanged();
+    }
+
+    public void Dispose()
+    {
+        Navigation.LocationChanged -= HandleLocationChanged;
+    }
+}

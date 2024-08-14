@@ -1,25 +1,24 @@
-@using Microsoft.AspNetCore.Components.Routing
+@using DomainModels
 @inject NavigationManager Navigation
-@implements IDisposable
 
 <nav class="flex" aria-label="Breadcrumb">
-    <ol class="inline-flex items-center space-x-1 md:space-x-3">
+    <ol class="inline-flex items-center space-x-1">
         <li class="inline-flex items-center">
-            <a href="/" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 cursor-pointer">
-                <i class="fas fa-home"></i>
+            <a href="/" class="mt-1 inline-flex items-center font-medium text-gray-700 hover:text-indigo-600 cursor-pointer">
+                <i class="fas fa-home text-lg"></i>
             </a>
         </li>
         @foreach (var item in BreadcrumbItems)
         {
-            <li class="inline-flex items-center">
-                <i class="fas fa-chevron-right ml-2 mr-2 text-gray-900"></i>
+            <li class="inline-flex items-center pt-2">
+                <i class="fas fa-chevron-right mr-4 ml-4 text-gray-900"></i>
                 @if (item.IsCurrent)
                 {
-                    <span class="ml-1 text-sm font-medium text-gray-900 md:ml-2 hover:text-indigo-600  cursor-pointer">@item.Title</span>
+                    <span class="text-sm font-medium text-gray-900 hover:text-indigo-600 cursor-pointer">@item.Title</span>
                 }
                 else
                 {
-                    <a href="@item.Url" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600  cursor-pointer">
+                    <a href="@item.Url" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-indigo-600 hover:font-bold cursor-pointer">
                         @item.Title
                     </a>
                 }
@@ -29,15 +28,11 @@
 </nav>
 
 @code {
+    [CascadingParameter] public string? CurrentUri { get; set; }
+
     private List<BreadcrumbItem> BreadcrumbItems { get; set; } = new List<BreadcrumbItem>();
 
-    protected override void OnInitialized()
-    {
-        Navigation.LocationChanged += OnLocationChanged;
-        BuildBreadcrumbs();
-    }
-
-    private void OnLocationChanged(object sender, LocationChangedEventArgs e)
+    protected override void OnParametersSet()
     {
         BuildBreadcrumbs();
     }
@@ -45,26 +40,24 @@
     private void BuildBreadcrumbs()
     {
         BreadcrumbItems.Clear();
-        var segments = Navigation.ToBaseRelativePath(Navigation.Uri).Split('/', StringSplitOptions.RemoveEmptyEntries);
-        if (segments.Length > 0)
-        {
-            var currentUrl = "/";
-            foreach (var segment in segments)
-            {
-                currentUrl += segment + "/";
-                BreadcrumbItems.Add(new BreadcrumbItem
-                {
-                    Title = segment,
-                    Url = currentUrl,
-                    IsCurrent = (currentUrl == Navigation.ToBaseRelativePath(Navigation.Uri) + "/")
-                });
-            }
-        }
-    }
+        if (CurrentUri is null) return;
 
-    public void Dispose()
-    {
-        Navigation.LocationChanged -= OnLocationChanged;
+        var segments = Navigation.ToBaseRelativePath(CurrentUri).Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var currentUrl = "/";
+        foreach (var segment in segments)
+        {
+            currentUrl += segment + "/";
+
+            Links.SegmentAliases.TryGetValue(segment, out var alias);
+            alias ??= segment;
+
+            BreadcrumbItems.Add(new BreadcrumbItem
+            {
+                Title = alias,
+                Url = currentUrl,
+                IsCurrent = (currentUrl == Navigation.ToBaseRelativePath(CurrentUri) + "/")
+            });
+        }
     }
 
     public class BreadcrumbItem

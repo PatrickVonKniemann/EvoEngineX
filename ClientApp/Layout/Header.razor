@@ -1,11 +1,16 @@
 ﻿@using ClientApp.Components
+@inject NavigationManager Navigation
 
-<div class="flex justify-between bg-white p-5">
+<div class="flex justify-between bg-white p-5 shadow-md">
     <div class="left-content flex items-center">
         <Breadcrumb />
-
     </div>
-    <div class="right-content pt-4">
-        @* <GradientButton ButtonType=@ButtonType.primary ButtonText="Sign Up" Link=@Links.SignUp/> *@
+    <div class="right-content pt-4 flex items-center space-x-4">
+        <!-- Example buttons or other header content -->
+        <!-- Your content here -->
     </div>
 </div>
+
+@code {
+    [CascadingParameter] public string? CurrentUri { get; set; }
+}
