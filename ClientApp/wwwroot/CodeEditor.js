@@ -3,7 +3,7 @@ window.setDotNetHelper = (dotNetHelper) => {
 };
 
 window.createMonacoEditor = (element, options) => {
-    require.config({ paths: { 'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs' } });
+    require.config({paths: {'vs': 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.21.2/min/vs'}});
     require(['vs/editor/editor.main'], function () {
         // Register the MATLAB language
         monaco.languages.register({id: 'matlab'});
@@ -25,7 +25,7 @@ window.createMonacoEditor = (element, options) => {
                             '@default': 'identifier'
                         }
                     }],
-                    { include: '@whitespace' },
+                    {include: '@whitespace'},
                     [/[{}()\[\]]/, '@brackets'],
                     [/[<>](?!@symbols)/, '@brackets'],
                     [/[;,.]/, 'delimiter'],
@@ -58,7 +58,7 @@ window.createMonacoEditor = (element, options) => {
                 .catch(err => console.error('Error invoking UpdateCode:', err));
         });
     });
-    
+
 };
 
 window.setMonacoEditorValue = (formattedCode) => {
@@ -72,4 +72,48 @@ window.getMonacoEditorValue = () => {
         return window.monacoEditor.getValue();
     }
     return '';
+};
+
+window.highlightWords = (words) => {
+    console.log("Highlight words");
+    if (window.monacoEditor) {
+        console.log(`monacoEditor is setup search sing texts:`);
+
+        const model = window.monacoEditor.getModel();
+        const fullText = model.getValue();
+        console.log(fullText);
+
+        // Clear existing decorations
+        window.decorations = window.monacoEditor.deltaDecorations(window.decorations || [], []);
+
+        // Create new decorations
+        const newDecorations = [];
+
+        words.forEach((word) => {
+            let matchIndex = fullText.indexOf(word);
+            console.log(`Searching for word: ${word}`);
+            while (matchIndex !== -1) {
+                console.log(`Word '${word}' found at index: ${matchIndex}`);
+
+                const startPosition = model.getPositionAt(matchIndex);
+                const endPosition = model.getPositionAt(matchIndex + word.length);
+
+                newDecorations.push({
+                    range: new monaco.Range(startPosition.lineNumber, startPosition.column, endPosition.lineNumber, endPosition.column),
+                    options: {
+                        inlineClassName: 'myInlineDecoration',
+                        overviewRuler: {
+                            color: 'rgba(255, 0, 0, 0.7)',
+                            position: monaco.editor.OverviewRulerLane.Right
+                        }
+                    }
+                });
+
+                matchIndex = fullText.indexOf(word, matchIndex + word.length);
+            }
+        });
+
+        // Apply new decorations
+        window.decorations = window.monacoEditor.deltaDecorations([], newDecorations);
+    }
 };

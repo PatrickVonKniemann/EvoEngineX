@@ -1,4 +1,6 @@
 @inject IJSRuntime JsRuntime
+@inject NotificationService NotificationService
+@using ClientApp.Services
 @using Microsoft.JSInterop
 
 
@@ -25,7 +27,9 @@
                 language = PlatformLanguage,
                 theme = "vs"
             });
-            await JsRuntime.InvokeVoidAsync("setDotNetHelper", dotNetRef); // Pass the reference to JS
+            await JsRuntime.InvokeVoidAsync("setDotNetHelper", dotNetRef);
+            await Task.Delay(500);
+            await JsRuntime.InvokeVoidAsync("highlightWords", CodeEditorHelper.HighlightedWords);
         }
     }
 
@@ -38,7 +42,7 @@
         }
         catch (JSException ex)
         {
-            Console.Error.WriteLine($"JavaScript error: {ex.Message}");
+            NotificationService.ShowMessage($"JavaScript error: {ex.Message}");
         }
     }
 
@@ -46,12 +50,14 @@
     public async Task UpdateCode(string code)
     {
         await OnCodeChange.InvokeAsync(code);
+        await JsRuntime.InvokeVoidAsync("highlightWords", CodeEditorHelper.HighlightedWords);
     }
 
     [JSInvokable("FormatCode")]
     public async Task FormatCode(string code)
     {
         await OnCodeFormat.InvokeAsync(code);
+        await JsRuntime.InvokeVoidAsync("highlightWords", CodeEditorHelper.HighlightedWords);
     }
 
 }

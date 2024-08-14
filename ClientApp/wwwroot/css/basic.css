@@ -45,3 +45,8 @@
     height: 24px;
     animation: spin 1s linear infinite;
 }
+
+.myInlineDecoration {
+    background-color: #4f46e5; /* Indigo-600 */
+    border: 1px solid #4f46e5; /* Indigo-600 */
+}
