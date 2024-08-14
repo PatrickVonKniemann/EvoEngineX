@@ -1,5 +1,6 @@
 ﻿@page "/code-base/{codeBaseId}"
 @inject IJSRuntime JsRuntime
+@inject CodeFormatService CodeFormatService
 @inject CodeBaseService CodeBaseService
 @inject NotificationService NotificationService
 @inject CodeRunService CodeRunService
@@ -111,7 +112,7 @@ else
             try
             {
                 // Call the formatting service
-                var formattedCode = await CodeBaseService.FormatCodeAsync(codeToFormat, _codeBase.SupportedPlatform.ToString());
+                var formattedCode = await CodeFormatService.FormatCodeAsync(codeToFormat, _codeBase.SupportedPlatform.ToString());
 
                 // Update the editor with the formatted code
                 await JsRuntime.InvokeVoidAsync("setMonacoEditorValue", formattedCode);
@@ -137,10 +138,14 @@ else
                 {
                     CodeBaseId = _codeBase.Id
                 };
-
+                await CodeFormatService.ValidateFormatAsync(_codeBase.Code, _codeBase.SupportedPlatform.ToString());
                 await CodeRunService.AddEntityAsync(newRun);
                 await LoadCodeRuns();
                 await Task.Delay(2000); // Show the "Running..." message for 2 seconds
+            }
+            catch (Exception ex)
+            {
+                NotificationService.ShowMessage($"Code running failed: {ex.Message}");
             }
             finally
             {

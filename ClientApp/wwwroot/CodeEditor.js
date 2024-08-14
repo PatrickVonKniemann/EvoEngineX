@@ -103,7 +103,6 @@ window.highlightWords = (words) => {
                     options: {
                         inlineClassName: 'myInlineDecoration',
                         overviewRuler: {
-                            color: 'rgba(255, 0, 0, 0.7)',
                             position: monaco.editor.OverviewRulerLane.Right
                         }
                     }
