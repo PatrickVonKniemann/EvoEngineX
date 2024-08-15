@@ -2,8 +2,10 @@ namespace Generics.Enums;
 
 public enum RunStatus
 {
+    Validating,
     Ready,
     Running,
-    Paused,
+    PausedRunning,
+    PausedValidating,
     Done
 }

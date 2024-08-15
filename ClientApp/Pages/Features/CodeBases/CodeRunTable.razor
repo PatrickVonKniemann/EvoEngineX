@@ -16,9 +16,9 @@
     @foreach (var codeRun in CodeRuns.Items.Values)
     {
         <tr class="bg-white border-b text-gray-950 w-full text-center">
-            <td class="px-1 py-1 font-medium whitespace-nowrap underline text-indigo-500 hover:text-indigo-700 visited:text-indigo-900">
+            <td class="px-1 py-1 font-medium whitespace-nowrap h-4 underline text-indigo-500 hover:text-indigo-700 visited:text-indigo-900">
                 <a href="@codeRun.Id">
-                    <i class="fas fa-info-circle text-indigo-600"></i>
+                    <i class="fa fa-eye text-indigo-600"></i>
                 </a>
             </td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">
@@ -39,7 +39,8 @@
     {
         RunStatus.Ready => "text-cyan-400",
         RunStatus.Running => "text-indigo-600",
-        RunStatus.Paused => "text-orange-500",
+        RunStatus.PausedRunning => "text-orange-500",
+        RunStatus.PausedValidating => "text-orange-500",
         RunStatus.Done => "text-green-500",
         _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
     };
