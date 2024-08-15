@@ -1,11 +1,11 @@
 @using ExternalDomainEntities.CodeRunDto.Query
 @using Generics.Enums
 @using ClientApp.Components
-<h2 class="m-3 text-base font-semibold leading-7 text-indigo-600">Previous runs:</h2>
+<h2 class="m-3 text-base font-semibold leading-7 text-indigo-600 max-w-fit">Previous runs:</h2>
 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mb-10">
-    <thead class="text-xs text-gray-700 uppercase">
+    <thead class="text-xs text-gray-700 uppercase text-center">
     <tr>
-        <th scope="col" class="px-6 py-3">Run ID</th>
+        <th scope="col" class="px-2 py-3">Run ID</th>
         <th scope="col" class="px-6 py-3">Status</th>
         <th scope="col" class="px-6 py-3">Start Time</th>
         <th scope="col" class="px-6 py-3">End Time</th>
@@ -15,8 +15,10 @@
     <tbody>
     @foreach (var codeRun in CodeRuns.Items.Values)
     {
-        <tr class="bg-white border-b text-gray-950 w-full">
-            <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Id</td>
+        <tr class="bg-white border-b text-gray-950 w-full text-center">
+            <td class="px-1 py-1  font-medium whitespace-nowrap underline text-indigo-500 hover:text-indigo-700 visited:text-indigo-900">
+                <a href="@codeRun.Id">ID</a>
+            </td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">
                 <RunStatusProgressBar ParentRunStatus=@codeRun.Status/>
             </td>

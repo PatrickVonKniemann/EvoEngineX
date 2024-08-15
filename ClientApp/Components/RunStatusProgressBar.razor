@@ -1,49 +1,52 @@
 @using Generics.Enums
 
-<nav aria-label="Progress">
-    <ol class="inline-flex items-center">
-        @foreach (var step in ProgressSteps)
+<nav aria-label="Progress" class="w-full">
+    <ol class="flex items-center space-x-4">
+        @for (int i = 0; i < ProgressSteps.Count; i++)
         {
-            <li class="items-center">
-                @if (step.Status == RunStatus.Done)
+            <li class="flex items-center">
+                @if (ProgressSteps[i].Status == RunStatus.Done)
                 {
-                    <span class="inline-flex text-sm font-medium text-indigo-500 cursor-pointer">
-                        <i class="fas fa-circle-check text-indigo-500 mr-2"></i>@step.Title
+                    <span class="inline-flex items-center text-sm font-medium text-indigo-500 cursor-pointer">
+                        <i class="fas fa-circle-check text-indigo-500 mr-1"></i>@ProgressSteps[i].Title
                     </span>
                 }
-                else if (step.Status == RunStatus.Paused)
+                else if (ProgressSteps[i].Status == RunStatus.Paused)
                 {
-                    <span class="inline-flex text-sm font-medium text-yellow-600 cursor-pointer">
-                        <i class="fas fa-pause-circle text-yellow-600 mr-2"></i>@step.Title
+                    <span class="inline-flex items-center text-sm font-medium text-yellow-600 cursor-pointer">
+                        <i class="fas fa-pause-circle text-yellow-600 mr-1"></i>@ProgressSteps[i].Title
                     </span>
                 }
-                else if (step.Status == RunStatus.Running)
+                else if (ProgressSteps[i].Status == RunStatus.Running)
                 {
-                    <span class="inline-flex text-sm font-medium text-indigo-600 cursor-pointer">
-                        <Spinner Size="h-3 w-3" AdditionalClasses="border-indigo-600 mr-2" LoadingText="@step.Title"/>
+                    <span class="inline-flex items-center text-sm font-medium text-indigo-600 cursor-pointer">
+                        <Spinner Size="h-4 w-4" AdditionalClasses="border-indigo-600 mr-1" LoadingText="@ProgressSteps[i].Title"/>
                     </span>
                 }
-                else if (step.Status == RunStatus.Ready && IsCurrentStep(step))
+                else if (ProgressSteps[i].Status == RunStatus.Ready && IsCurrentStep(ProgressSteps[i]))
                 {
-                    <span class="inline-flex text-sm font-medium text-gray-400 cursor-pointer">
-                        <Spinner Size="h-3 w-3" AdditionalClasses="border-indigo-600 mr-2" LoadingText="@step.Title"/>
+                    <span class="inline-flex items-center text-sm font-medium text-gray-400 cursor-pointer">
+                        <Spinner Size="h-4 w-4" AdditionalClasses="border-indigo-600 mr-1" LoadingText="@ProgressSteps[i].Title"/>
                     </span>
                 }
                 else
                 {
-                    <span class="inline-flex text-sm font-medium text-gray-400 cursor-pointer">
-                        <i class="fas fa-circle text-gray-400 mr-2"></i>@step.Title
+                    <span class="inline-flex items-center text-sm font-medium text-gray-400 cursor-pointer">
+                        <i class="fas fa-circle text-gray-400 mr-1"></i>@ProgressSteps[i].Title
                     </span>
                 }
-
-                @if (!step.IsLast)
-                {
-                    <i class="fas fa-chevron-right mx-4 text-gray-900"></i>
-                }
             </li>
+
+            @if (i < ProgressSteps.Count - 1)
+            {
+                <li class="flex items-center justify-center">
+                    <i class="fas fa-chevron-right text-gray-900"></i>
+                </li>
+            }
         }
     </ol>
 </nav>
+
 
 @code {
     [Parameter] public RunStatus ParentRunStatus { get; set; } // This parameter comes from the parent component
@@ -68,18 +71,18 @@
         else if (ParentRunStatus == RunStatus.Running)
         {
             ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Done });
-            ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Running });
-            ProgressSteps.Add(new ProgressStep { Title = "Finished", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "", Status = RunStatus.Running });
+            ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Ready });
         }
         else if (ParentRunStatus == RunStatus.Paused)
         {
             ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Done });
             ProgressSteps.Add(new ProgressStep { Title = "Paused", Status = RunStatus.Paused });
-            ProgressSteps.Add(new ProgressStep { Title = "Finished", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Ready });
         }
         else if (ParentRunStatus == RunStatus.Ready)
         {
-            ProgressSteps.Add(new ProgressStep { Title = "Starting", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "", Status = RunStatus.Ready });
             ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Ready });
             ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Ready });
         }

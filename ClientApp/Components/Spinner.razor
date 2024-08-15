@@ -5,10 +5,10 @@
 }
 
 <div class="flex justify-center items-center">
-    <div class="flex flex-col items-center">
+    <div class="inline-flex items-center">
         <div class="@($"{Size} border-t-transparent border-solid animate-spin rounded-full border-4 {AdditionalClasses}")" role="status">
             <span class="sr-only">@LoadingText</span>
         </div>
-        <p class="mt-4 text-indigo-500">@LoadingText</p>
+        <span class="mt-4 text-indigo-500">@LoadingText</span>
     </div>
 </div>
