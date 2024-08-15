@@ -1,7 +1,7 @@
 @using Generics.Enums
 
 <nav aria-label="Progress">
-    <ol class="inline-flex items-center space-x-4">
+    <ol class="inline-flex items-center">
         @foreach (var step in ProgressSteps)
         {
             <li class="items-center">
@@ -23,10 +23,16 @@
                         <Spinner Size="h-3 w-3" AdditionalClasses="border-indigo-600 mr-2" LoadingText="@step.Title"/>
                     </span>
                 }
-                else if (step.Status == RunStatus.Ready)
+                else if (step.Status == RunStatus.Ready && IsCurrentStep(step))
                 {
                     <span class="inline-flex text-sm font-medium text-gray-400 cursor-pointer">
-                        <Spinner Size="h-3 w-3" AdditionalClasses="border-gray-400 mr-2" LoadingText="@step.Title"/>
+                        <Spinner Size="h-3 w-3" AdditionalClasses="border-indigo-600 mr-2" LoadingText="@step.Title"/>
+                    </span>
+                }
+                else
+                {
+                    <span class="inline-flex text-sm font-medium text-gray-400 cursor-pointer">
+                        <i class="fas fa-circle text-gray-400 mr-2"></i>@step.Title
                     </span>
                 }
 
@@ -73,7 +79,7 @@
         }
         else if (ParentRunStatus == RunStatus.Ready)
         {
-            ProgressSteps.Add(new ProgressStep { Title = "Ready", Status = RunStatus.Ready });
+            ProgressSteps.Add(new ProgressStep { Title = "Starting", Status = RunStatus.Ready });
             ProgressSteps.Add(new ProgressStep { Title = "Running", Status = RunStatus.Ready });
             ProgressSteps.Add(new ProgressStep { Title = "Done", Status = RunStatus.Ready });
         }
@@ -90,6 +96,13 @@
         {
             ProgressSteps.Last().IsLast = true;
         }
+    }
+
+    private bool IsCurrentStep(ProgressStep step)
+    {
+        var currentStepIndex = ProgressSteps.FindIndex(s => s.Status == ParentRunStatus);
+        var stepIndex = ProgressSteps.IndexOf(step);
+        return currentStepIndex == stepIndex;
     }
 
     public class ProgressStep
