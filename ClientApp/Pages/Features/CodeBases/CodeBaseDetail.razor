@@ -12,6 +12,7 @@
 @using ExternalDomainEntities.CodeBaseDto.Command
 @using ExternalDomainEntities.CodeRunDto.Command
 @using Generics.Enums
+@using Helpers
 
 <PageTitle>CodeBase Detail Page</PageTitle>
 
@@ -28,7 +29,9 @@ else
                 <h2 class="m-3 text-base font-semibold leading-7 "><span class="text-indigo-600">@_codeBase.Name</span> / <span class="text-indigo-900">@_codeBase.SupportedPlatform</span></h2>
             </div>
             <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange" OnCodeFormat="HandleCodeFormat" PlatformLanguage=@_codeBase.SupportedPlatform.ToString().ToLower()/>
-
+            <div class="text-sm text-gray-600 bg-gray-100 pl-2 rounded italic">
+                @CodeFormatHelper.GetInformationText(_codeBase.SupportedPlatform.ToString().ToLower())
+            </div>
             <div class="my-8">
                 <button class="primary-gradient cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
                     @if (_isRunning)

@@ -5,7 +5,7 @@
 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mb-10">
     <thead class="text-xs text-gray-700 uppercase text-center">
     <tr>
-        <th scope="col" class="px-2 py-3">Run ID</th>
+        <th scope="col" class="px-2 py-3">Run detail</th>
         <th scope="col" class="px-6 py-3">Status</th>
         <th scope="col" class="px-6 py-3">Start Time</th>
         <th scope="col" class="px-6 py-3">End Time</th>
@@ -16,14 +16,14 @@
     @foreach (var codeRun in CodeRuns.Items.Values)
     {
         <tr class="bg-white border-b text-gray-950 w-full text-center">
-            <td class="px-1 py-1  font-medium whitespace-nowrap underline text-indigo-500 hover:text-indigo-700 visited:text-indigo-900">
-                <a href="@codeRun.Id">ID</a>
+            <td class="px-1 py-1 font-medium whitespace-nowrap underline text-indigo-500 hover:text-indigo-700 visited:text-indigo-900">
+                <a href="@codeRun.Id">
+                    <i class="fas fa-info-circle text-indigo-600"></i>
+                </a>
             </td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">
                 <RunStatusProgressBar ParentRunStatus=@codeRun.Status/>
             </td>
-            @* <td class="px-6 py-3 font-medium whitespace-nowrap @GetColorByStatus(codeRun.Status)">@codeRun.Status</td> *@
-
             <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunStart</td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunFinish</td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Results</td>
