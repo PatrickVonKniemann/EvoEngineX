@@ -6,6 +6,8 @@ public enum RunStatus
     Ready,
     Running,
     PausedRunning,
+    ErrorRunning,
     PausedValidating,
+    ErrorValidating,
     Done
 }

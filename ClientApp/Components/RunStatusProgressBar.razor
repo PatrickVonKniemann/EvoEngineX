@@ -9,33 +9,39 @@
                     case RunStatus.Done:
                         <span class="inline-flex items-center text-sm font-medium text-indigo-500 cursor-pointer">
                             <i class="fas fa-circle-check text-indigo-500 mr-1"></i>@step.Title
-                        </span>;
+                        </span>
                         break;
 
                     case RunStatus.PausedRunning:
                     case RunStatus.PausedValidating:
                         <span class="inline-flex items-center text-sm font-medium text-yellow-600 cursor-pointer">
                             <i class="fas fa-pause-circle text-yellow-600 mr-1"></i>Paused
-                        </span>;
+                        </span>
                         break;
 
                     case RunStatus.Running:
                     case RunStatus.Validating:
                         <span class="inline-flex items-center text-sm font-medium text-indigo-600 cursor-pointer">
                             <Spinner Size="h-4 w-4" AdditionalClasses="border-indigo-600 mr-1" LoadingText=""/>
-                        </span>;
+                        </span>
                         break;
 
                     case RunStatus.Ready when IsCurrentStep(step):
                         <span class="inline-flex items-center text-sm font-medium text-gray-400 cursor-pointer">
                             <Spinner Size="h-4 w-4" AdditionalClasses="border-indigo-600 mr-1" LoadingText=""/>
-                        </span>;
+                        </span>
+                        break;
+                    case RunStatus.ErrorRunning:
+                    case RunStatus.ErrorValidating:
+                        <span class="inline-flex items-center text-sm font-medium text-red-500 cursor-pointer">
+                            <i class="fas fa-times-circle text-red-500 mr-1"></i>Error
+                        </span>
                         break;
 
                     default:
                         <span class="inline-flex items-center text-sm font-medium text-gray-400 cursor-pointer">
                             <i class="fas fa-circle text-gray-400 mr-1"></i>@step.Title
-                        </span>;
+                        </span>
                         break;
                 }
             </li>
@@ -89,6 +95,13 @@
             case RunStatus.Validating:
                 AddSteps(RunStatus.Validating, RunStatus.Ready, RunStatus.Ready, RunStatus.Ready);
                 break;
+            case RunStatus.ErrorRunning:
+                AddSteps(RunStatus.Done, RunStatus.Done, RunStatus.ErrorRunning, RunStatus.Ready);
+                break;
+
+            case RunStatus.ErrorValidating:
+                AddSteps(RunStatus.ErrorValidating, RunStatus.Ready, RunStatus.Ready, RunStatus.Ready);
+                break;
 
             default:
                 AddSteps(RunStatus.Ready, RunStatus.Ready, RunStatus.Ready, RunStatus.Ready);
@@ -118,4 +131,5 @@
         public RunStatus Status { get; set; }
         public bool IsLast { get; set; } = false;
     }
+
 }
