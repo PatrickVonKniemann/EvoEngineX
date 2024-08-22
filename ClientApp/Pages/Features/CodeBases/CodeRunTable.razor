@@ -1,6 +1,36 @@
 @using ExternalDomainEntities.CodeRunDto.Query
 @using Generics.Enums
 @using ClientApp.Components
+@using ClientApp.Services
+@inject CodeRunService CodeRunService
+
+@if (_isModalVisible && _selectedCodeRun != null)
+{
+    <ModalDialog>
+        <button class="absolute top-0 right-0 p-2 text-gray-600" @onclick="CloseModal">
+            <i class="fa fa-times"></i>
+        </button>
+        <h3 class="text-lg font-bold">Run Details</h3>
+        <p>
+            <strong>Run ID:</strong> @_selectedCodeRun.Id
+        </p>
+        <p>
+            <strong>Code:</strong> @_selectedCodeRun.Code
+        </p>
+        <p>
+            <strong>Status:</strong> @_selectedCodeRun.Status
+        </p>
+        <p>
+            <strong>Start Time:</strong> @_selectedCodeRun.RunStart
+        </p>
+        <p>
+            <strong>End Time:</strong> @_selectedCodeRun.RunFinish
+        </p>
+
+    </ModalDialog>
+}
+
+
 <h2 class="m-3 text-base font-semibold leading-7 text-indigo-600 max-w-fit">Previous runs:</h2>
 <table class="w-full text-sm text-left rtl:text-right text-gray-500 dark:text-gray-400 mb-10">
     <thead class="text-xs text-gray-700 uppercase text-center">
@@ -17,7 +47,7 @@
     {
         <tr class="bg-white border-b text-gray-950 w-full text-center">
             <td class="px-1 py-1 font-medium whitespace-nowrap h-4 underline text-indigo-500 hover:text-indigo-700 visited:text-indigo-900">
-                <a href="@codeRun.Id">
+                <a class="cursor-pointer" @onclick="() => ShowDetailsAsync(codeRun.Id.ToString())">
                     <i class="fa fa-eye text-indigo-600"></i>
                 </a>
             </td>
@@ -32,8 +62,26 @@
     </tbody>
 </table>
 
+
 @code {
     [Parameter] public required ReadCodeRunListByCodeBaseIdResponse CodeRuns { get; set; }
+
+    private bool _isModalVisible = false;
+    private ReadCodeRunResponse? _selectedCodeRun;
+
+    private async Task ShowDetailsAsync(string codeRunId)
+    {
+        _selectedCodeRun = await CodeRunService.GetEntityAsync(codeRunId);
+        _isModalVisible = true;
+    }
+
+    private Task CloseModal()
+    {
+        _isModalVisible = false;
+        _selectedCodeRun = null;
+        return Task.CompletedTask;
+    }
+
 
     private string GetColorByStatus(RunStatus status) => status switch
     {

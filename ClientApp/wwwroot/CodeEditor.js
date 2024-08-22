@@ -79,7 +79,6 @@ window.highlightWords = (words) => {
 
         const model = window.monacoEditor.getModel();
         const fullText = model.getValue();
-        console.log(fullText);
 
         // Clear existing decorations
         window.decorations = window.monacoEditor.deltaDecorations(window.decorations || [], []);

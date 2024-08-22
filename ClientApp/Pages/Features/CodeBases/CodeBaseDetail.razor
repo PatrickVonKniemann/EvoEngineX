@@ -7,11 +7,9 @@
 @using ClientApp.Services
 @using ExternalDomainEntities.CodeRunDto.Query
 @using ClientApp.Components
-@using ExternalDomainEntities
 @using ExternalDomainEntities.CodeBaseDto.Query
 @using ExternalDomainEntities.CodeBaseDto.Command
 @using ExternalDomainEntities.CodeRunDto.Command
-@using Generics.Enums
 @using Helpers
 
 <PageTitle>CodeBase Detail Page</PageTitle>
@@ -67,8 +65,8 @@ else
     private int _currentPage = 1;
     private const int PageSize = 10;
     private ReadCodeBaseResponse? _codeBase;
-    private bool _isRunning = false;
-    private bool _isSaving = false;
+    private bool _isRunning;
+    private bool _isSaving;
 
     protected override async Task OnInitializedAsync()
     {
@@ -139,7 +137,8 @@ else
             {
                 var newRun = new CreateCodeRunRequest
                 {
-                    CodeBaseId = _codeBase.Id
+                    CodeBaseId = _codeBase.Id,
+                    Code = _codeBase.Code
                 };
                 await CodeFormatService.ValidateFormatAsync(_codeBase.Code, _codeBase.SupportedPlatform.ToString());
                 await CodeRunService.AddEntityAsync(newRun);

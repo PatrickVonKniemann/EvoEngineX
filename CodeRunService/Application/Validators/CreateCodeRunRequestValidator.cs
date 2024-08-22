@@ -9,6 +9,8 @@ public class CreateCodeRunRequestValidator : AbstractValidator<CreateCodeRunRequ
     {
         RuleFor(x => x.CodeBaseId)
             .NotEmpty().WithMessage("CodeBaseId is required.");
+        RuleFor(x => x.Code)
+            .NotEmpty().WithMessage("Code is required.");
 
     }
 }
