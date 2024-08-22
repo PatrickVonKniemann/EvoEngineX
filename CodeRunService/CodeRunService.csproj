@@ -9,7 +9,7 @@
     
 
     <ItemGroup>
-        <PackageReference Include="FastEndpoints" Version="5.27.0.1-beta" />
+        <PackageReference Include="FastEndpoints" Version="5.28.0" />
         <PackageReference Include="FastEndpoints.Swagger" Version="5.27.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.4">
