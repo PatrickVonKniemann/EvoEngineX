@@ -34,15 +34,16 @@
 </div>
 
 @code {
-private ReadUserResponse? _user;
+    private ReadUserResponse? _user;
 
-protected override async Task OnInitializedAsync()
-{
-await LoadDataAsync();
-}
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
 
-private async Task LoadDataAsync()
-{
-_user = await UserService.GetEntityAsync("123e4567-e89b-12d3-a456-426614174008");
-}
+    private async Task LoadDataAsync()
+    {
+        _user = await UserService.GetEntityAsync("123e4567-e89b-12d3-a456-426614174008");
+    }
+
 }
