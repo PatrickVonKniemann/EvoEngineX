@@ -1,7 +1,5 @@
 using ExternalDomainEntities.CodeRunDto.Command;
 using ExternalDomainEntities.CodeRunDto.Query;
-using Microsoft.Extensions.Logging;
-using System.Net.Http;
 
 namespace ClientApp.Services;
 
