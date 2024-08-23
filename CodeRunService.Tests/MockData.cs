@@ -12,6 +12,7 @@ public static class MockData
     public static readonly CodeRun MockCodeRun = new()
     {
         Id = MockId,
+        Code = "Hellow world",
         CodeBaseId = new Guid("222e4567-e89b-12d3-a456-426614174000"),
         Status = RunStatus.Ready,
         RunStart = DateTime.UtcNow,
@@ -28,6 +29,7 @@ public static class MockData
     public static readonly CodeRun ExpectedCodeRun = new()
     {
         Id = MockId,
+        Code = "Hellow world",
         CodeBaseId = new Guid("222e4567-e89b-12d3-a456-426614174000"),
         Status = RunStatus.Ready,
         RunStart = DateTime.UtcNow,

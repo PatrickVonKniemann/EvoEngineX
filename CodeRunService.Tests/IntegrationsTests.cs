@@ -27,6 +27,7 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         var codeRun = new CreateCodeRunRequest
         {
             CodeBaseId = expectedCodeBaseId,
+            Code = "Hellow world",
         };
         var content = DeserializationHelper.CreateJsonContent(codeRun);
 
