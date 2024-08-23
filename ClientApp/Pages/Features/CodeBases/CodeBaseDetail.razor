@@ -6,46 +6,69 @@
 
 @if (_codeRuns == null)
 {
-    <Spinner Size="h-16 w-16 mt-5 pt-5" AdditionalClasses="border-indigo-500" LoadingText=""/>
+    <Spinner Size="h-16 w-16 mt-5 pt-5" AdditionalClasses="border-indigo-500" LoadingText="" />
 }
 else
 {
     <div class="overflow-x-auto">
         <div class="max-h-fit overflow-y-auto">
             <div class="inline-flex">
-                <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">Your code</p>
+                <p class="m-3 text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+                    Your code
+                </p>
                 <h2 class="m-3 text-base font-semibold leading-7">
-                    <span class="text-indigo-600">@_codeBase.Name</span> / <span class="text-indigo-900">@_codeBase.SupportedPlatform</span>
+                    <span class="text-indigo-600">@_codeBase.Name</span> /
+                    <span class="text-indigo-900">@_codeBase.SupportedPlatform</span>
                 </h2>
             </div>
-            <CodeEditor InitialCode="@_codeBase?.Code" OnCodeChange="HandleCodeChange" OnCodeFormat="HandleCodeFormat" PlatformLanguage="@_codeBase.SupportedPlatform.ToString().ToLower()"/>
+
+            <CodeEditor 
+                InitialCode="@_codeBase?.Code" 
+                OnCodeChange="HandleCodeChange" 
+                OnCodeFormat="HandleCodeFormat" 
+                PlatformLanguage="@_codeBase.SupportedPlatform.ToString().ToLower()" 
+            />
+
             <div class="text-sm text-gray-600 bg-gray-100 pl-2 rounded italic">
                 @CodeFormatHelper.GetInformationText(_codeBase.SupportedPlatform.ToString().ToLower())
             </div>
+
             <div class="my-8">
-                <button class="primary-gradient cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleRunChanged" disabled="@_isRunning">
+                <button 
+                    class="primary-gradient cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" 
+                    @onclick="HandleRunChanged" 
+                    disabled="@_isRunning">
                     @if (_isRunning)
                     {
                         <span>...</span>
                     }
                     else
                     {
-                        <span>Run </span>
+                        <span>Run</span>
                     }
                 </button>
-                <button class="secondary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" @onclick="HandleSaveChanged" disabled="@_isSaving">
+                <button 
+                    class="secondary-basic cursor-pointer text-center mx-3 px-6 py-4 text-white font-bold rounded-lg" 
+                    @onclick="HandleSaveChanged" 
+                    disabled="@_isSaving">
                     @if (_isSaving)
                     {
-                        <span>.... </span>
+                        <span>....</span>
                     }
                     else
                     {
-                        <span>Save </span>
+                        <span>Save</span>
                     }
                 </button>
             </div>
-            <CodeRunTable CodeRuns="_codeRuns"/>
-            <Pagination PageNumber="@_codeRuns.Pagination.PageNumber" TotalPages="@_codeRuns.Pagination.TotalPages" OnPageChanged="HandlePageChanged"/>
+
+            <CodeRunTable CodeRuns="_codeRuns" />
+
+            <Pagination 
+                PageNumber="@_codeRuns.Pagination.PageNumber" 
+                TotalPages="@_codeRuns.Pagination.TotalPages" 
+                OnPageChanged="HandlePageChanged" 
+            />
         </div>
     </div>
 }

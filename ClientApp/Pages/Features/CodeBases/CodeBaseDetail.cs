@@ -19,11 +19,14 @@ public partial class CodeBaseDetail
     private bool _isRunning;
     private bool _isSaving;
 
+    // Injected services
     [Inject] private IJSRuntime JsRuntime { get; set; } = default!;
     [Inject] private CodeFormatService CodeFormatService { get; set; } = default!;
     [Inject] private CodeBaseService CodeBaseService { get; set; } = default!;
     [Inject] private NotificationService NotificationService { get; set; } = default!;
     [Inject] private CodeRunService CodeRunService { get; set; } = default!;
+
+    #region Initialization
 
     protected override async Task OnInitializedAsync()
     {
@@ -36,6 +39,10 @@ public partial class CodeBaseDetail
         await LoadCodeRuns();
     }
 
+    #endregion
+
+    #region Data Loading Methods
+
     private async Task LoadCodeBase()
     {
         _codeBase = await CodeBaseService.GetEntityAsync(CodeBaseId);
@@ -47,6 +54,10 @@ public partial class CodeBaseDetail
         _codeRuns = await CodeRunService.GetDataAsync($"by-code-base-id/{CodeBaseId}", _currentPage, PageSize);
         StateHasChanged();
     }
+
+    #endregion
+
+    #region Event Handlers
 
     private async Task HandlePageChanged(int pageNumber)
     {
@@ -69,12 +80,14 @@ public partial class CodeBaseDetail
         {
             try
             {
-                // Call the formatting service
-                var formattedCode = await CodeFormatService.FormatCodeAsync(codeToFormat, _codeBase.SupportedPlatform.ToString());
+                // Format the code using the service
+                var formattedCode =
+                    await CodeFormatService.FormatCodeAsync(codeToFormat, _codeBase.SupportedPlatform.ToString());
+
                 // Update the editor with the formatted code
                 await JsRuntime.InvokeVoidAsync("setMonacoEditorValue", formattedCode);
 
-                // Ensure Blazor state is also updated
+                // Update the component state
                 await HandleCodeChange(formattedCode);
             }
             catch (Exception ex)
@@ -96,9 +109,12 @@ public partial class CodeBaseDetail
                     CodeBaseId = _codeBase.Id,
                     Code = _codeBase.Code
                 };
+
+                // Validate and run the code
                 await CodeFormatService.ValidateFormatAsync(_codeBase.Code, _codeBase.SupportedPlatform.ToString());
                 await CodeRunService.AddEntityAsync(newRun);
                 await LoadCodeRuns();
+
                 await Task.Delay(2000); // Show the "Running..." message for 2 seconds
             }
             catch (Exception ex)
@@ -129,6 +145,7 @@ public partial class CodeBaseDetail
                 };
 
                 await CodeBaseService.UpdateEntityAsync(CodeBaseId, updateRequest);
+
                 await Task.Delay(2000); // Show the "Saved" message for 2 seconds
             }
             finally
@@ -137,4 +154,6 @@ public partial class CodeBaseDetail
             }
         }
     }
+
+    #endregion
 }
