@@ -35,4 +35,10 @@
         <ProjectReference Include="..\Helpers\Helpers.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Compile Update="Pages\Features\CodeBases\CodeBaseDetail.cs">
+        <DependentUpon>CodeBaseDetail.razor</DependentUpon>
+      </Compile>
+    </ItemGroup>
+
 </Project>
