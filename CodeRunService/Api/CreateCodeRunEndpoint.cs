@@ -36,6 +36,7 @@ public class CreateCodeRunEndpoint(ILogger<CreateCodeRunEndpoint> logger, ICodeR
         CreateCodeRunDetailRequest newCodeRun = new CreateCodeRunDetailRequest
         {
             CodeBaseId = req.CodeBaseId,
+            Code = req.Code,
             Status = RunStatus.Ready,
             RunStart = formattedDateTime
         };

@@ -8,6 +8,7 @@ namespace ExternalDomainEntities.CodeRunDto.Command;
 public record CreateCodeRunDetailRequest
 {
     public required Guid CodeBaseId { get; set; }
+    public required string Code { get; set; }
     public required RunStatus Status { get; set; }
     public required DateTime RunStart { get; set; }
 }

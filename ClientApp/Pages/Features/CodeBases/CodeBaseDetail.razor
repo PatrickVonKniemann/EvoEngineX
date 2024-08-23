@@ -114,7 +114,6 @@ else
             {
                 // Call the formatting service
                 var formattedCode = await CodeFormatService.FormatCodeAsync(codeToFormat, _codeBase.SupportedPlatform.ToString());
-
                 // Update the editor with the formatted code
                 await JsRuntime.InvokeVoidAsync("setMonacoEditorValue", formattedCode);
 

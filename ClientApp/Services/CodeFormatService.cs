@@ -9,30 +9,33 @@ public class CodeFormatService(
     ILogger<CodeFormatService> logger,
     NotificationService notificationService)
 {
-    private const string BaseUrl = "http://localhost:5004/format";
+    private const string BaseUrl = "http://localhost:5004";
 
     public async Task<string?> FormatCodeAsync(string codeToFormat, string platformLanguage)
     {
-        return await ProcessRequestAsync<string?>(codeToFormat, platformLanguage, "formatting");
+        var response = await ProcessRequestAsync<string?>(codeToFormat, platformLanguage, "format");
+        var result = await response.Content.ReadFromJsonAsync<CodeResponse>();
+        return result.Code;
     }
 
     public async Task<bool> ValidateFormatAsync(string codeToValidate, string platformLanguage)
     {
-        return await ProcessRequestAsync<bool>(codeToValidate, platformLanguage, "validating");
+        var response = await ProcessRequestAsync<bool>(codeToValidate, platformLanguage, "validate");
+        return await response.Content.ReadFromJsonAsync<bool>();
     }
 
-    private async Task<T> ProcessRequestAsync<T>(string code, string platformLanguage, string operation)
+    private async Task<HttpResponseMessage> ProcessRequestAsync<T>(string code, string platformLanguage,
+        string operation)
     {
         try
         {
-            var url = $"{BaseUrl}/{platformLanguage.ToLower()}";
+            var url = $"{BaseUrl}/{operation}/{platformLanguage.ToLower()}";
             var content = new CodeRequest { Code = code };
 
             var response = await httpClient.PostAsync(url, DeserializationHelper.CreateJsonContent(content));
             response.EnsureSuccessStatusCode();
 
-            var result = await response.Content.ReadFromJsonAsync<T>();
-            return result;
+            return response;
         }
         catch (HttpRequestException httpEx)
         {
