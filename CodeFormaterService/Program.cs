@@ -1,3 +1,5 @@
+using CodeFormaterService.Consumers;
+using CodeFormaterService.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 
@@ -15,6 +17,8 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
+builder.Services.AddHostedService<CodeValidationRequestConsumer>(); 
 
 var app = builder.Build();
 app.UseCors("AllowAllOrigins");

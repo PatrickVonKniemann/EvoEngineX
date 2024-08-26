@@ -1,4 +1,5 @@
 using CodeRunService.Application.Services;
+using CodeRunService.Consumers;
 using CodeRunService.Infrastructure;
 using CodeRunService.Infrastructure.Database;
 using Common;
@@ -7,6 +8,7 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using Helpers;
 using Microsoft.EntityFrameworkCore;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,8 +42,13 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ICodeRunCommandService, CodeRunCommandService>();
 builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
 builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
-
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
+
+builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp => new ConnectionFactory { HostName = "localhost" });
+builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+builder.Services.AddHostedService<CodeValidationResultEventConsumer>(); 
+builder.Services.AddHostedService<CodeExecutionResultEventConsumer>(); 
+
 
 var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
 connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")

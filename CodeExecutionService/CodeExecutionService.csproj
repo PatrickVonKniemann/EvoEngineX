@@ -8,15 +8,13 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="FastEndpoints" Version="5.28.0" />
-        <PackageReference Include="FastEndpoints.Swagger" Version="5.27.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.1"/>
         <PackageReference Include="Swashbuckle.AspNetCore" Version="6.4.0"/>
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\ExternalDomainEntities\ExternalDomainEntities.csproj" />
-      <ProjectReference Include="..\Generics\Generics.csproj" />
     </ItemGroup>
 
 </Project>

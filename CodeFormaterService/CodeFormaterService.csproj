@@ -17,6 +17,7 @@
     </ItemGroup>
 
     <ItemGroup>
+      <ProjectReference Include="..\Common\Common.csproj" />
       <ProjectReference Include="..\ExternalDomainEntities\ExternalDomainEntities.csproj" />
     </ItemGroup>
 

@@ -1,9 +1,10 @@
+using CodeFormaterService.Services;
 using ExternalDomainEntities;
 using FastEndpoints;
 
 namespace CodeFormaterService.Endpoints;
 
-public class ValidateCSharpEndpoint : Endpoint<CodeRequest, bool>
+public class ValidateCSharpEndpoint(ICodeValidationService codeValidationService) : Endpoint<CodeRequest, bool>
 {
     public override void Configure()
     {
@@ -12,15 +13,8 @@ public class ValidateCSharpEndpoint : Endpoint<CodeRequest, bool>
         AllowAnonymous();
     }
 
-    public override Task HandleAsync(CodeRequest req, CancellationToken ct)
+    public override async Task HandleAsync(CodeRequest req, CancellationToken ct)
     {
-        
-        return SendOkAsync(FlipCoin(), ct);
-    }
-
-    private static bool FlipCoin()
-    {
-        var random = new Random();
-        return random.Next(0, 2) == 0;
+        await SendOkAsync(await codeValidationService.ValidateAsync(req.Code), ct);
     }
 }
