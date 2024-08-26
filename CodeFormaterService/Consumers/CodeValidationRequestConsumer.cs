@@ -4,8 +4,6 @@ using CodeFormaterService.Services;
 using ExternalDomainEntities;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
-using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace CodeFormaterService.Consumers;
 

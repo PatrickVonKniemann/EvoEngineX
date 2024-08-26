@@ -44,14 +44,14 @@ builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
 builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
 
-builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp => new ConnectionFactory { HostName = "localhost" });
+builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp => new ConnectionFactory { HostName = "localhost", UserName = "kolenpat", Password = "sa"});
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
 builder.Services.AddHostedService<CodeValidationResultEventConsumer>(); 
 builder.Services.AddHostedService<CodeExecutionResultEventConsumer>(); 
 
 
 var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
-connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost:5433")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeRunDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
     .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");

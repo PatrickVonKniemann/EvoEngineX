@@ -52,6 +52,29 @@ public class CodeRunCommandService(
             Message = "Code run creation has started and will be processed."
         };
     }
+    
+    private void PublishStatusUpdate(RunStatus status)
+    {
+        var factory = new ConnectionFactory() { HostName = "localhost", UserName = "kolenpat", Password = "sa"};
+        using var connection = factory.CreateConnection();
+        using var channel = connection.CreateModel();
+        channel.QueueDeclare(queue: "codeRunStatusQueue",
+            durable: false,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null);
+
+        string message = JsonSerializer.Serialize(new { Status = status });
+        var body = Encoding.UTF8.GetBytes(message);
+
+        channel.BasicPublish(exchange: "",
+            routingKey: "codeRunStatusQueue",
+            basicProperties: null,
+            body: body);
+
+        logger.LogInformation($"Status update published: {status}");
+    }
+    
 
     // Method to update the status based on external events (triggered by event listeners)
     public async Task HandleValidationResultAsync(CodeRunValidationResultEvent validationEvent)
@@ -93,25 +116,5 @@ public class CodeRunCommandService(
         PublishStatusUpdate(newStatus);
     }
 
-    private void PublishStatusUpdate(RunStatus status)
-    {
-        var factory = new ConnectionFactory() { HostName = "localhost" };
-        using var connection = factory.CreateConnection();
-        using var channel = connection.CreateModel();
-        channel.QueueDeclare(queue: "codeRunStatusQueue",
-            durable: false,
-            exclusive: false,
-            autoDelete: false,
-            arguments: null);
-
-        string message = JsonSerializer.Serialize(new { Status = status });
-        var body = Encoding.UTF8.GetBytes(message);
-
-        channel.BasicPublish(exchange: "",
-            routingKey: "codeRunStatusQueue",
-            basicProperties: null,
-            body: body);
-
-        logger.LogInformation($"Status update published: {status}");
-    }
+   
 }

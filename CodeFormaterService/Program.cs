@@ -2,6 +2,7 @@ using CodeFormaterService.Consumers;
 using CodeFormaterService.Services;
 using FastEndpoints;
 using FastEndpoints.Swagger;
+using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,6 +19,8 @@ builder.Services.AddCors(options =>
             .AllowAnyHeader());
 });
 builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
+builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp => new ConnectionFactory { HostName = "localhost", UserName = "kolenpat", Password = "sa"});
+
 builder.Services.AddHostedService<CodeValidationRequestConsumer>(); 
 
 var app = builder.Build();

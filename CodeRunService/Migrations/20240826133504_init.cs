@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace CodeRunService.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,9 +30,11 @@ namespace CodeRunService.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     CodeBaseId = table.Column<Guid>(type: "uuid", nullable: false),
                     Status = table.Column<int>(type: "integer", nullable: false),
-                    RunStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Code = table.Column<string>(type: "text", nullable: false),
+                    RunStart = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     RunFinish = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
-                    ResultsId = table.Column<Guid>(type: "uuid", nullable: true)
+                    ResultsId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
                 },
                 constraints: table =>
                 {
