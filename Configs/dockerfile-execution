@@ -9,6 +9,8 @@ RUN echo "Step 1: Copying the csproj file and restoring dependencies"
 COPY ../CodeExecutionService/CodeExecutionService.csproj ./CodeExecutionService/
 COPY ../ExternalDomainEntities/ExternalDomainEntities.csproj ./ExternalDomainEntities/
 COPY ../Generics/Generics.csproj ./Generics/
+COPY ../Common ./Common
+COPY ../Helpers ./Helpers
 
 RUN dotnet restore ./CodeExecutionService/CodeExecutionService.csproj
 
@@ -19,6 +21,8 @@ RUN echo "Step 2: Copying the remaining source code and building the application
 COPY ../CodeExecutionService/ ./CodeExecutionService/
 COPY ../ExternalDomainEntities/ ./ExternalDomainEntities/
 COPY ../Generics ./Generics
+COPY ../Common ./Common
+COPY ../Helpers ./Helpers
 
 RUN dotnet publish ./CodeExecutionService/CodeExecutionService.csproj -c Release -o out
 

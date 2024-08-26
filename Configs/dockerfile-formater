@@ -9,7 +9,8 @@ RUN echo "Step 1: Copying the csproj file and restoring dependencies"
 COPY ../CodeFormaterService/CodeFormaterService.csproj ./CodeFormaterService/
 COPY ../ExternalDomainEntities/ExternalDomainEntities.csproj ./ExternalDomainEntities/
 COPY ../Generics/Generics.csproj ./Generics/
-COPY ./Common ./Common
+COPY ../Common ./Common
+COPY ../Helpers ./Helpers
 
 RUN dotnet restore ./CodeFormaterService/CodeFormaterService.csproj
 
@@ -20,7 +21,8 @@ RUN echo "Step 2: Copying the remaining source code and building the application
 COPY ../CodeFormaterService/ ./CodeFormaterService/
 COPY ../ExternalDomainEntities/ ./ExternalDomainEntities/
 COPY ../Generics ./Generics
-COPY ./Common ./Common
+COPY ../Common ./Common
+COPY ../Helpers ./Helpers
 
 RUN dotnet publish ./CodeFormaterService/CodeFormaterService.csproj -c Release -o out
 
@@ -40,4 +42,4 @@ COPY --from=build-env /app/out .
 RUN echo "Step 5: Setting the entry point for the application"
 
 # Set the entry point for the application
-ENTRYPOINT ["dotnet", "CodeExecutionService.dll"]
+ENTRYPOINT ["dotnet", "CodeFormaterService.dll"]
