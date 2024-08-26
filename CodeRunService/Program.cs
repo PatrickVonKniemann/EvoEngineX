@@ -44,26 +44,35 @@ builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
 builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
 
-builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp => new ConnectionFactory { HostName = "localhost", UserName = "kolenpat", Password = "sa"});
+// Get RabbitMQ settings from environment variables
+var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost:5672";
+var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "guest";
+var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "guest";
+
+builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
+    new ConnectionFactory
+    {
+        HostName = rabbitMqHost,
+        UserName = rabbitMqUser,
+        Password = rabbitMqPass
+    });
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
 builder.Services.AddHostedService<CodeValidationResultEventConsumer>(); 
 builder.Services.AddHostedService<CodeExecutionResultEventConsumer>(); 
 
-
+// Setup database connection
 var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
-connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost:5433")
+connectionString = connectionString?
+    .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost:5432")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeRunDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
     .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
 
-
 builder.Services.AddDbContext<CodeRunDbContext>(options =>
     options.UseNpgsql(connectionString));
 
-
 var app = builder.Build();
 app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
-
 
 // Apply migrations
 using (var scope = app.Services.CreateScope())

@@ -55,7 +55,7 @@ public class CodeRunCommandService(
     
     private void PublishStatusUpdate(RunStatus status)
     {
-        var factory = new ConnectionFactory() { HostName = "localhost", UserName = "kolenpat", Password = "sa"};
+        var factory = new ConnectionFactory() { HostName = "localhost:5672", UserName = "kolenpat", Password = "sa"};
         using var connection = factory.CreateConnection();
         using var channel = connection.CreateModel();
         channel.QueueDeclare(queue: "codeRunStatusQueue",
