@@ -14,6 +14,13 @@ public class ValidateCSharpEndpoint : Endpoint<CodeRequest, bool>
 
     public override Task HandleAsync(CodeRequest req, CancellationToken ct)
     {
-        return SendOkAsync(true, ct);
+        
+        return SendOkAsync(FlipCoin(), ct);
+    }
+
+    private static bool FlipCoin()
+    {
+        var random = new Random();
+        return random.Next(0, 2) == 0;
     }
 }

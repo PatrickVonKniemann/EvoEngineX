@@ -111,7 +111,6 @@ public partial class CodeBaseDetail
                 };
 
                 // Validate and run the code
-                await CodeFormatService.ValidateFormatAsync(_codeBase.Code, _codeBase.SupportedPlatform.ToString());
                 await CodeRunService.AddEntityAsync(newRun);
                 await LoadCodeRuns();
 
