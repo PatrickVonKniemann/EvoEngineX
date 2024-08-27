@@ -58,6 +58,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
     ports:
       - "5001:8080"
     networks:
@@ -78,9 +79,6 @@ services:
       DB_NAME: ${SERVICE2_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_USER: ${RABBITMQ_USER}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     ports:
       - "5002:8080"
     networks:
@@ -94,16 +92,12 @@ services:
         SERVICE_NAME: ${SERVICE3_NAME}
     depends_on:
       - postgres
-      - rabbitmq
     environment:
       SERVICE_NAME: ${SERVICE3_NAME}
       DB_HOST: postgres
       DB_NAME: ${SERVICE3_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
-      RABBITMQ_HOST: rabbitmq
-      RABBITMQ_USER: ${RABBITMQ_USER}
-      RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
     ports:
       - "5003:8080"
     networks:
@@ -119,6 +113,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
     ports:
       - "5004:8080"
     networks:
@@ -134,6 +129,7 @@ services:
       RABBITMQ_HOST: rabbitmq
       RABBITMQ_USER: ${RABBITMQ_USER}
       RABBITMQ_PASSWORD: ${RABBITMQ_PASSWORD}
+      RABBITMQ_PORT: ${RABBITMQ_PORT}
     ports:
       - "5005:8080"
     networks:

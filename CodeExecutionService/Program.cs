@@ -8,20 +8,24 @@ var builder = WebApplication.CreateBuilder(args);
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 // Get RabbitMQ settings from environment variables
-var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost:5672";
+var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "rabbitmq";
 var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat";
 var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa";
+var rabbitMqPort = Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672";
 
 builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
     new ConnectionFactory
     {
         HostName = rabbitMqHost,
         UserName = rabbitMqUser,
-        Password = rabbitMqPass
+        Password = rabbitMqPass,
+        Port = int.Parse(rabbitMqPort)
     });
+
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
-builder.Services.AddHostedService<CodeExecutionRequestConsumer>(); 
+builder.Services.AddHostedService<CodeExecutionRequestConsumer>();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
