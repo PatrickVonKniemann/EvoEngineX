@@ -15,12 +15,23 @@ public class RabbitMqEventPublisher(IConnectionFactory connectionFactory, ILogge
 
         var eventName = typeof(TEvent).Name;
 
-        channel.QueueDeclare(queue: eventName, durable: true, exclusive: false, autoDelete: false, arguments: null);
+        channel.QueueDeclare(
+            queue: eventName,
+            durable: true,
+            exclusive: false,
+            autoDelete: false,
+            arguments: null
+        );
 
         var message = JsonSerializer.Serialize(eventMessage);
         var body = Encoding.UTF8.GetBytes(message);
 
-        channel.BasicPublish(exchange: "", routingKey: eventName, basicProperties: null, body: body);
+        channel.BasicPublish(
+            exchange: "",
+            routingKey: eventName,
+            basicProperties: null,
+            body: body
+        );
 
         logger.LogInformation($"Published event: {eventName}");
 
