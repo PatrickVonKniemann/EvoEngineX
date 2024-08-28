@@ -42,6 +42,9 @@ builder.Services.AddCors(options =>
 builder.Services.AddScoped<ICodeRunCommandService, CodeRunCommandService>();
 builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
 builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
+builder.Services.AddScoped<ICodeExecutionCommandService, CodeExecutionCommandService>();
+builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
+
 builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
 
 // Get RabbitMQ settings from environment variables

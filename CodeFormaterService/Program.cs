@@ -38,6 +38,7 @@ builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
     });
 
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+builder.Services.AddSingleton<ICodeValidationService, CodeValidationService>();
 builder.Services.AddHostedService<CodeValidationRequestConsumer>();
 
 var app = builder.Build();

@@ -1,6 +1,8 @@
 using System.Text;
 using System.Text.Json;
+using Common;
 using ExternalDomainEntities;
+using ExternalDomainEntities.CodeRunDto.Events;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -8,13 +10,15 @@ namespace CodeExecutionService;
 
 public class CodeExecutionRequestConsumer : BackgroundService
 {
-    private readonly IServiceProvider _serviceProvider;
+    private readonly ICodeExecutionLogic _codeExecutionService;
     private readonly IConnection _connection;
     private readonly IModel _channel;
+    private readonly IEventPublisher _eventPublisher;
 
-    public CodeExecutionRequestConsumer(IServiceProvider serviceProvider, IConnectionFactory connectionFactory)
+    public CodeExecutionRequestConsumer(IConnectionFactory connectionFactory, ICodeExecutionLogic codeExecutionService, IEventPublisher eventPublisher)
     {
-        _serviceProvider = serviceProvider;
+        _codeExecutionService = codeExecutionService;
+        _eventPublisher = eventPublisher;
         _connection = connectionFactory.CreateConnection();
         _channel = _connection.CreateModel();
     }
@@ -22,7 +26,7 @@ public class CodeExecutionRequestConsumer : BackgroundService
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _channel.QueueDeclare(
-            queue: "CodeExecutionRequestQueue",
+            queue: EventQueueList.CodeExecutionQueue,
             durable: true,
             exclusive: false,
             autoDelete: false,
@@ -35,17 +39,24 @@ public class CodeExecutionRequestConsumer : BackgroundService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var validationEvent = JsonSerializer.Deserialize<CodeExecutionExecutionRequestEvent>(message);
-
-            using var scope = _serviceProvider.CreateScope();
-            var codeExecutionService = scope.ServiceProvider.GetRequiredService<CodeExecutionService>();
+            
 
             if (validationEvent != null)
             {
-                await codeExecutionService.ExecuteAsync(validationEvent.Code);
+                var executionResult = await _codeExecutionService.ExecuteAsync(validationEvent.Code);
+                
+                // Create event that will start the execution in the execution service
+                var eventResultToPublish = new CodeRunExecutionResultEvent()
+                {
+                    CodeRunId = validationEvent.CodeRunId,
+                    IsSuccess = executionResult
+                };
+
+                await _eventPublisher.PublishAsync(eventResultToPublish, EventQueueList.CodeExecutionQueueResult);
             }
         };
 
-        _channel.BasicConsume(queue: "CodeExecutionRequestQueue", autoAck: true, consumer: consumer);
+        _channel.BasicConsume(queue: EventQueueList.CodeExecutionQueue, autoAck: true, consumer: consumer);
 
         return Task.CompletedTask;
     }

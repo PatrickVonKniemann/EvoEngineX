@@ -1,6 +1,6 @@
 namespace CodeExecutionService;
 
-public class CodeExecutionService : ICodeExecuteService
+public class CodeExecutionLogic : ICodeExecutionLogic
 {
     public Task<bool> ExecuteAsync(string code)
     {

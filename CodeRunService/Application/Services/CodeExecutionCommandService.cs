@@ -5,7 +5,7 @@ using Generics.Enums;
 
 namespace CodeRunService.Application.Services;
 
-public class CodeExecutionService(ICodeRunRepository codeRunRepository, IEventPublisher eventPublisher) : ICodeExecutionService
+public class CodeExecutionCommandService(ICodeRunRepository codeRunRepository, IEventPublisher eventPublisher) : ICodeExecutionCommandService
 {
     public async Task HandleExecutionResultAsync(CodeRunExecutionResultEvent executionEvent)
     {

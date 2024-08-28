@@ -10,21 +10,22 @@ namespace CodeRunService.Consumers;
 
 public class CodeValidationConsumer : BackgroundService
 {
-    private readonly ICodeValidationService _codeValidationService;
+    private readonly IServiceProvider _serviceProvider;
     private readonly IConnection _connection;
     private readonly IModel _channel;
-    
 
-    public CodeValidationConsumer(IConnectionFactory connectionFactory, ICodeValidationService codeValidationService)
+
+    public CodeValidationConsumer(IConnectionFactory connectionFactory, IServiceProvider serviceProvider)
     {
-        _codeValidationService = codeValidationService;
+        _serviceProvider = serviceProvider;
         _connection = connectionFactory.CreateConnection();
         _channel = _connection.CreateModel();
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        _channel.QueueDeclare(queue: EventQueueList.CodeValidationQueueResult, durable: true, exclusive: false, autoDelete: false, arguments: null);
+        _channel.QueueDeclare(queue: EventQueueList.CodeValidationQueueResult, durable: true, exclusive: false,
+            autoDelete: false, arguments: null);
 
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += async (model, ea) =>
@@ -32,6 +33,10 @@ public class CodeValidationConsumer : BackgroundService
             var body = ea.Body.ToArray();
             var message = Encoding.UTF8.GetString(body);
             var validationEvent = JsonSerializer.Deserialize<CodeRunValidationResultEvent>(message);
+
+
+            using var scope = _serviceProvider.CreateScope();
+            var _codeValidationService = scope.ServiceProvider.GetRequiredService<ICodeValidationService>();
             await _codeValidationService.HandleValidationResultAsync(validationEvent);
         };
 

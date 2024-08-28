@@ -2,7 +2,7 @@ using ExternalDomainEntities.CodeRunDto.Events;
 
 namespace CodeRunService.Application.Services;
 
-public interface ICodeExecutionService
+public interface ICodeExecutionCommandService
 {
     public Task HandleExecutionResultAsync(CodeRunExecutionResultEvent executionEvent);
 }

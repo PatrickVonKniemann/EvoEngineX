@@ -25,7 +25,9 @@ builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
     });
 
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+builder.Services.AddSingleton<ICodeExecutionLogic, CodeExecutionLogic>();
 builder.Services.AddHostedService<CodeExecutionRequestConsumer>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
