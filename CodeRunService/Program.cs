@@ -60,8 +60,8 @@ builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
     });
 
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
-builder.Services.AddHostedService<CodeValidationResultEventConsumer>(); 
-builder.Services.AddHostedService<CodeExecutionResultEventConsumer>(); 
+builder.Services.AddHostedService<CodeValidationConsumer>(); 
+builder.Services.AddHostedService<CodeExecutionConsumer>(); 
 
 // Setup database connection
 var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
@@ -76,7 +76,7 @@ builder.Services.AddDbContext<CodeRunDbContext>(options =>
 
 var app = builder.Build();
 app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
-app.Logger.LogInformation($"Using connection RabbitMQ connecting var {rabbitMqHost}, {rabbitMqUser}, {rabbitMqPass}, {rabbitMqPort}");
+app.Logger.LogInformation($"Using connection RabbitMQ connecting: {rabbitMqHost}, {rabbitMqUser}, {rabbitMqPass}, {rabbitMqPort}");
 
 // Apply migrations
 using (var scope = app.Services.CreateScope())

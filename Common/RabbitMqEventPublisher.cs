@@ -8,7 +8,7 @@ namespace Common;
 public class RabbitMqEventPublisher(IConnectionFactory connectionFactory, ILogger<RabbitMqEventPublisher> logger)
     : IEventPublisher
 {
-    public async Task PublishAsync<TEvent>(TEvent eventMessage) where TEvent : class
+    public async Task PublishAsync<TEvent>(TEvent eventMessage, string eventQueue) where TEvent : class
     {
         using var connection = connectionFactory.CreateConnection();
         using var channel = connection.CreateModel();
@@ -16,7 +16,7 @@ public class RabbitMqEventPublisher(IConnectionFactory connectionFactory, ILogge
         var eventName = typeof(TEvent).Name;
 
         channel.QueueDeclare(
-            queue: eventName,
+            queue: eventQueue,
             durable: true,
             exclusive: false,
             autoDelete: false,
@@ -28,7 +28,7 @@ public class RabbitMqEventPublisher(IConnectionFactory connectionFactory, ILogge
 
         channel.BasicPublish(
             exchange: "",
-            routingKey: eventName,
+            routingKey: eventQueue,
             basicProperties: null,
             body: body
         );
