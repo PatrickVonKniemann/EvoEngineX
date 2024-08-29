@@ -51,6 +51,7 @@ services:
     environment:
       SERVICE_NAME: ${SERVICE1_NAME}
       DB_HOST: postgres
+      DB_PORT: 5432
       DB_NAME: ${SERVICE1_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -75,6 +76,7 @@ services:
     environment:
       SERVICE_NAME: ${SERVICE2_NAME}
       DB_HOST: postgres
+      DB_PORT: 5432
       DB_NAME: ${SERVICE2_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -94,6 +96,7 @@ services:
     environment:
       SERVICE_NAME: ${SERVICE3_NAME}
       DB_HOST: postgres
+      DB_PORT: 5432
       DB_NAME: ${SERVICE3_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
@@ -118,7 +121,7 @@ services:
     networks:
       - development-network
     
-  code-execution-service:
+  code-execution-engine:
     build:
       context: ..
       dockerfile: ./Configs/dockerfile-execution

@@ -10,6 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddFastEndpoints();
 builder.Services.AddSwaggerGen();
+
 // Add CORS services
 builder.Services.AddCors(options =>
 {
@@ -19,9 +20,9 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
+
 builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
 
-// Get RabbitMQ settings from environment variables
 // Get RabbitMQ settings from environment variables
 var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
 var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat";

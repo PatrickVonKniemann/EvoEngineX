@@ -50,7 +50,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeFormaterService", "Code
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedService", "SharedService", "{6FC88AA8-41D8-4A40-8C16-CC0845CA757B}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeExecutionService", "CodeExecutionService", "{1E2BD6C0-5C32-4102-BA83-8CC86D7017C7}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeExecutionEngine", "CodeExecutionEngine", "{1E2BD6C0-5C32-4102-BA83-8CC86D7017C7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeExecutionEngine", "CodeExecutionEngine\CodeExecutionEngine.csproj", "{0C5FFA09-0272-4E94-956D-7EE7E68F2A69}"
 EndProject

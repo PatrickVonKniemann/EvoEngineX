@@ -6,25 +6,25 @@ WORKDIR /app
 RUN echo "Step 1: Copying the csproj file and restoring dependencies"
 
 # Copy the project files and restore dependencies as distinct layers
-COPY ../CodeExecutionService/CodeExecutionService.csproj ./CodeExecutionService/
+COPY ../CodeExecutionEngine/CodeExecutionEngine.csproj ./CodeExecutionEngine/
 COPY ../ExternalDomainEntities/ExternalDomainEntities.csproj ./ExternalDomainEntities/
 COPY ../Generics/Generics.csproj ./Generics/
 COPY ../Common ./Common
 COPY ../Helpers ./Helpers
 
-RUN dotnet restore ./CodeExecutionService/CodeExecutionService.csproj
+RUN dotnet restore ./CodeExecutionEngine/CodeExecutionEngine.csproj
 
 # Log the current step
 RUN echo "Step 2: Copying the remaining source code and building the application"
 
 # Copy the remaining source code and build the application
-COPY ../CodeExecutionService/ ./CodeExecutionService/
+COPY ../CodeExecutionEngine/ ./CodeExecutionEngine/
 COPY ../ExternalDomainEntities/ ./ExternalDomainEntities/
 COPY ../Generics ./Generics
 COPY ../Common ./Common
 COPY ../Helpers ./Helpers
 
-RUN dotnet publish ./CodeExecutionService/CodeExecutionService.csproj -c Release -o out
+RUN dotnet publish ./CodeExecutionEngine/CodeExecutionEngine.csproj -c Release -o out
 
 # Log the current step
 RUN echo "Step 3: Using the official .NET runtime image as the base runtime image"
@@ -42,4 +42,4 @@ COPY --from=build-env /app/out .
 RUN echo "Step 5: Setting the entry point for the application"
 
 # Set the entry point for the application
-ENTRYPOINT ["dotnet", "CodeExecutionService.dll"]
+ENTRYPOINT ["dotnet", "CodeExecutionEngine.dll"]
