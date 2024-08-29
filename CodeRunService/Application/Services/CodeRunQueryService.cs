@@ -40,17 +40,15 @@ namespace CodeRunService.Application.Services
                     }
                 };
             }
-            else
+
+            codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId);
+            return new ReadCodeRunListByCodeBaseIdResponse
             {
-                codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId);
-                return new ReadCodeRunListByCodeBaseIdResponse
+                Items =
                 {
-                    Items =
-                    {
-                        Values = _mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
-                    }
-                };
-            }
+                    Values = _mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
+                }
+            };
         }
     }
 }

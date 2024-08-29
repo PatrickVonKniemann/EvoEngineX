@@ -21,8 +21,8 @@ public class CreateCodeRunEndpoint(ILogger<CreateCodeRunEndpoint> logger, ICodeR
 
     public override async Task HandleAsync(CreateCodeRunRequest req, CancellationToken ct)
     {
-        Logger.LogInformation("------------ Starting Creation process ---------------");
-        Logger.LogInformation(nameof(CreateCodeRunEndpoint));
+        Logger.LogInformation("Starting creation process for CodeRun.");
+        Logger.LogInformation("Endpoint: {EndpointName}", nameof(CreateCodeRunEndpoint));
 
         var createCodeRunResponse = codeRunCommandService.HandleAddAsync(req);
 

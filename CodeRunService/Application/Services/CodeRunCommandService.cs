@@ -17,12 +17,16 @@ public class CodeRunCommandService(
     : BaseCommandService<CodeRun, CreateCodeRunDetailRequest, CreateCodeRunResponse, UpdateCodeRunRequest,
         UpdateCodeRunResponse>(mapper, codeRunRepository, logger), ICodeRunCommandService
 {
-    public async Task<CreateCodeRunResponse> HandleAddAsync(CreateCodeRunRequest req)
-    {
-        var newCodeRun = CreateNewCodeRunRequest(req);
-        var createResponse = await AddAsync(newCodeRun);
 
-        await PublishCodeValidationRequestedEventAsync(createResponse.Id, newCodeRun.Code);
+    public async Task<CreateCodeRunResponse> HandleAddAsync(CreateCodeRunRequest newCodeRun)
+    {
+        logger.LogInformation("Starting code run creation process.");
+
+        var newCodeRunRequest = CreateNewCodeRunDetailRequest(newCodeRun);
+        var createResponse = await AddAsync(newCodeRunRequest);
+
+        logger.LogInformation("Code run created with Id: {CodeRunId}, publishing validation event.", createResponse.Id);
+        await PublishCodeValidationRequestedEventAsync(createResponse.Id, newCodeRunRequest.Code);
 
         return new CreateCodeRunResponse
         {
@@ -33,22 +37,28 @@ public class CodeRunCommandService(
         };
     }
 
-
     private async Task PublishCodeValidationRequestedEventAsync(Guid codeRunId, string code)
     {
-        await eventPublisher.PublishAsync(new CodeRunValidationRequestedEvent
+        logger.LogInformation("Publishing CodeRunValidationRequestedEvent for CodeRunId: {CodeRunId}", codeRunId);
+
+        var validationEvent = new CodeRunValidationRequestedEvent
         {
             CodeRunId = codeRunId,
             Code = code
-        }, EventQueueList.CodeValidationQueue);
+        };
+
+        await eventPublisher.PublishAsync(validationEvent, EventQueueList.CodeValidationQueue);
+        logger.LogInformation("CodeRunValidationRequestedEvent published successfully for CodeRunId: {CodeRunId}", codeRunId);
     }
 
-    private CreateCodeRunDetailRequest CreateNewCodeRunRequest(CreateCodeRunRequest req)
+    private CreateCodeRunDetailRequest CreateNewCodeRunDetailRequest(CreateCodeRunRequest request)
     {
+        logger.LogInformation("Mapping CreateCodeRunRequest to CreateCodeRunDetailRequest.");
+
         return new CreateCodeRunDetailRequest
         {
-            CodeBaseId = req.CodeBaseId,
-            Code = req.Code,
+            CodeBaseId = request.CodeBaseId,
+            Code = request.Code,
             Status = RunStatus.Validating,
             RunStart = DateTimeOffset.UtcNow.UtcDateTime
         };

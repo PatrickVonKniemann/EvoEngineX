@@ -1,5 +1,6 @@
 using CodeRunService.Infrastructure.Database;
 using Common;
+using DomainEntities;
 using ExternalDomainEntities.CodeRunDto.Events;
 using Generics.Enums;
 using Microsoft.AspNetCore.SignalR;
@@ -7,16 +8,16 @@ using Microsoft.AspNetCore.SignalR;
 namespace CodeRunService.Application.Services;
 
 public class CodeValidationService(
-    IServiceProvider serviceProvider,
     ICodeRunRepository codeRunRepository,
     IEventPublisher eventPublisher,
-    ILogger<CodeValidationService> logger)
+    ILogger<CodeValidationService> logger,
+    IHubContext<CodeRunHub>? hubContext)
     : ICodeValidationService
 {
     public async Task HandleValidationResultAsync(CodeRunValidationResultEvent validationEvent)
     {
         logger.LogInformation("Handling validation result for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
-        var result = false;
+
         var codeRun = await codeRunRepository.GetByIdAsync(validationEvent.CodeRunId);
         if (codeRun == null)
         {
@@ -26,39 +27,55 @@ public class CodeValidationService(
 
         if (validationEvent.IsValid)
         {
-            logger.LogInformation("Validation was successful for CodeRunId: {CodeRunId}. Updating status to Ready.", validationEvent.CodeRunId);
-
-            // Update codeRun status in the DB
-            codeRun.Status = RunStatus.Ready;
-            await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);
-            // Create event that will start the execution in the execution service
-            var eventToPublish = new CodeRunExecutionRequestedEvent
-            {
-                CodeRunId = validationEvent.CodeRunId,
-                Code = codeRun.Code
-            };
-
-            logger.LogInformation("Publishing CodeRunExecutionRequestedEvent for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
-            result = true;
-            await eventPublisher.PublishAsync(eventToPublish, EventQueueList.CodeExecutionQueue);
+            await HandleSuccessfulValidationAsync(validationEvent, codeRun);
         }
         else
         {
-            logger.LogError("Validation failed for CodeRunId: {CodeRunId}. Updating status to ErrorValidating.", validationEvent.CodeRunId);
-
-            codeRun.Status = RunStatus.ErrorValidating;
-            await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);
+            await HandleFailedValidationAsync(validationEvent, codeRun);
         }
 
-        logger.LogInformation("Validation result handled for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
-        
-        // Trigger SignalR update
-        logger.LogInformation("Triggering CodeValidationNotificationEvent for CodeRunId: {CodeRunId}",
-            validationEvent.CodeRunId);
+        await NotifyClientsAsync(validationEvent.CodeRunId, validationEvent.IsValid);
+    }
 
-        var hubContext = serviceProvider.GetService<IHubContext<CodeRunHub>>();
-        await hubContext.Clients.All.SendAsync("ReceiveStatusUpdate", validationEvent.CodeRunId.ToString(),
-            result ? RunStatus.Ready.ToString() : RunStatus.ErrorValidating.ToString());
-        logger.LogInformation("Notification through hub send");
+    private async Task HandleSuccessfulValidationAsync(CodeRunValidationResultEvent validationEvent, CodeRun codeRun)
+    {
+        logger.LogInformation("Validation was successful for CodeRunId: {CodeRunId}. Updating status to Ready.", validationEvent.CodeRunId);
+
+        codeRun.Status = RunStatus.Ready;
+        await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);
+
+        var eventToPublish = new CodeRunExecutionRequestedEvent
+        {
+            CodeRunId = validationEvent.CodeRunId,
+            Code = codeRun.Code
+        };
+
+        logger.LogInformation("Publishing CodeRunExecutionRequestedEvent for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
+        await eventPublisher.PublishAsync(eventToPublish, EventQueueList.CodeExecutionQueue);
+    }
+
+    private async Task HandleFailedValidationAsync(CodeRunValidationResultEvent validationEvent, CodeRun codeRun)
+    {
+        logger.LogError("Validation failed for CodeRunId: {CodeRunId}. Updating status to ErrorValidating.", validationEvent.CodeRunId);
+
+        codeRun.Status = RunStatus.ErrorValidating;
+        await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);
+    }
+
+    private async Task NotifyClientsAsync(Guid codeRunId, bool isValid)
+    {
+        var status = isValid ? RunStatus.Running.ToString() : RunStatus.ErrorValidating.ToString();
+
+        logger.LogInformation("Triggering CodeValidationNotificationEvent for CodeRunId: {CodeRunId}", codeRunId);
+
+        if (hubContext != null)
+        {
+            await hubContext.Clients.All.SendAsync("ReceiveStatusUpdate", codeRunId.ToString(), status);
+            logger.LogInformation("Notification sent to clients for CodeRunId: {CodeRunId}", codeRunId);
+        }
+        else
+        {
+            logger.LogWarning("HubContext is null, skipping client notification for CodeRunId: {CodeRunId}", codeRunId);
+        }
     }
 }
