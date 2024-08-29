@@ -35,9 +35,9 @@ public class CodeRunServiceTests(CodeRunServiceWebApplicationFactory<Program> fa
         var response = await _client.PostAsync("/code-run/add", content);
 
         // Assert
-        response.EnsureSuccessStatusCode();
-        var responseContent = await response.Content.ReadAsStringAsync();
-        responseContent.Should().Contain(expectedCodeBaseId.ToString());
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+        var responseObject = await DeserializationHelper.DeserializeResponse<CreateCodeRunResponse>(response);
+        responseObject.CodeBaseId.Should().Be(expectedCodeBaseId);
     }
 
     [Fact]

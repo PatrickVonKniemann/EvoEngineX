@@ -139,7 +139,7 @@ namespace UserService.Tests
                 Name = "Updated Name",
                 Password = "Test pass",
                 UserName = "Updated UserName",
-                Language = "Updated Language"
+                Language = "ULanguage"
             };
             var content = DeserializationHelper.CreateJsonContent(userToUpdate);
 

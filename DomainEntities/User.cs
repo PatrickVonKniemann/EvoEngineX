@@ -17,5 +17,5 @@ public class User : CommonEntityObject
 
     [Required] [MaxLength(100)] public required string Name { get; set; }
 
-    [Required] [MaxLength(10)] public required string Language { get; set; }
+    [Required] [MaxLength(25)] public required string Language { get; set; }
 }

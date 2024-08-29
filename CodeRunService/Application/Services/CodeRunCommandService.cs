@@ -27,6 +27,7 @@ public class CodeRunCommandService(
         return new CreateCodeRunResponse
         {
             Id = createResponse.Id,
+            CodeBaseId = createResponse.CodeBaseId,
             Status = "Accepted",
             Message = "Code run creation has started and will be processed."
         };

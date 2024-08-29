@@ -19,7 +19,7 @@ public class UpdateUserEndpoint(ILogger<UpdateUserEndpoint> logger, IUserCommand
     public override async Task HandleAsync(UpdateUserRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(UpdateUserEndpoint));
-        var updateUserResponse = userCommandService.UpdateAsync(req.Id, req);
-        await SendAsync(await updateUserResponse, cancellation: ct);
+        var updateUserResponse = await userCommandService.UpdateAsync(req.Id, req);
+        await SendAsync(updateUserResponse, cancellation: ct);
     }
 }
