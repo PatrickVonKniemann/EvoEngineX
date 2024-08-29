@@ -54,8 +54,6 @@ public class CodeValidationConsumer : BackgroundService
                 _logger.LogInformation("Handling validation result...");
 
                 await codeValidationService.HandleValidationResultAsync(validationEvent);
-
-                _logger.LogInformation("Validation result handled successfully.");
             }
             catch (Exception ex)
             {

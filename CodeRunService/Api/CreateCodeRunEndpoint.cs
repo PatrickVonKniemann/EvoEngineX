@@ -1,4 +1,3 @@
-
 using CodeRunService.Application.Services;
 using CodeRunService.Application.Validators;
 using ExternalDomainEntities.CodeRunDto.Command;
@@ -22,11 +21,11 @@ public class CreateCodeRunEndpoint(ILogger<CreateCodeRunEndpoint> logger, ICodeR
 
     public override async Task HandleAsync(CreateCodeRunRequest req, CancellationToken ct)
     {
+        Logger.LogInformation("------------ Starting Creation process ---------------");
         Logger.LogInformation(nameof(CreateCodeRunEndpoint));
 
         var createCodeRunResponse = codeRunCommandService.HandleAddAsync(req);
 
         await SendAsync(await createCodeRunResponse, cancellation: ct);
     }
-
 }

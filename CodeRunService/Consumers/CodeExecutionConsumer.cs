@@ -53,8 +53,6 @@ public class CodeExecutionConsumer : BackgroundService
                 _logger.LogInformation("Handling execution result...");
 
                 await executionCommandService.HandleExecutionResultAsync(executionEvent);
-
-                _logger.LogInformation("Execution result handled successfully.");
             }
             catch (Exception ex)
             {

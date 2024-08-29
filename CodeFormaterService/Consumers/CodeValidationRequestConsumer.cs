@@ -59,9 +59,17 @@ public class CodeValidationRequestConsumer : BackgroundService
                     _logger.LogInformation("Validating code for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
 
                     var validationResult = await _codeValidationService.ValidateAsync(validationEvent.Code);
-
-                    _logger.LogInformation("Validation result for CodeRunId {CodeRunId}: {ValidationResult}",
-                        validationEvent.CodeRunId, validationResult);
+                    if (validationResult)
+                    {
+                        _logger.LogInformation("Validation result for CodeRunId {CodeRunId}: {ValidationResult}",
+                            validationEvent.CodeRunId, validationResult);
+                    }
+                    else
+                    {
+                        _logger.LogWarning(
+                            "Validation result for CodeRunId {CodeRunId}: {ValidationResult} validation failed",
+                            validationEvent.CodeRunId, validationResult);
+                    }
 
                     // Create event that will start the execution in the execution service
                     var eventResultToPublish = new CodeRunValidationResultEvent

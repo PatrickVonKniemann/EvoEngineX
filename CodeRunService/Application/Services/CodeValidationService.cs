@@ -44,7 +44,7 @@ public class CodeValidationService(
         }
         else
         {
-            logger.LogInformation("Validation failed for CodeRunId: {CodeRunId}. Updating status to ErrorValidating.", validationEvent.CodeRunId);
+            logger.LogError("Validation failed for CodeRunId: {CodeRunId}. Updating status to ErrorValidating.", validationEvent.CodeRunId);
 
             codeRun.Status = RunStatus.ErrorValidating;
             await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);

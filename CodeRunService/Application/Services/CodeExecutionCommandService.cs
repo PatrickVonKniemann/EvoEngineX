@@ -48,7 +48,7 @@ public class CodeExecutionCommandService(
         }
         else
         {
-            logger.LogInformation("Execution failed for CodeRunId: {CodeRunId}. Updating status to ErrorRunning.",
+            logger.LogError("Execution failed for CodeRunId: {CodeRunId}. Updating status to ErrorRunning.",
                 executionEvent.CodeRunId);
 
             codeRun.Status = RunStatus.ErrorRunning;

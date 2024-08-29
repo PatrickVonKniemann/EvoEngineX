@@ -49,7 +49,7 @@ public class CodeRunCommandService(
         {
             CodeBaseId = req.CodeBaseId,
             Code = req.Code,
-            Status = RunStatus.Created,
+            Status = RunStatus.Validating,
             RunStart = DateTimeOffset.UtcNow.UtcDateTime
         };
     }
