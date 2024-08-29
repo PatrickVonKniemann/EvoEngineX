@@ -4,7 +4,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MainApi", "MainApi", "{8BBE
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Gui", "Gui", "{5FC1178A-AB62-47EE-817E-D5A835287A7F}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Core", "Core", "{5124D5CB-365D-443F-BBEF-A83647049E16}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedCoreLib", "SharedCoreLib", "{5124D5CB-365D-443F-BBEF-A83647049E16}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ClientApp", "ClientApp\ClientApp.csproj", "{ACDDC9CB-FABF-4932-8FDA-B0378B9A7B7F}"
 EndProject
@@ -26,7 +26,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainSharedModels", "Domai
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ExternalDomainEntities", "ExternalDomainEntities\ExternalDomainEntities.csproj", "{1E77D33B-50E0-4145-87DB-E8991B269306}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiSharedCode", "ApiSharedCode", "{3B5593C2-F47B-47AC-833F-260F3864AA84}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ApiSharedCodeLib", "ApiSharedCodeLib", "{3B5593C2-F47B-47AC-833F-260F3864AA84}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DomainEntities", "DomainEntities\DomainEntities.csproj", "{EBEF5F95-8BB9-4CB4-824F-47EDDC4B044B}"
 EndProject
@@ -52,7 +52,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SharedService", "SharedServ
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "CodeExecutionService", "CodeExecutionService", "{1E2BD6C0-5C32-4102-BA83-8CC86D7017C7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeExecutionService", "CodeExecutionService\CodeExecutionService.csproj", "{0C5FFA09-0272-4E94-956D-7EE7E68F2A69}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CodeExecutionEngine", "CodeExecutionEngine\CodeExecutionEngine.csproj", "{0C5FFA09-0272-4E94-956D-7EE7E68F2A69}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -82,7 +82,6 @@ Global
 		{C3EE439E-D6AA-45BB-8E67-CD8637F2D74D} = {5124D5CB-365D-443F-BBEF-A83647049E16}
 		{6FC88AA8-41D8-4A40-8C16-CC0845CA757B} = {8BBEA39F-3702-4164-BD8E-A3F99EDBDF36}
 		{7DB8EF49-C919-4D26-8DDE-8F4624FDA093} = {6FC88AA8-41D8-4A40-8C16-CC0845CA757B}
-		{1E2BD6C0-5C32-4102-BA83-8CC86D7017C7} = {8BBEA39F-3702-4164-BD8E-A3F99EDBDF36}
 		{0C5FFA09-0272-4E94-956D-7EE7E68F2A69} = {1E2BD6C0-5C32-4102-BA83-8CC86D7017C7}
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
