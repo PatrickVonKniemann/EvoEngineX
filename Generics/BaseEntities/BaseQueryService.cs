@@ -45,17 +45,15 @@ public class BaseQueryService<TEntity, TReadResponse, TListResponseItem, TListRe
                 }
             };
         }
-        else
+
+        entities = await _repository.GetAllAsync();
+        return new TListResponse
         {
-            entities = await _repository.GetAllAsync();
-            return new TListResponse
+            Items = new ItemWrapper<TListResponseItem>
             {
-                Items = new ItemWrapper<TListResponseItem>
-                {
-                    Values = _mapper.Map<List<TListResponseItem>>(entities)
-                }
-            };
-        }
+                Values = _mapper.Map<List<TListResponseItem>>(entities)
+            }
+        };
     }
 
     public async Task<TReadResponse> GetByIdAsync(Guid entityId)
