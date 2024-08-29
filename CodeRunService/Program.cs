@@ -13,7 +13,7 @@ using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+// Add services to the container
 builder.Services
     .AddFastEndpoints()
     .SwaggerDocument(o =>
@@ -25,43 +25,47 @@ builder.Services
         };
     });
 
-// Configure logging explicitly
+// Configure logging
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Services.AddLogging();
-builder.Services.AddSignalR();
 
-// Add CORS services
+// Add SignalR services
+builder.Services.AddSignalR();  // This line ensures SignalR is added to the DI container
+
+// Add CORS policy
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins",
-        corsPolicyBuilder => corsPolicyBuilder
-            .AllowAnyOrigin()
+    options.AddPolicy("AllowAllOrigins", policyBuilder =>
+        policyBuilder.AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader());
 });
 
+// Register application services
 builder.Services.AddScoped<ICodeRunCommandService, CodeRunCommandService>();
 builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
 builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
 builder.Services.AddScoped<ICodeExecutionCommandService, CodeExecutionCommandService>();
 builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
 
-builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodeRunProfile()));
+builder.Services.AddAutoMapper(cfg => cfg.AddProfile(new CodeRunProfile()));
 
-// Get RabbitMQ settings from environment variables
-var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
-var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat";
-var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa";
-var rabbitMqPort = Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672";
+// Configure RabbitMQ settings from environment variables
+var rabbitMqSettings = new
+{
+    Host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost",
+    User = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat",
+    Pass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa",
+    Port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672")
+};
 
 builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
     new ConnectionFactory
     {
-        HostName = rabbitMqHost,
-        UserName = rabbitMqUser,
-        Password = rabbitMqPass,
-        Port = int.Parse(rabbitMqPort)
+        HostName = rabbitMqSettings.Host,
+        UserName = rabbitMqSettings.User,
+        Password = rabbitMqSettings.Pass,
+        Port = rabbitMqSettings.Port
     });
 
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
@@ -69,8 +73,7 @@ builder.Services.AddHostedService<CodeValidationConsumer>();
 builder.Services.AddHostedService<CodeExecutionConsumer>();
 
 // Setup database connection
-var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
-connectionString = connectionString?
+var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase")?
     .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost:5433")
     .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeRunDb")
     .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
@@ -80,11 +83,13 @@ builder.Services.AddDbContext<CodeRunDbContext>(options =>
     options.UseNpgsql(connectionString));
 
 var app = builder.Build();
-app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
-app.Logger.LogInformation(
-    $"Using connection RabbitMQ connecting: {rabbitMqHost}, {rabbitMqUser}, {rabbitMqPass}, {rabbitMqPort}");
 
-// Apply migrations
+// Log connection strings
+app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
+app.Logger.LogInformation("RabbitMQ connection: Host={Host}, User={User}, Port={Port}", 
+    rabbitMqSettings.Host, rabbitMqSettings.User, rabbitMqSettings.Port);
+
+// Apply migrations and seed database
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
@@ -92,28 +97,25 @@ using (var scope = app.Services.CreateScope())
     {
         var context = services.GetRequiredService<CodeRunDbContext>();
         await context.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("Database migrations applied successfully");
+        app.Logger.LogInformation("Database created successfully");
 
         // Check if seeding is needed based on environment
-        var fileList = new List<string>
-        {
-            "CodeRuns"
-        };
+        var fileList = new List<string> { "CodeRuns" };
         var sqlDirectory = "../Configs/SqlScripts";
         await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occurred while applying migrations");
+        app.Logger.LogError(ex, "An error occurred while applying migrations or seeding the database");
     }
 }
 
-app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware
-app.UseFastEndpoints()
-    .UseSwaggerGen();
+// Use middleware and other configurations
+app.UseMiddleware<ErrorHandlingMiddleware>(); // Custom error handling middleware
+app.UseFastEndpoints();
+app.UseSwaggerGen();
 
 app.MapHub<CodeRunHub>("/codeRunHub");
-
 app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");
 

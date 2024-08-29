@@ -14,58 +14,86 @@ public class CodeValidationConsumer : BackgroundService
     private readonly IConnection _connection;
     private readonly IModel _channel;
     private readonly ILogger<CodeValidationConsumer> _logger;
+    private readonly string _queueName = EventQueueList.CodeValidationQueueResult;
 
-    public CodeValidationConsumer(IConnectionFactory connectionFactory, IServiceProvider serviceProvider,
+    public CodeValidationConsumer(
+        IConnectionFactory connectionFactory, 
+        IServiceProvider serviceProvider,
         ILogger<CodeValidationConsumer> logger)
     {
         _serviceProvider = serviceProvider;
-        _connection = connectionFactory.CreateConnection();
-        _channel = _connection.CreateModel();
         _logger = logger;
 
+        _connection = connectionFactory.CreateConnection();
+        _channel = _connection.CreateModel();
+
+        InitializeQueue();
+
         _logger.LogInformation("CodeValidationConsumer created, RabbitMQ connection established.");
+    }
+
+    private void InitializeQueue()
+    {
+        _channel.QueueDeclare(
+            queue: _queueName, 
+            durable: true, 
+            exclusive: false,
+            autoDelete: false, 
+            arguments: null);
+
+        _logger.LogInformation("Queue {QueueName} declared.", _queueName);
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
         _logger.LogInformation("Starting CodeValidationConsumer execution...");
 
-        _channel.QueueDeclare(queue: EventQueueList.CodeValidationQueueResult, durable: true, exclusive: false,
-            autoDelete: false, arguments: null);
-
         var consumer = new EventingBasicConsumer(_channel);
-        consumer.Received += async (model, ea) =>
-        {
-            _logger.LogInformation("Message received from queue: {QueueName}",
-                EventQueueList.CodeValidationQueueResult);
+        consumer.Received += async (model, ea) => await HandleMessageAsync(ea);
 
-            try
-            {
-                var body = ea.Body.ToArray();
-                var message = Encoding.UTF8.GetString(body);
-                _logger.LogDebug("Message content: {Message}", message);
-
-                var validationEvent = JsonSerializer.Deserialize<CodeRunValidationResultEvent>(message);
-                _logger.LogInformation("Deserialized message to CodeRunValidationResultEvent.");
-
-                using var scope = _serviceProvider.CreateScope();
-                var codeValidationService = scope.ServiceProvider.GetRequiredService<ICodeValidationService>();
-
-                _logger.LogInformation("Handling validation result...");
-
-                await codeValidationService.HandleValidationResultAsync(validationEvent);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while processing the validation message.");
-            }
-        };
-
-        _channel.BasicConsume(queue: EventQueueList.CodeValidationQueueResult, autoAck: true, consumer: consumer);
+        _channel.BasicConsume(
+            queue: _queueName, 
+            autoAck: true, 
+            consumer: consumer);
 
         _logger.LogInformation("CodeValidationConsumer is now consuming messages.");
 
         return Task.CompletedTask;
+    }
+
+    private async Task HandleMessageAsync(BasicDeliverEventArgs eventArgs)
+    {
+        _logger.LogInformation("Message received from queue: {QueueName}", _queueName);
+
+        try
+        {
+            var body = eventArgs.Body.ToArray();
+            var message = Encoding.UTF8.GetString(body);
+            _logger.LogDebug("Message content: {Message}", message);
+
+            var validationEvent = JsonSerializer.Deserialize<CodeRunValidationResultEvent>(message);
+            if (validationEvent == null)
+            {
+                _logger.LogWarning("Failed to deserialize message into CodeRunValidationResultEvent. Message: {Message}", message);
+                return;
+            }
+
+            _logger.LogInformation("Deserialized message to CodeRunValidationResultEvent.");
+
+            using var scope = _serviceProvider.CreateScope();
+            var codeValidationService = scope.ServiceProvider.GetRequiredService<ICodeValidationService>();
+
+            _logger.LogInformation("Handling validation result...");
+            await codeValidationService.HandleValidationResultAsync(validationEvent);
+        }
+        catch (JsonException jsonEx)
+        {
+            _logger.LogError(jsonEx, "JSON deserialization error occurred while processing the validation message.");
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError(ex, "An error occurred while processing the validation message.");
+        }
     }
 
     public override void Dispose()
