@@ -1,6 +1,6 @@
 namespace ExternalDomainEntities;
 
-public class CodeExecutionExecutionRequestEvent
+public class CodeExecutionRequestEvent
 {
     public Guid CodeRunId { get; set; }  // Unique identifier for the code run
     public string Code { get; set; }    // Indicates if the code passed validation

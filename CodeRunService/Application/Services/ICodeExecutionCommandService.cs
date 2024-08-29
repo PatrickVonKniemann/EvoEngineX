@@ -4,5 +4,5 @@ namespace CodeRunService.Application.Services;
 
 public interface ICodeExecutionCommandService
 {
-    public Task HandleExecutionResultAsync(CodeRunExecutionResultEvent executionEvent);
+    public Task HandleExecutionResultAsync(CodeRunExecutionResultEvent? executionEvent);
 }

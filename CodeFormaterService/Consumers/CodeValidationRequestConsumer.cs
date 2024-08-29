@@ -15,18 +15,25 @@ public class CodeValidationRequestConsumer : BackgroundService
     private readonly IEventPublisher _eventPublisher;
     private readonly IConnection _connection;
     private readonly IModel _channel;
+    private readonly ILogger<CodeValidationRequestConsumer> _logger;
 
     public CodeValidationRequestConsumer(IServiceProvider serviceProvider, IConnectionFactory connectionFactory,
-        ICodeValidationService codeValidationService, IEventPublisher eventPublisher)
+        ICodeValidationService codeValidationService, IEventPublisher eventPublisher,
+        ILogger<CodeValidationRequestConsumer> logger)
     {
         _codeValidationService = codeValidationService;
         _eventPublisher = eventPublisher;
         _connection = connectionFactory.CreateConnection();
         _channel = _connection.CreateModel();
+        _logger = logger;
+
+        _logger.LogInformation("CodeValidationRequestConsumer created, RabbitMQ connection established.");
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Starting CodeValidationRequestConsumer execution...");
+
         _channel.QueueDeclare(
             queue: EventQueueList.CodeValidationQueue,
             durable: true,
@@ -38,32 +45,56 @@ public class CodeValidationRequestConsumer : BackgroundService
         var consumer = new EventingBasicConsumer(_channel);
         consumer.Received += async (model, ea) =>
         {
-            var body = ea.Body.ToArray();
-            var message = Encoding.UTF8.GetString(body);
-            var validationEvent = JsonSerializer.Deserialize<CodeFormaterValidationRequestEvent>(message);
+            _logger.LogInformation("Message received from queue: {QueueName}", EventQueueList.CodeValidationQueue);
 
-            if (validationEvent != null)
+            try
             {
-                var validationResult = await _codeValidationService.ValidateAsync(validationEvent.Code);
+                var body = ea.Body.ToArray();
+                var message = Encoding.UTF8.GetString(body);
+                _logger.LogDebug("Message content: {Message}", message);
 
-                // Create event that will start the execution in the execution service
-                var eventResultToPublish = new CodeRunValidationResultEvent
+                var validationEvent = JsonSerializer.Deserialize<CodeFormaterValidationRequestEvent>(message);
+                if (validationEvent != null)
                 {
-                    CodeRunId = validationEvent.CodeRunId,
-                    IsValid = validationResult
-                };
+                    _logger.LogInformation("Validating code for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
 
-                await _eventPublisher.PublishAsync(eventResultToPublish, EventQueueList.CodeValidationQueueResult);
+                    var validationResult = await _codeValidationService.ValidateAsync(validationEvent.Code);
+
+                    _logger.LogInformation("Validation result for CodeRunId {CodeRunId}: {ValidationResult}",
+                        validationEvent.CodeRunId, validationResult);
+
+                    // Create event that will start the execution in the execution service
+                    var eventResultToPublish = new CodeRunValidationResultEvent
+                    {
+                        CodeRunId = validationEvent.CodeRunId,
+                        IsValid = validationResult
+                    };
+
+                    _logger.LogInformation("Publishing validation result for CodeRunId: {CodeRunId}",
+                        validationEvent.CodeRunId);
+                    await _eventPublisher.PublishAsync(eventResultToPublish, EventQueueList.CodeValidationQueueResult);
+                }
+                else
+                {
+                    _logger.LogWarning("Received invalid or null validation event.");
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while processing the message.");
             }
         };
 
         _channel.BasicConsume(queue: EventQueueList.CodeValidationQueue, autoAck: true, consumer: consumer);
+
+        _logger.LogInformation("CodeValidationRequestConsumer is now consuming messages.");
 
         return Task.CompletedTask;
     }
 
     public override void Dispose()
     {
+        _logger.LogInformation("Disposing CodeValidationRequestConsumer, closing channel and connection.");
         _channel.Close();
         _connection.Close();
         base.Dispose();

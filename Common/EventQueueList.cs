@@ -6,4 +6,5 @@ public static class EventQueueList
     public static string CodeValidationQueueResult = "CodeValidationQueueResult";
     public static string CodeExecutionQueue = "CodeExecutionQueue";
     public static string CodeExecutionQueueResult = "CodeExecutionQueueResult";
+    public static string CodeExecutionQueueNotification = "CodeExecutionQueueNotification";
 }
