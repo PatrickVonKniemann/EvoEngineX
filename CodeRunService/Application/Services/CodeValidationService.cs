@@ -2,10 +2,12 @@ using CodeRunService.Infrastructure.Database;
 using Common;
 using ExternalDomainEntities.CodeRunDto.Events;
 using Generics.Enums;
+using Microsoft.AspNetCore.SignalR;
 
 namespace CodeRunService.Application.Services;
 
 public class CodeValidationService(
+    IServiceProvider serviceProvider,
     ICodeRunRepository codeRunRepository,
     IEventPublisher eventPublisher,
     ILogger<CodeValidationService> logger)
@@ -14,7 +16,7 @@ public class CodeValidationService(
     public async Task HandleValidationResultAsync(CodeRunValidationResultEvent validationEvent)
     {
         logger.LogInformation("Handling validation result for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
-
+        var result = false;
         var codeRun = await codeRunRepository.GetByIdAsync(validationEvent.CodeRunId);
         if (codeRun == null)
         {
@@ -29,7 +31,6 @@ public class CodeValidationService(
             // Update codeRun status in the DB
             codeRun.Status = RunStatus.Ready;
             await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);
-
             // Create event that will start the execution in the execution service
             var eventToPublish = new CodeRunExecutionRequestedEvent
             {
@@ -38,6 +39,7 @@ public class CodeValidationService(
             };
 
             logger.LogInformation("Publishing CodeRunExecutionRequestedEvent for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
+            result = true;
             await eventPublisher.PublishAsync(eventToPublish, EventQueueList.CodeExecutionQueue);
         }
         else
@@ -49,5 +51,14 @@ public class CodeValidationService(
         }
 
         logger.LogInformation("Validation result handled for CodeRunId: {CodeRunId}", validationEvent.CodeRunId);
+        
+        // Trigger SignalR update
+        logger.LogInformation("Triggering CodeValidationNotificationEvent for CodeRunId: {CodeRunId}",
+            validationEvent.CodeRunId);
+
+        var hubContext = serviceProvider.GetService<IHubContext<CodeRunHub>>();
+        await hubContext.Clients.All.SendAsync("ReceiveStatusUpdate", validationEvent.CodeRunId.ToString(),
+            result ? RunStatus.Ready.ToString() : RunStatus.ErrorValidating.ToString());
+        logger.LogInformation("Notification through hub send");
     }
 }

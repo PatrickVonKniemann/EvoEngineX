@@ -4,6 +4,7 @@
 @using ClientApp.Components.Common
 @using ClientApp.Components.CodeRun
 @inject CodeRunService CodeRunService
+@inject CodeRunStatusConnectorService RunStatusConnectorService
 
 @if (_isModalVisible && _selectedCodeRun != null)
 {
@@ -94,4 +95,26 @@
         _ => throw new ArgumentOutOfRangeException(nameof(status), status, null)
     };
 
+    protected override async Task OnInitializedAsync()
+    {
+        RunStatusConnectorService.OnRunStatusUpdated += HandleRunStatusUpdated;
+        await RunStatusConnectorService.StartConnectionAsync();
+    }
+    
+    
+    private void HandleRunStatusUpdated(string runId, string status)
+    {
+        var codeRun = CodeRuns.Items.Values.FirstOrDefault(cr => cr.Id.ToString() == runId);
+        if (codeRun != null)
+        {
+            codeRun.Status = Enum.Parse<RunStatus>(status);
+            StateHasChanged();
+        }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        RunStatusConnectorService.OnRunStatusUpdated -= HandleRunStatusUpdated;
+        await RunStatusConnectorService.StopConnectionAsync();
+    }
 }

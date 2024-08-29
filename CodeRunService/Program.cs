@@ -1,3 +1,4 @@
+using CodeRunService;
 using CodeRunService.Application.Services;
 using CodeRunService.Consumers;
 using CodeRunService.Infrastructure;
@@ -27,7 +28,8 @@ builder.Services
 // Configure logging explicitly
 builder.Logging.ClearProviders();
 builder.Logging.AddConsole();
-builder.Services.AddLogging(); // Ensure logging is added first
+builder.Services.AddLogging();
+builder.Services.AddSignalR();
 
 // Add CORS services
 builder.Services.AddCors(options =>
@@ -63,8 +65,8 @@ builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
     });
 
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
-builder.Services.AddHostedService<CodeValidationConsumer>(); 
-builder.Services.AddHostedService<CodeExecutionConsumer>(); 
+builder.Services.AddHostedService<CodeValidationConsumer>();
+builder.Services.AddHostedService<CodeExecutionConsumer>();
 
 // Setup database connection
 var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase");
@@ -79,7 +81,8 @@ builder.Services.AddDbContext<CodeRunDbContext>(options =>
 
 var app = builder.Build();
 app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
-app.Logger.LogInformation($"Using connection RabbitMQ connecting: {rabbitMqHost}, {rabbitMqUser}, {rabbitMqPass}, {rabbitMqPort}");
+app.Logger.LogInformation(
+    $"Using connection RabbitMQ connecting: {rabbitMqHost}, {rabbitMqUser}, {rabbitMqPass}, {rabbitMqPort}");
 
 // Apply migrations
 using (var scope = app.Services.CreateScope())
@@ -96,7 +99,7 @@ using (var scope = app.Services.CreateScope())
         {
             "CodeRuns"
         };
-        var sqlDirectory =  "../Configs/SqlScripts";
+        var sqlDirectory = "../Configs/SqlScripts";
         await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
     }
     catch (Exception ex)
@@ -108,6 +111,8 @@ using (var scope = app.Services.CreateScope())
 app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware
 app.UseFastEndpoints()
     .UseSwaggerGen();
+
+app.MapHub<CodeRunHub>("/codeRunHub");
 
 app.UseHttpsRedirection();
 app.UseCors("AllowAllOrigins");

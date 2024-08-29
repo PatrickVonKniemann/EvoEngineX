@@ -15,6 +15,7 @@
         <PackageReference Include="BlazorMonaco" Version="3.2.0" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.1" />
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.1" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.AspNetCore.SignalR.Client" Version="8.0.8" />
         <PackageReference Include="Microsoft.NET.ILLink.Tasks" Version="8.0.1" />
         <PackageReference Include="Microsoft.NET.Sdk.WebAssembly.Pack" Version="8.0.1" />
     </ItemGroup>
@@ -26,6 +27,7 @@
     <ItemGroup>
         <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css" />
         <_ContentIncludedByDefault Remove="wwwroot\css\bootstrap\bootstrap.min.css.map" />
+        <_ContentIncludedByDefault Remove="Pages\Features\BuildRuns\BuildRuns.razor" />
     </ItemGroup>
 
     <ItemGroup>

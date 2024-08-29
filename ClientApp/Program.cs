@@ -13,5 +13,6 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<CodeBaseService>();
 builder.Services.AddScoped<CodeRunService>();
 builder.Services.AddScoped<NotificationService>();
+builder.Services.AddScoped<CodeRunStatusConnectorService>();
 
 await builder.Build().RunAsync();
