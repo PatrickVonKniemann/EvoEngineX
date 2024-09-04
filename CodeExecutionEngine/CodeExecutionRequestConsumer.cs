@@ -96,15 +96,15 @@ public class CodeExecutionRequestConsumer : BackgroundService
 
         _logger.LogInformation("Executing code for CodeRunId: {CodeRunId}", executionEvent.CodeRunId);
 
-        var executionResult = await _codeExecutionService.ExecuteAsync(executionEvent.Code);
+        await _codeExecutionService.ExecuteAsync(executionEvent.Code);
 
         _logger.LogInformation("Execution result for CodeRunId {CodeRunId}: {ExecutionResult}",
-            executionEvent.CodeRunId, executionResult);
+            executionEvent.CodeRunId, true);
 
         var eventResultToPublish = new CodeRunExecutionResultEvent
         {
             CodeRunId = executionEvent.CodeRunId,
-            IsSuccess = executionResult
+            IsSuccess = true
         };
 
         _logger.LogInformation("Publishing execution result for CodeRunId: {CodeRunId}", executionEvent.CodeRunId);

@@ -1,5 +1,6 @@
 using CodeExecutionService;
 using Common;
+using MongoDB.Driver;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,6 +24,23 @@ builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
         Password = rabbitMqPass,
         Port = int.Parse(rabbitMqPort)
     });
+
+// Get MongoDB connection settings from environment variables
+var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "mongo"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27017"}/{Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db"}";
+var mongoDatabaseName = Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+Console.WriteLine("mongoConnectionString: " + mongoConnectionString);
+
+// Register MongoDB client as a singleton
+builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+    new MongoClient(mongoConnectionString));
+
+
+// Register MongoDB database instance
+builder.Services.AddSingleton(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(mongoDatabaseName);
+});
 
 builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
 builder.Services.AddSingleton<ICodeExecutionLogic, CodeExecutionLogic>();
