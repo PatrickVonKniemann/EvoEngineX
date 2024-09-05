@@ -101,8 +101,11 @@ using (var scope = app.Services.CreateScope())
         app.Logger.LogInformation("Database created successfully");
 
         // Check if seeding is needed based on environment
-        var fileList = new List<string> { "CodeRuns" };
-        var sqlDirectory = "../Configs/SqlScripts";
+        var sqlDirectory = "./SqlScripts";
+        var fileList = new List<string>
+        {
+            "CodeRuns"
+        };
         await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
     }
     catch (Exception ex)

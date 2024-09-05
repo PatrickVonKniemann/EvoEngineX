@@ -41,5 +41,11 @@ COPY --from=build-env /app/out .
 # Log the current step
 RUN echo "Step 5: Setting the entry point for the application"
 
-# Set the entry point for the application
-ENTRYPOINT ["dotnet", "CodeExecutionEngine.dll"]
+# Copy the entrypoint script and wait-for-it.sh
+COPY ../Configs/dll_entrypoint_execution.sh /app/dll_entrypoint_execution.sh
+COPY ../Configs/wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/dll_entrypoint_execution.sh
+RUN chmod +x /app/wait-for-it.sh
+
+# Use the script as the entrypoint
+ENTRYPOINT ["/app/dll_entrypoint_execution.sh"]
