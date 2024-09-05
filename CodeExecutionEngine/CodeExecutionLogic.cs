@@ -9,7 +9,7 @@ namespace CodeExecutionService;
 public class CodeExecutionLogic(IMongoDatabase mongoDatabase) : ICodeExecutionLogic
 {
 
-    public async Task ExecuteAsync(string code)
+    public async Task ExecuteAsync(Guid codeRunId, string code)
     {
         code = @"
         using System;
@@ -39,7 +39,7 @@ public class CodeExecutionLogic(IMongoDatabase mongoDatabase) : ICodeExecutionLo
                 { AutoFlush = true }); // Reset to default Console output
 
             // Write captured output to the database
-            await WriteOutputToDatabaseAsync(consoleOutput);
+            await WriteOutputToDatabaseAsync(codeRunId, consoleOutput);
         }
         catch (CompilationErrorException e)
         {
@@ -48,16 +48,24 @@ public class CodeExecutionLogic(IMongoDatabase mongoDatabase) : ICodeExecutionLo
     }
 
     // Function to write captured output to the MongoDB database
-    private async Task WriteOutputToDatabaseAsync(string consoleOutput)
+    private async Task WriteOutputToDatabaseAsync(Guid codeRunId, string consoleOutput)
     {
         var collection = mongoDatabase.GetCollection<BsonDocument>("ExecutionLogs");
 
         // Create a BSON document to insert
         var logDocument = new BsonDocument
         {
+            { "CodeRunId", codeRunId.ToString() },
             { "Timestamp", DateTime.UtcNow },
-            { "LogMessage", consoleOutput }
+            { "Parameters", new BsonDocument
+                {
+                    { "MaxFes", 100000 },  // Mock value for MaxFes
+                    { "Fes", 1000 }        // Mock value for Fes
+                }
+            },
+            { "Data", consoleOutput }
         };
+
 
         // Insert the document into the MongoDB collection
         await collection.InsertOneAsync(logDocument);

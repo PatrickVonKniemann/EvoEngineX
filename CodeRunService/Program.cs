@@ -9,6 +9,8 @@ using FastEndpoints;
 using FastEndpoints.Swagger;
 using Helpers;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -82,6 +84,46 @@ var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabas
 
 builder.Services.AddDbContext<CodeRunDbContext>(options =>
     options.UseNpgsql(connectionString));
+
+// Get MongoDB connection settings from environment variables
+var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "localhost"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27018"}/{Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db"}";
+var mongoDatabaseName = Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+
+// Register MongoDB client as a singleton
+builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+{
+    var mongoClient = new MongoClient(mongoConnectionString);
+
+    // Try to ping the MongoDB server to check the connection
+    try
+    {
+        var database = mongoClient.GetDatabase(mongoDatabaseName);
+        var pingResult = database.RunCommandAsync((Command<BsonDocument>)"{ping:1}").Result;
+
+        if (pingResult != null)
+        {
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"Successfully connected to MongoDB at {mongoConnectionString}");
+            Console.ResetColor(); // Reset to default color
+        }
+    }
+    catch (Exception ex)
+    {
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.WriteLine($"Failed to connect to MongoDB at {mongoConnectionString}: " + ex.Message);
+        Console.ResetColor(); // Reset to default color
+        throw; // Optionally, you can decide if you want to stop the app if MongoDB is not reachable
+    }
+
+    return mongoClient;
+});
+
+// Register MongoDB database instance
+builder.Services.AddSingleton(sp =>
+{
+    var client = sp.GetRequiredService<IMongoClient>();
+    return client.GetDatabase(mongoDatabaseName);
+});
 
 var app = builder.Build();
 

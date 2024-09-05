@@ -96,7 +96,7 @@ public class CodeExecutionRequestConsumer : BackgroundService
 
         _logger.LogInformation("Executing code for CodeRunId: {CodeRunId}", executionEvent.CodeRunId);
 
-        await _codeExecutionService.ExecuteAsync(executionEvent.Code);
+        await _codeExecutionService.ExecuteAsync(executionEvent.CodeRunId, executionEvent.Code);
 
         _logger.LogInformation("Execution result for CodeRunId {CodeRunId}: {ExecutionResult}",
             executionEvent.CodeRunId, true);

@@ -2,5 +2,5 @@ namespace CodeExecutionService;
 
 public interface ICodeExecutionLogic
 {
-    public Task ExecuteAsync(string code);
+    public Task ExecuteAsync(Guid codeRunId, string code);
 }

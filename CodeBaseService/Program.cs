@@ -90,16 +90,12 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
     return mongoClient;
 });
 
-
-
 // Register MongoDB database instance
 builder.Services.AddSingleton(sp =>
 {
     var client = sp.GetRequiredService<IMongoClient>();
     return client.GetDatabase(mongoDatabaseName);
 });
-
-
 
 var app = builder.Build();
 app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
