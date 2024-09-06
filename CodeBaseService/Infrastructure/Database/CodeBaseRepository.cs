@@ -7,15 +7,14 @@ namespace CodebaseService.Infrastructure.Database;
 
 public class CodeBaseRepository(CodeBaseDbContext context,  ILogger<CodeBaseRepository> logger) : BaseRepository<CodeBase>(context, logger), ICodeBaseRepository
 {
-    public async Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId)
+    public async Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId, PaginationQuery? paginationQuery = null)
     {
-        return await GetAllByParameterAsync("UserId", userId);
+        return await GetAllAsync(
+            paginationQuery: paginationQuery,
+            filter: codeBase => codeBase.UserId == userId
+        );
     }
-    
-    public async Task<List<CodeBase>> GetAllByUserIdAsync(Guid userId, PaginationQuery paginationQuery)
-    {
-        return await GetAllByParameterAsync("UserId", userId, paginationQuery);
-    }
+
 
     public async Task<int> GetCountByUserId(Guid userId)
     {

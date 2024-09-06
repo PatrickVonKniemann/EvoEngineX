@@ -23,8 +23,9 @@ namespace CodeRunService.Application.Services
             List<CodeRun> codeRuns;
             if (paginationQuery != null)
             {
-                codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId, paginationQuery);
-                var itemsCount = await codeRunRepository.GetCountByCodeBaseId(codeBaseId);
+                codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId, paginationQuery,
+                    cr => cr.Results);
+                var itemsCount = await codeRunRepository.GetCountByCodeBaseIdAsync(codeBaseId);
                 return new ReadCodeRunListByCodeBaseIdResponse
                 {
                     Items =
@@ -41,7 +42,7 @@ namespace CodeRunService.Application.Services
                 };
             }
 
-            codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId);
+            codeRuns = await codeRunRepository.GetAllByCodeBaseIdAsync(codeBaseId, null, cr => cr.Results);
             return new ReadCodeRunListByCodeBaseIdResponse
             {
                 Items =
@@ -49,6 +50,12 @@ namespace CodeRunService.Application.Services
                     Values = _mapper.Map<List<ReadCodeRunListResponseItem>>(codeRuns)
                 }
             };
+        }
+
+        public async Task<ReadCodeRunResponse> GetByIdAsyncDetail(Guid entityId)
+        {
+            return _mapper.Map<ReadCodeRunResponse>(await codeRunRepository.GetByIdAsync(entityId,
+                cr => cr.Results));
         }
     }
 }

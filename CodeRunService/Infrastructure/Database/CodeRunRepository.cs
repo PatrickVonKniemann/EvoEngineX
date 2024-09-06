@@ -1,4 +1,5 @@
 using System.Data.Common;
+using System.Linq.Expressions;
 using System.Text;
 using DomainEntities;
 using Generics.BaseEntities;
@@ -15,17 +16,19 @@ public class CodeRunRepository(
     IMongoDatabase mongoDatabase)
     : BaseRepository<CodeRun>(context, logger), ICodeRunRepository
 {
-    public async Task<List<CodeRun>> GetAllByCodeBaseIdAsync(Guid codeBaseId)
+    public async Task<List<CodeRun>> GetAllByCodeBaseIdAsync(
+        Guid codeBaseId, 
+        PaginationQuery? paginationQuery = null, 
+        params Expression<Func<CodeRun, object>>[] includes)
     {
-        return await GetAllByParameterAsync("CodeBaseId", codeBaseId);
+        return await GetAllAsync(
+            paginationQuery: paginationQuery,
+            filter: codeRun => codeRun.CodeBaseId == codeBaseId,
+            includes: includes
+        );
     }
 
-    public async Task<List<CodeRun>> GetAllByCodeBaseIdAsync(Guid codeBaseId, PaginationQuery paginationQuery)
-    {
-        return await GetAllByParameterAsync("CodeBaseId", codeBaseId, paginationQuery);
-    }
-
-    public async Task<int> GetCountByCodeBaseId(Guid codeBaseId)
+    public async Task<int> GetCountByCodeBaseIdAsync(Guid codeBaseId)
     {
         return await GetCountByParameterAsync("CodeBaseId", codeBaseId);
     }
@@ -35,9 +38,9 @@ public class CodeRunRepository(
         var collection = mongoDatabase.GetCollection<BsonDocument>("ExecutionLogs");
 
         var filter = Builders<BsonDocument>.Filter.Eq("CodeRunId", codeRunId.ToString());
-        logger.LogInformation($"Using filter: {filter.ToJson()}");
+        logger.LogInformation("Using filter: {Json}", filter.ToJson());
         var result = await collection.Find(filter).FirstOrDefaultAsync();
-        logger.LogInformation($"Result: {result?.ToJson()}");
+        logger.LogInformation("Result: {Json}", result?.ToJson());
         
         if (result != null)
         {
@@ -53,7 +56,7 @@ public class CodeRunRepository(
             };
         }
 
-        logger.LogWarning("No logs found in the database.");
+        logger.LogWarning("No logs found in the database");
 
         return new RunResult
         {
@@ -74,10 +77,11 @@ public class CodeRunRepository(
         try
         {
             var parameterDict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(parameters);
-            foreach (var element in parameterDict)
-            {
-                csvBuilder.AppendLine($"{element.Key},{element.Value}");
-            }
+            if (parameterDict != null)
+                foreach (var element in parameterDict)
+                {
+                    csvBuilder.AppendLine($"{element.Key},{element.Value}");
+                }
         }
         catch (Exception ex)
         {
@@ -89,10 +93,11 @@ public class CodeRunRepository(
         try
         {
             var dataDict = Newtonsoft.Json.JsonConvert.DeserializeObject<Dictionary<string, object>>(data);
-            foreach (var element in dataDict)
-            {
-                csvBuilder.AppendLine($"{element.Key},{element.Value}");
-            }
+            if (dataDict != null)
+                foreach (var element in dataDict)
+                {
+                    csvBuilder.AppendLine($"{element.Key},{element.Value}");
+                }
         }
         catch (Exception ex)
         {

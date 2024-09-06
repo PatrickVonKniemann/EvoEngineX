@@ -19,7 +19,7 @@ public class ReadCodeRunEndpoint(ILogger<ReadCodeRunEndpoint> logger, ICodeRunQu
     public override async Task HandleAsync(ReadCodeRunRequest req, CancellationToken ct)
     {
         Logger.LogInformation(nameof(ReadCodeRunEndpoint));
-        var response = codeRunQueryService.GetByIdAsync(req.Id);
+        var response = codeRunQueryService.GetByIdAsyncDetail(req.Id);
         await SendAsync(await response, cancellation: ct);
     }
 }

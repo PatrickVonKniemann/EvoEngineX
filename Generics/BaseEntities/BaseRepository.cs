@@ -5,292 +5,253 @@ using Generics.Pagination;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 
-namespace Generics.BaseEntities
+namespace Generics.BaseEntities;
+
+public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class
 {
-    public class BaseRepository<TEntity> : IRepository<TEntity> where TEntity : class
+    private readonly DbContext _context;
+    private readonly ILogger<BaseRepository<TEntity>> _logger;
+    private readonly List<string> _propertyNames;
+
+    protected BaseRepository(DbContext context, ILogger<BaseRepository<TEntity>> logger)
     {
-        private readonly DbContext _context;
-        private readonly ILogger<BaseRepository<TEntity>> _logger;
-        private readonly List<string> _propertyNames;
+        _context = context;
+        _logger = logger;
+        _propertyNames = typeof(TEntity).GetProperties().Select(p => p.Name).ToList();
+    }
 
-        protected BaseRepository(DbContext context, ILogger<BaseRepository<TEntity>> logger)
+    public Task<int> GetCount()
+    {
+        _logger.LogInformation("Getting count of {Entity}", typeof(TEntity).Name);
+        return _context.Set<TEntity>().CountAsync();
+    }
+
+    protected async Task<int> GetCountByParameterAsync<TValue>(string parameterName, TValue parameterValue)
+    {
+        _logger.LogInformation("Getting count of {Entity} with {ParameterName} = {ParameterValue}",
+            typeof(TEntity).Name, parameterName, parameterValue);
+
+        var parameter = Expression.Parameter(typeof(TEntity), "entity");
+        var property = Expression.Property(parameter, parameterName);
+        var value = Expression.Constant(parameterValue);
+        var equals = Expression.Equal(property, value);
+        var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
+
+        return await _context.Set<TEntity>().CountAsync(lambda);
+    }
+
+    // Merged GetAllAsync with optional pagination, filtering, sorting, and includes
+    public async Task<List<TEntity>> GetAllAsync(
+        PaginationQuery? paginationQuery = null,
+        Expression<Func<TEntity, bool>>? filter = null,
+        params Expression<Func<TEntity, object>>[] includes)
+    {
+        _logger.LogInformation("Getting all {Entity} with optional pagination, filtering, sorting, and includes", typeof(TEntity).Name);
+        IQueryable<TEntity> query = _context.Set<TEntity>();
+
+        // Apply includes if provided
+        if (includes != null && includes.Any())
         {
-            _context = context;
-            _logger = logger;
-            _propertyNames = typeof(TEntity).GetProperties().Select(p => p.Name).ToList();
+            query = ApplyIncludes(query, includes);
         }
 
-        public Task<int> GetCount()
+        // Apply filtering if provided
+        if (filter != null)
         {
-            _logger.LogInformation("Getting count of {Entity}", typeof(TEntity).Name);
-            return _context.Set<TEntity>().CountAsync();
+            query = query.Where(filter);
         }
 
-        protected async Task<int> GetCountByParameterAsync<TValue>(string parameterName, TValue parameterValue)
+        // Apply pagination and sorting if provided
+        if (paginationQuery != null)
         {
-            _logger.LogInformation("Getting count of {Entity} with {ParameterName} = {ParameterValue}",
-                typeof(TEntity).Name, parameterName, parameterValue);
-
-            var parameter = Expression.Parameter(typeof(TEntity), "entity");
-            var property = Expression.Property(parameter, parameterName);
-            var value = Expression.Constant(parameterValue);
-            var equals = Expression.Equal(property, value);
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
-
-            return await _context.Set<TEntity>().CountAsync(lambda);
+            query = ApplyFiltering(query, paginationQuery);
+            query = ApplySorting(query, paginationQuery);
+            query = ApplyPagination(query, paginationQuery);
         }
 
-        public async Task<List<TEntity>> GetAllAsync()
+        return await query.ToListAsync();
+    }
+
+    public async Task<TEntity?> GetByIdAsync(Guid entityId, params Expression<Func<TEntity, object>>[] includes)
+    {
+        _logger.LogInformation("Getting {Entity} by Id: {EntityId} with optional includes", typeof(TEntity).Name, entityId);
+        IQueryable<TEntity> query = _context.Set<TEntity>();
+
+        // Apply includes if provided
+        if (includes != null && includes.Any())
         {
-            _logger.LogInformation("Getting all {Entity}", typeof(TEntity).Name);
-            return await _context.Set<TEntity>().ToListAsync();
+            query = ApplyIncludes(query, includes);
         }
 
-        public async Task<List<TEntity>> GetAllAsync(PaginationQuery? paginationQuery)
+        return await query.FirstOrDefaultAsync(e => EF.Property<Guid>(e, "Id") == entityId);
+    }
+
+    public async Task<TEntity> AddAsync(TEntity entity)
+    {
+        _logger.LogInformation("Adding a new {Entity}", typeof(TEntity).Name);
+        SetGuidIdIfExists(entity);
+        await _context.Set<TEntity>().AddAsync(entity);
+        await _context.SaveChangesAsync();
+        return entity;
+    }
+
+    private void SetGuidIdIfExists(TEntity entity)
+    {
+        var idProperty = typeof(TEntity).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
+        if (idProperty != null && idProperty.PropertyType == typeof(Guid))
         {
-            _logger.LogInformation("Getting all {Entity} with pagination", typeof(TEntity).Name);
-            IQueryable<TEntity> query = _context.Set<TEntity>();
-            if (paginationQuery != null)
+            var currentValue = idProperty.GetValue(entity);
+            if (currentValue == null || (Guid)currentValue == Guid.Empty)
             {
-                query = ApplyFiltering(query, paginationQuery);
-                query = ApplySorting(query, paginationQuery);
-                query = ApplyPagination(query, paginationQuery);
+                idProperty.SetValue(entity, Guid.NewGuid());
             }
-
-            return await query.ToListAsync();
         }
+    }
 
-        protected async Task<List<TEntity>> GetAllByParameterAsync<TValue>(string parameterName, TValue parameterValue)
+    public async Task<TEntity> UpdateAsync(Guid entityId, TEntity updatedEntity)
+    {
+        _logger.LogInformation("Updating {Entity} with Id: {EntityId}", typeof(TEntity).Name, entityId);
+        var entity = await _context.Set<TEntity>().FindAsync(entityId);
+        if (entity == null)
+            throw new DbEntityNotFoundException(nameof(TEntity), entityId);
+
+        foreach (var property in typeof(TEntity).GetProperties())
         {
-            _logger.LogInformation("Querying {Entity} with {ParameterName} = {ParameterValue}", typeof(TEntity).Name,
-                parameterName, parameterValue);
+            var currentValue = property.GetValue(entity);
+            var updatedValue = property.GetValue(updatedEntity);
 
-            var parameter = Expression.Parameter(typeof(TEntity), "entity");
-            var property = Expression.Property(parameter, parameterName);
-            var value = Expression.Constant(parameterValue);
-            var equals = Expression.Equal(property, value);
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
-
-            return await _context.Set<TEntity>().Where(lambda).ToListAsync();
-        }
-
-        protected async Task<List<TEntity>> GetAllByParameterAsync<TValue>(string parameterName, TValue parameterValue,
-            PaginationQuery? paginationQuery)
-        {
-            _logger.LogInformation("Querying {Entity} with {ParameterName} = {ParameterValue} and pagination",
-                typeof(TEntity).Name, parameterName, parameterValue);
-
-            var parameter = Expression.Parameter(typeof(TEntity), "entity");
-            var property = Expression.Property(parameter, parameterName);
-            var value = Expression.Constant(parameterValue);
-            var equals = Expression.Equal(property, value);
-            var lambda = Expression.Lambda<Func<TEntity, bool>>(equals, parameter);
-
-            IQueryable<TEntity> query = _context.Set<TEntity>().Where(lambda);
-
-            if (paginationQuery != null)
+            if (updatedValue != null && !updatedValue.Equals(currentValue))
             {
-                query = ApplyFiltering(query, paginationQuery);
-                query = ApplySorting(query, paginationQuery);
-                query = ApplyPagination(query, paginationQuery);
+                property.SetValue(entity, updatedValue);
             }
-
-            return await query.ToListAsync();
         }
 
-        public async Task<TEntity?> GetByIdAsync(Guid entityId)
+        await _context.SaveChangesAsync();
+        return entity;
+    }
+
+    public async Task DeleteAsync(Guid entityId)
+    {
+        _logger.LogInformation("Deleting {Entity} with Id: {EntityId}", typeof(TEntity).Name, entityId);
+        var entity = await _context.Set<TEntity>().FindAsync(entityId);
+        if (entity == null)
+            throw new DbEntityNotFoundException(nameof(TEntity), entityId);
+
+        _context.Set<TEntity>().Remove(entity);
+        await _context.SaveChangesAsync();
+    }
+
+    // Helper methods
+
+    private IQueryable<TEntity> ApplyIncludes(IQueryable<TEntity> query, params Expression<Func<TEntity, object>>[] includes)
+    {
+        foreach (var include in includes)
         {
-            _logger.LogInformation("Getting {Entity} by Id: {EntityId}", typeof(TEntity).Name, entityId);
-            return await _context.Set<TEntity>().FindAsync(entityId);
+            query = query.Include(include);
         }
 
-        public async Task<TEntity> AddAsync(TEntity entity)
-        {
-            _logger.LogInformation("Adding a new {Entity}", typeof(TEntity).Name);
-            SetGuidIdIfExists(entity);
-            await _context.Set<TEntity>().AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity;
-        }
+        return query;
+    }
 
-        private void SetGuidIdIfExists(TEntity entity)
+    private IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
+    {
+        if (paginationQuery != null && paginationQuery.FilterParams.Any())
         {
-            var idProperty = typeof(TEntity).GetProperty("Id", BindingFlags.Public | BindingFlags.Instance);
-            if (idProperty != null && idProperty.PropertyType == typeof(Guid))
+            ValidateFilterParameter(paginationQuery.FilterParams);
+            var parameterExp = Expression.Parameter(typeof(TEntity), "type");
+            Expression? finalExp = null;
+            var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
+
+            foreach (var (paramName, paramValue) in paginationQuery.FilterParams)
             {
-                var currentValue = idProperty.GetValue(entity);
-                if (currentValue == null || (Guid)currentValue == Guid.Empty)
+                var propertyExp = Expression.Property(parameterExp, paramName);
+                var someValue = Expression.Constant(paramValue, typeof(string));
+                if (method == null) continue;
+                var containsMethodExp = Expression.Call(propertyExp, method, someValue);
+
+                if (finalExp == null)
                 {
-                    idProperty.SetValue(entity, Guid.NewGuid());
+                    finalExp = containsMethodExp;
+                }
+                else
+                {
+                    finalExp = paginationQuery.FilterCondition == FilterCondition.And
+                        ? Expression.AndAlso(finalExp, containsMethodExp)
+                        : Expression.OrElse(finalExp, containsMethodExp);
                 }
             }
-        }
 
-        public async Task<TEntity> UpdateAsync(Guid entityId, TEntity updatedEntity)
-        {
-            _logger.LogInformation("Updating {Entity} with Id: {EntityId}", typeof(TEntity).Name, entityId);
-            var entity = await _context.Set<TEntity>().FindAsync(entityId);
-            if (entity == null)
-                throw new DbEntityNotFoundException(nameof(TEntity), entityId);
-
-            foreach (var property in typeof(TEntity).GetProperties())
+            if (finalExp != null)
             {
-                var currentValue = property.GetValue(entity);
-                var updatedValue = property.GetValue(updatedEntity);
-
-                if (updatedValue != null && !updatedValue.Equals(currentValue))
-                {
-                    property.SetValue(entity, updatedValue);
-                }
-            }
-
-            await _context.SaveChangesAsync();
-            return entity;
-        }
-
-
-        public async Task DeleteAsync(Guid entityId)
-        {
-            _logger.LogInformation("Deleting {Entity} with Id: {EntityId}", typeof(TEntity).Name, entityId);
-            var entity = await _context.Set<TEntity>().FindAsync(entityId);
-            if (entity == null)
-                throw new DbEntityNotFoundException(nameof(TEntity), entityId);
-
-            _context.Set<TEntity>().Remove(entity);
-            await _context.SaveChangesAsync();
-        }
-
-
-        private void ValidateFilterParameter(Dictionary<string, string> filterParams)
-        {
-            bool isFilterParamAndValueProvided = filterParams.Count > 0;
-
-            if (!isFilterParamAndValueProvided) return;
-
-            if (filterParams.Any(param => !_propertyNames.Contains(param.Key)))
-            {
-                _logger.LogWarning("Invalid filter parameters: {FilterParams}", filterParams);
-                throw new ArgumentException(CoreMessages.FilterParametersDoesntMatch);
-            }
-        }
-
-        private IQueryable<TEntity> ApplyFiltering(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
-        {
-            if (paginationQuery != null && !paginationQuery.FilterParams.Any())
-            {
-                ValidateFilterParameter(paginationQuery.FilterParams);
-                if (!paginationQuery.FilterParams.Any()) return query;
-                var parameterExp = Expression.Parameter(typeof(TEntity), "type");
-                Expression? finalExp = null;
-                var method = typeof(string).GetMethod("Contains", new[] { typeof(string) });
-
-                foreach (var (paramName, paramValue) in paginationQuery.FilterParams)
-                {
-                    var propertyExp = Expression.Property(parameterExp, paramName);
-                    var someValue = Expression.Constant(paramValue, typeof(string));
-                    if (method == null) continue;
-                    var containsMethodExp = Expression.Call(propertyExp, method, someValue);
-
-                    if (finalExp == null)
-                    {
-                        finalExp = containsMethodExp;
-                    }
-                    else
-                    {
-                        finalExp = paginationQuery.FilterCondition == FilterCondition.And
-                            ? Expression.AndAlso(finalExp, containsMethodExp)
-                            : Expression.OrElse(finalExp, containsMethodExp);
-                    }
-                }
-
-                if (finalExp == null) return query;
                 var lambda = Expression.Lambda<Func<TEntity, bool>>(finalExp, parameterExp);
                 query = query.Where(lambda);
             }
-
-            return query;
         }
 
-        private IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
+        return query;
+    }
+
+    private IQueryable<TEntity> ApplySorting(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
+    {
+        if (paginationQuery?.SortingQuery != null)
         {
-            if (paginationQuery != null && paginationQuery.SortingQuery != null)
-            {
-                var sortingQuery = paginationQuery.SortingQuery;
-                ValidateSortingParameter(sortingQuery);
-                if (string.IsNullOrWhiteSpace(sortingQuery.SortParam)) return query;
-                PropertyInfo? propertyInfo = typeof(TEntity).GetProperty(sortingQuery.SortParam,
-                    BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
+            var sortingQuery = paginationQuery.SortingQuery;
+            ValidateSortingParameter(sortingQuery);
+            PropertyInfo? propertyInfo = typeof(TEntity).GetProperty(sortingQuery.SortParam,
+                BindingFlags.IgnoreCase | BindingFlags.Public | BindingFlags.Instance);
 
-                if (propertyInfo == null) return query;
-                ParameterExpression parameter = Expression.Parameter(typeof(TEntity), "x");
-                Expression property = Expression.Property(parameter, propertyInfo);
-                LambdaExpression lambda = Expression.Lambda(property, parameter);
+            if (propertyInfo == null) return query;
+            ParameterExpression parameter = Expression.Parameter(typeof(TEntity), "x");
+            Expression property = Expression.Property(parameter, propertyInfo);
+            LambdaExpression lambda = Expression.Lambda(property, parameter);
 
-                switch (sortingQuery.SortDirection)
-                {
-                    case SortDirection.Asc:
-                        _logger.LogInformation("Applying ascending sorting on {Entity} by {SortParam}",
-                            typeof(TEntity).Name, sortingQuery.SortParam);
-                        MethodCallExpression orderByCall = Expression.Call(
-                            typeof(Queryable),
-                            "OrderBy",
-                            new[] { typeof(TEntity), property.Type },
-                            query.Expression,
-                            Expression.Quote(lambda));
+            var orderByMethod = sortingQuery.SortDirection == SortDirection.Asc ? "OrderBy" : "OrderByDescending";
+            MethodCallExpression orderByCall = Expression.Call(
+                typeof(Queryable),
+                orderByMethod,
+                new[] { typeof(TEntity), property.Type },
+                query.Expression,
+                Expression.Quote(lambda));
 
-                        return query.Provider.CreateQuery<TEntity>(orderByCall);
-                    case SortDirection.Desc:
-                        _logger.LogInformation("Applying descending sorting on {Entity} by {SortParam}",
-                            typeof(TEntity).Name, sortingQuery.SortParam);
-                        MethodCallExpression orderByDescendingCall = Expression.Call(
-                            typeof(Queryable),
-                            "OrderByDescending",
-                            new[] { typeof(TEntity), property.Type },
-                            query.Expression,
-                            Expression.Quote(lambda));
-
-                        return query.Provider.CreateQuery<TEntity>(orderByDescendingCall);
-                    default:
-                        return query;
-                }
-            }
-
-            return query;
+            query = query.Provider.CreateQuery<TEntity>(orderByCall);
         }
 
+        return query;
+    }
 
-        private void ValidateSortingParameter(SortingQuery sortingQuery)
+    private IQueryable<TEntity> ApplyPagination(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
+    {
+        if (paginationQuery?.PageSize > 0)
         {
-            bool isSortParamProvided = !string.IsNullOrEmpty(sortingQuery.SortParam);
-
-            if (!isSortParamProvided) return;
-
-            if (!_propertyNames.Contains(sortingQuery.SortParam))
-            {
-                _logger.LogWarning("Invalid sorting parameter: {SortParam}", sortingQuery.SortParam);
-                throw new ArgumentException(CoreMessages.SortParametersDoesntMatch);
-            }
+            int skipAmount = (paginationQuery.PageNumber - 1) * paginationQuery.PageSize;
+            _logger.LogInformation(
+                "Applying pagination on {Entity}: PageNumber = {PageNumber}, PageSize = {PageSize}",
+                typeof(TEntity).Name, paginationQuery.PageNumber, paginationQuery.PageSize);
+            query = query.Skip(skipAmount).Take(paginationQuery.PageSize);
         }
 
+        return query;
+    }
 
-        private IQueryable<TEntity> ApplyPagination(IQueryable<TEntity> query, PaginationQuery? paginationQuery)
+    private void ValidateFilterParameter(Dictionary<string, string> filterParams)
+    {
+        if (!filterParams.Any()) return;
+
+        if (filterParams.Any(param => !_propertyNames.Contains(param.Key)))
         {
-            if (paginationQuery != null && paginationQuery.PageNumber <= 0)
-            {
-                _logger.LogWarning("Invalid page number in pagination query");
-                throw new ArgumentException(CoreMessages.PagingWrongPage);
-            }
+            _logger.LogWarning("Invalid filter parameters: {FilterParams}", filterParams);
+            throw new ArgumentException(CoreMessages.FilterParametersDoesntMatch);
+        }
+    }
 
-            if (paginationQuery is { PageSize: > 0 })
-            {
-                int skipAmount = (paginationQuery.PageNumber - 1) * paginationQuery.PageSize;
-                _logger.LogInformation(
-                    "Applying pagination on {Entity}: PageNumber = {PageNumber}, PageSize = {PageSize}",
-                    typeof(TEntity).Name, paginationQuery.PageNumber, paginationQuery.PageSize);
-                query = query.Skip(skipAmount).Take(paginationQuery.PageSize);
-            }
+    private void ValidateSortingParameter(SortingQuery sortingQuery)
+    {
+        if (string.IsNullOrEmpty(sortingQuery.SortParam)) return;
 
-            return query;
+        if (!_propertyNames.Contains(sortingQuery.SortParam))
+        {
+            _logger.LogWarning("Invalid sorting parameter: {SortParam}", sortingQuery.SortParam);
+            throw new ArgumentException(CoreMessages.SortParametersDoesntMatch);
         }
     }
 }

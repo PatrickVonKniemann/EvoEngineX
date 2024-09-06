@@ -8,4 +8,6 @@ public interface ICodeRunQueryService : IGenericEntityQueryService<ReadCodeRunRe
 {
     Task<ReadCodeRunListByCodeBaseIdResponse> GetAllByCodeBaseIdAsync(Guid codeBaseId,
         PaginationQuery? paginationQuery);
+    
+    Task<ReadCodeRunResponse> GetByIdAsyncDetail(Guid entityId);
 }

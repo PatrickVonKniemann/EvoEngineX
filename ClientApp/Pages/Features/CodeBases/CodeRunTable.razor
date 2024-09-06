@@ -58,12 +58,24 @@
             </td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunStart</td>
             <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.RunFinish</td>
-            <td class="px-6 py-3 font-medium whitespace-nowrap">@codeRun.Results</td>
+
+            <td class="px-6 py-3 font-medium whitespace-nowrap">
+                @if (codeRun.Results != null)
+                {
+                    <a href="@codeRun.Results.Id" title="Download File">
+                        <i class="fa fa-download"></i> <!-- Font Awesome download icon -->
+                    </a>
+                }
+                else
+                {
+                    <span>No Results</span>
+                }
+            </td>
         </tr>
     }
     </tbody>
 </table>
-
+f
 
 @code {
     [Parameter] public required ReadCodeRunListByCodeBaseIdResponse CodeRuns { get; set; }
@@ -100,21 +112,44 @@
         RunStatusConnectorService.OnRunStatusUpdated += HandleRunStatusUpdated;
         await RunStatusConnectorService.StartConnectionAsync();
     }
-    
-    
-    private void HandleRunStatusUpdated(string runId, string status)
+
+
+    private async void HandleRunStatusUpdated(string runId, string status)
     {
         var codeRun = CodeRuns.Items.Values.FirstOrDefault(cr => cr.Id.ToString() == runId);
         if (codeRun != null)
         {
+            // Update the status locally
             codeRun.Status = Enum.Parse<RunStatus>(status);
+
+            // If the status is Done, refetch the entire item
+            if (codeRun.Status == RunStatus.Done)
+            {
+                // Fetch the updated details for the CodeRun
+                var refetchCodeRun = await CodeRunService.GetEntityAsync(runId);
+
+                if (refetchCodeRun != null)
+                {
+                    var selectedCodeRun = CodeRuns.Items.Values.FirstOrDefault(codeRunItem => codeRunItem.Id == codeRun.Id);
+                    if (selectedCodeRun != null)
+                    {
+                        selectedCodeRun.RunFinish = refetchCodeRun.RunFinish;
+                        selectedCodeRun.Status = refetchCodeRun.Status;
+                        selectedCodeRun.Results = refetchCodeRun.Results;
+                    }
+                }
+            }
+
+            // Trigger UI update
             StateHasChanged();
         }
     }
+
 
     public async ValueTask DisposeAsync()
     {
         RunStatusConnectorService.OnRunStatusUpdated -= HandleRunStatusUpdated;
         await RunStatusConnectorService.StopConnectionAsync();
     }
+
 }
