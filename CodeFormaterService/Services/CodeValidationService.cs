@@ -6,7 +6,7 @@ public class CodeValidationService : ICodeValidationService
     public Task<bool> ValidateAsync(string code)
     {
         Thread.Sleep(3000);
-        return FlipCoin();
+        return Task.FromResult(true);
     }
     
     // TODO this is temporary while testing

@@ -46,7 +46,7 @@ public class CodeExecutionCommandService(
         logger.LogInformation("Execution was successful for CodeRunId: {CodeRunId}. Updating status to Done.", codeRunId);
 
         codeRun.Status = RunStatus.Done;
-        codeRun.RunFinish = DateTime.Now;
+        codeRun.RunFinish = DateTime.UtcNow;
         codeRun.Results =  await codeRunRepository.ReadLogsFromDatabaseAsync(codeRun.Id);
         
         await codeRunRepository.UpdateAsync(codeRun.Id, codeRun);
