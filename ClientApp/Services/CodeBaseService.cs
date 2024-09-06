@@ -14,5 +14,8 @@ public class CodeBaseService(
     : GenericService<ReadCodeBaseListByUserIdResponse, ReadCodeBaseResponse, ReadCodeBaseListRequest,
         CreateCodeBaseRequest, UpdateCodeBaseRequest>(httpClient, "http://localhost:5002/code-base", logger)
 {
-    
+    public async Task IncreaseSuccessFullRunCounter(Guid codeBaseId)
+    {
+        await httpClient.PostAsJsonAsync("http://localhost:5002/code-base/increase", codeBaseId);
+    }
 }

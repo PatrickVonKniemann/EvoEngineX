@@ -10,6 +10,7 @@ public class CodeBase : CommonEntityObject
     public required string Name { get; set; }
     public required SupportedPlatformType SupportedPlatform { get; set; }
     public required bool Valid { get; set; }
+    public required int SuccessfulRunCounter { get; set; } = 0;
     public string? Code { get; set; }
     [NotMapped] public Dictionary<string, string>? Parameters { get; set; }
     public required Guid UserId { get; init; }
