@@ -1,3 +1,5 @@
+version: '3.8'
+
 services:
   postgres-integration-testing:
     image: postgres:latest
@@ -11,7 +13,9 @@ services:
       - "5434:5432"
     networks:
       - development-network
-  
+    profiles:
+      - localhost
+
   postgres:
     image: postgres:latest
     environment:
@@ -24,6 +28,8 @@ services:
       - "5433:5432"
     networks:
       - development-network
+    profiles:
+      - localhost
 
   rabbitmq:
     image: rabbitmq:3-management
@@ -38,6 +44,8 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
     networks:
       - development-network
+    profiles:
+      - localhost
 
   mongo:
     image: mongo:latest
@@ -51,6 +59,8 @@ services:
       - "27018:27017"
     networks:
       - development-network
+    profiles:
+      - localhost
 
   code-run-service:
     build:
@@ -81,6 +91,8 @@ services:
       - "5001:8080"
     networks:
       - development-network
+    profiles:
+      - localhost
 
   code-base-service:
     build:
@@ -108,6 +120,8 @@ services:
       - "5002:8080"
     networks:
       - development-network
+    profiles:
+      - localhost
 
   user-service:
     build:
@@ -128,6 +142,8 @@ services:
       - "5003:8080"
     networks:
       - development-network
+    profiles:
+      - localhost
 
   code-formater-service:
     build:
@@ -144,6 +160,8 @@ services:
       - "5004:8080"
     networks:
       - development-network
+    profiles:
+      - localhost
   
   code-execution-engine:
     build:
@@ -166,6 +184,8 @@ services:
       - "5005:8080"
     networks:
       - development-network
+    profiles:
+      - localhost
 
 volumes:
   rabbitmq_data:
