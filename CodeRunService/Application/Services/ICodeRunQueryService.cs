@@ -10,4 +10,5 @@ public interface ICodeRunQueryService : IGenericEntityQueryService<ReadCodeRunRe
         PaginationQuery? paginationQuery);
     
     Task<ReadCodeRunResponse> GetByIdAsyncDetail(Guid entityId);
+    Task<ReadCodeRunFileResponse> GetFileByIdAsyncDetail(Guid entityId);
 }

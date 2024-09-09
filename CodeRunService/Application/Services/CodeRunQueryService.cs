@@ -57,5 +57,15 @@ namespace CodeRunService.Application.Services
             return _mapper.Map<ReadCodeRunResponse>(await codeRunRepository.GetByIdAsync(entityId,
                 cr => cr.Results));
         }
+
+        public async Task<ReadCodeRunFileResponse> GetFileByIdAsyncDetail(Guid entityId)
+        {
+            var codeRun = await codeRunRepository.GetByIdAsync(entityId,
+                cr => cr.Results);
+            return new ReadCodeRunFileResponse
+            {
+                File = codeRun.Results.File
+            };
+        }
     }
 }

@@ -3,9 +3,11 @@
 @using ClientApp.Services
 @using ClientApp.Components.Common
 @using ClientApp.Components.CodeRun
-@inject CodeBaseService CodeBaseService
+@using Microsoft.EntityFrameworkCore.Metadata.Internal
 @inject CodeRunService CodeRunService
+@inject CodeBaseService CodeBaseService
 @inject CodeRunStatusConnectorService RunStatusConnectorService
+@inject IJSRuntime JSRuntime
 
 @if (_isModalVisible && _selectedCodeRun != null)
 {
@@ -63,9 +65,9 @@
             <td class="px-6 py-3 font-medium whitespace-nowrap">
                 @if (codeRun.Results != null)
                 {
-                    <a href="@codeRun.Results.Id" title="Download File">
-                        <i class="fa fa-download"></i> <!-- Font Awesome download icon -->
-                    </a>
+                    <button @onclick="() => DownloadFile(codeRun.Id)">
+                        <i class="fa fa-download"></i>
+                    </button>
                 }
                 else
                 {
@@ -152,5 +154,42 @@ f
         RunStatusConnectorService.OnRunStatusUpdated -= HandleRunStatusUpdated;
         await RunStatusConnectorService.StopConnectionAsync();
     }
+
+    private async Task DownloadFile(Guid codeRunId)
+    {
+        try
+        {
+            Console.WriteLine($"Attempting to download file for CodeRunId: {codeRunId}");
+
+            // Call the API to get the file bytes via CodeRunService
+            var fileBytes = await CodeRunService.GetCodeRunFileAsync(codeRunId);
+
+            if (fileBytes != null && fileBytes.Length > 0)
+            {
+                Console.WriteLine($"File successfully fetched for CodeRunId: {codeRunId}");
+
+                // Convert the byte[] to a Base64 string (skipped in this case)
+                var fileName = "result.csv"; // Adjust based on your requirements
+
+                Console.WriteLine($"Calling JS function to download file with filename: {fileName}");
+
+                // Call the JavaScript function to download the file using byte[] directly
+                await JSRuntime.InvokeVoidAsync("downloadFileFromStream", fileName, fileBytes);
+
+                Console.WriteLine("JS function invoked successfully");
+            }
+            else
+            {
+                Console.WriteLine("Error: File content is null or empty");
+                throw new Exception("Error while downloading the file");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error in DownloadFile: {ex.Message}");
+            throw new Exception("Error while downloading the file", ex);
+        }
+    }
+
 
 }
