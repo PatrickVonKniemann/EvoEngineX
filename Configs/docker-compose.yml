@@ -131,8 +131,6 @@ services:
       - "5003:8080"
     networks:
       - evo-engine-x-network
-    profiles:
-      - localhost
 
   code-formater-service:
     build:
@@ -177,8 +175,8 @@ services:
       context: ..
       dockerfile: ./Configs/dockerfile-blazor
     environment:
-      CODE_RUN_SERVICE_SERVICE_URL: ${CODE_RUN_SERVICE_SERVICE_URL}
-      CODE_BASE_SERVICE_SERVICE_URL: ${CODE_BASE_SERVICE_SERVICE_URL}
+      CODE_RUN_SERVICE_URL: ${CODE_RUN_SERVICE_URL}
+      CODE_BASE_SERVICE_URL: ${CODE_BASE_SERVICE_URL}
       USER_SERVICE_URL: ${USER_SERVICE_URL}
       FORMATTER_SERVICE_URL: ${FORMATTER_SERVICE_URL}
       EXECUTION_ENGINE_URL: ${EXECUTION_ENGINE_URL}
