@@ -60,15 +60,15 @@ services:
       context: ..
       dockerfile: ./Configs/dockerfile-template
       args:
-        SERVICE_NAME: ${SERVICE1_NAME}
+        SERVICE_NAME: ${CODE_RUN_SERVICE_NAME}
     depends_on:
       - postgres
       - rabbitmq
     environment:
-      SERVICE_NAME: ${SERVICE1_NAME}
+      SERVICE_NAME: ${CODE_RUN_SERVICE_NAME}
       DB_HOST: ${POSTGRES_HOST}
       DB_PORT: ${POSTGRES_PORT_INNER}
-      DB_NAME: ${SERVICE1_DB}
+      DB_NAME: ${CODE_RUN_SERVICE_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       RABBITMQ_HOST: ${RABBITMQ_HOST}
@@ -90,16 +90,16 @@ services:
       context: ..
       dockerfile: ./Configs/dockerfile-template
       args:
-        SERVICE_NAME: ${SERVICE2_NAME}
+        SERVICE_NAME: ${CODE_BASE_SERVICE_NAME}
     depends_on:
       - postgres
       - rabbitmq
       - mongo
     environment:
-      SERVICE_NAME: ${SERVICE2_NAME}
+      SERVICE_NAME: ${CODE_BASE_SERVICE_NAME}
       DB_HOST: ${POSTGRES_HOST}
       DB_PORT: ${POSTGRES_PORT_INNER}
-      DB_NAME: ${SERVICE2_DB}
+      DB_NAME: ${CODE_BASE_SERVICE_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
       MONGO_HOST: ${MONGO_HOST}
@@ -117,14 +117,14 @@ services:
       context: ..
       dockerfile: ./Configs/dockerfile-template
       args:
-        SERVICE_NAME: ${SERVICE3_NAME}
+        SERVICE_NAME: ${USER_SERVICE_NAME}
     depends_on:
       - postgres
     environment:
-      SERVICE_NAME: ${SERVICE3_NAME}
+      SERVICE_NAME: ${USER_SERVICE_NAME}
       DB_HOST: ${POSTGRES_HOST}
       DB_PORT: ${POSTGRES_PORT_INNER}
-      DB_NAME: ${SERVICE3_DB}
+      DB_NAME: ${USER_SERVICE_DB}
       DB_USER: ${POSTGRES_USER}
       DB_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
@@ -171,6 +171,22 @@ services:
       - "5005:8080"
     networks:
       - evo-engine-x-network
+
+  gui-blazor-app:
+    build:
+      context: ..
+      dockerfile: ./Configs/dockerfile-blazor
+    environment:
+      CODE_RUN_SERVICE_SERVICE_URL: ${CODE_RUN_SERVICE_SERVICE_URL}
+      CODE_BASE_SERVICE_SERVICE_URL: ${CODE_BASE_SERVICE_SERVICE_URL}
+      USER_SERVICE_URL: ${USER_SERVICE_URL}
+      FORMATTER_SERVICE_URL: ${FORMATTER_SERVICE_URL}
+      EXECUTION_ENGINE_URL: ${EXECUTION_ENGINE_URL}
+    ports:
+      - "8080:80"
+    networks:
+      - evo-engine-x-network
+
 
 volumes:
   rabbitmq_data:
