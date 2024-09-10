@@ -6,35 +6,89 @@ using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Environment-specific configuration
+var environment = builder.Environment.EnvironmentName;
 
-// Get RabbitMQ settings from environment variables
-var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
-var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat";
-var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa";
-var rabbitMqPort = Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672";
+// Configure logging explicitly based on environment
+ConfigureLogging(builder.Logging, environment);
 
-builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
-    new ConnectionFactory
+// Add services to the container
+ConfigureServices(builder.Services);
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline
+ConfigureMiddleware(app);
+
+await app.RunAsync();
+
+// --------------------------
+// Application methods
+// --------------------------
+
+void ConfigureLogging(ILoggingBuilder loggingBuilder, string profileEnvironment)
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+
+    if (profileEnvironment == "Development")
     {
-        HostName = rabbitMqHost,
-        UserName = rabbitMqUser,
-        Password = rabbitMqPass,
-        Port = int.Parse(rabbitMqPort)
+        loggingBuilder.AddDebug(); // Add debug-level logging for development
+    }
+
+    loggingBuilder.AddFilter("Microsoft", LogLevel.Warning)
+                  .AddFilter("System", LogLevel.Error);
+}
+
+void ConfigureServices(IServiceCollection services)
+{
+    services.AddEndpointsApiExplorer();
+    services.AddSwaggerGen();
+
+    // RabbitMQ settings from environment variables
+    var rabbitMqSettings = GetRabbitMqSettings();
+    services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
+        new ConnectionFactory
+        {
+            HostName = rabbitMqSettings.Host,
+            UserName = rabbitMqSettings.User,
+            Password = rabbitMqSettings.Pass,
+            Port = rabbitMqSettings.Port
+        });
+
+    services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+
+    // MongoDB configuration
+    var mongoDatabaseName = GetMongoDatabaseName();
+    services.AddSingleton<IMongoClient, MongoClient>(sp =>
+    {
+        return CreateMongoClient(mongoDatabaseName);
     });
 
-// Get MongoDB connection settings from environment variables
-var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "mongo"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27017"}/{Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db"}";
-var mongoDatabaseName = Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+    services.AddSingleton(sp =>
+    {
+        var client = sp.GetRequiredService<IMongoClient>();
+        return client.GetDatabase(mongoDatabaseName);
+    });
 
-// Register MongoDB client as a singleton
+    services.AddSingleton<ICodeExecutionLogic, CodeExecutionLogic>();
+    services.AddHostedService<CodeExecutionRequestConsumer>();
+}
 
-// Register MongoDB client as a singleton
-builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+(string Host, string User, string Pass, int Port) GetRabbitMqSettings()
 {
+    return (
+        Host: Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost",
+        User: Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat",
+        Pass: Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa",
+        Port: int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672")
+    );
+}
+
+MongoClient CreateMongoClient(string mongoDatabaseName)
+{
+    var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "mongo"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27017"}/{mongoDatabaseName}";
+
     var mongoClient = new MongoClient(mongoConnectionString);
 
     // Try to ping the MongoDB server to check the connection
@@ -59,30 +113,20 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
     }
 
     return mongoClient;
-});
-
-
-
-// Register MongoDB database instance
-builder.Services.AddSingleton(sp =>
-{
-    var client = sp.GetRequiredService<IMongoClient>();
-    return client.GetDatabase(mongoDatabaseName);
-});
-
-builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
-builder.Services.AddSingleton<ICodeExecutionLogic, CodeExecutionLogic>();
-builder.Services.AddHostedService<CodeExecutionRequestConsumer>();
-
-var app = builder.Build();
-
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
 }
 
-app.UseHttpsRedirection();
+string GetMongoDatabaseName()
+{
+    return Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+}
 
-await app.RunAsync();
+void ConfigureMiddleware(WebApplication appRuntime)
+{
+    if (appRuntime.Environment.IsDevelopment())
+    {
+        appRuntime.UseSwagger();
+        appRuntime.UseSwaggerUI();
+    }
+
+    appRuntime.UseHttpsRedirection();
+}

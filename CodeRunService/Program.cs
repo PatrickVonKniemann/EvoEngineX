@@ -15,83 +15,131 @@ using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Environment-specific configuration
+var environment = builder.Environment.EnvironmentName;
+
+// Configure logging explicitly based on environment
+ConfigureLogging(builder.Logging, environment);
+
 // Add services to the container
-builder.Services
-    .AddFastEndpoints()
-    .SwaggerDocument(o =>
+ConfigureServices(builder.Services, builder.Configuration);
+
+var app = builder.Build();
+
+// Log connection strings
+LogConnectionDetails(app);
+
+// Apply database migrations and seeding
+await ApplyDatabaseMigrationsAndSeedingAsync(app);
+
+ConfigureMiddleware(app);
+
+await app.RunAsync();
+
+// --------------------------
+// Application methods
+// --------------------------
+
+void ConfigureLogging(ILoggingBuilder loggingBuilder, string profileEnvironment)
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+
+    if (profileEnvironment == "Development")
     {
-        o.DocumentSettings = s =>
+        loggingBuilder.AddDebug(); // Add debug-level logging for development
+    }
+
+    loggingBuilder.AddFilter("Microsoft", LogLevel.Warning)
+                  .AddFilter("System", LogLevel.Error);
+}
+
+void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+{
+    services.AddFastEndpoints()
+        .SwaggerDocument(o =>
         {
-            s.Title = "Code Run Service API";
-            s.Version = "v0.0.1";
-        };
-    });
+            o.DocumentSettings = s =>
+            {
+                s.Title = "Code Run Service API";
+                s.Version = "v0.0.1";
+            };
+        });
 
-// Configure logging
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-
-// Add SignalR services
-builder.Services.AddSignalR();  // This line ensures SignalR is added to the DI container
-
-// Add CORS policy
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins", policyBuilder =>
-        policyBuilder.AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-});
-
-// Register application services
-builder.Services.AddScoped<ICodeRunCommandService, CodeRunCommandService>();
-builder.Services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
-builder.Services.AddScoped<ICodeRunRepository, CodeRunRepository>();
-builder.Services.AddScoped<ICodeExecutionCommandService, CodeExecutionCommandService>();
-builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
-
-builder.Services.AddAutoMapper(cfg => cfg.AddProfile(new CodeRunProfile()));
-
-// Configure RabbitMQ settings from environment variables
-var rabbitMqSettings = new
-{
-    Host = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost",
-    User = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat",
-    Pass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa",
-    Port = int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672")
-};
-
-builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
-    new ConnectionFactory
+    services.AddSignalR();  // SignalR services
+    services.AddCors(options =>
     {
-        HostName = rabbitMqSettings.Host,
-        UserName = rabbitMqSettings.User,
-        Password = rabbitMqSettings.Pass,
-        Port = rabbitMqSettings.Port
+        options.AddPolicy("AllowAllOrigins",
+            policyBuilder => policyBuilder.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
     });
 
-builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
-builder.Services.AddHostedService<CodeValidationConsumer>();
-builder.Services.AddHostedService<CodeExecutionConsumer>();
+    // Register application services
+    services.AddScoped<ICodeRunCommandService, CodeRunCommandService>();
+    services.AddScoped<ICodeRunQueryService, CodeRunQueryService>();
+    services.AddScoped<ICodeRunRepository, CodeRunRepository>();
+    services.AddScoped<ICodeExecutionCommandService, CodeExecutionCommandService>();
+    services.AddScoped<ICodeValidationService, CodeValidationService>();
+    services.AddAutoMapper(cfg => cfg.AddProfile(new CodeRunProfile()));
 
-// Setup database connection
-var connectionString = builder.Configuration.GetConnectionString("CodeRunDatabase")?
-    .Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
-    .Replace("${DB_PORT}", Environment.GetEnvironmentVariable("DB_PORT") ?? "5433")
-    .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeRunDb")
-    .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
-    .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
+    // RabbitMQ configuration
+    var rabbitMqSettings = GetRabbitMqSettings();
+    services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
+        new ConnectionFactory
+        {
+            HostName = rabbitMqSettings.Host,
+            UserName = rabbitMqSettings.User,
+            Password = rabbitMqSettings.Pass,
+            Port = rabbitMqSettings.Port
+        });
 
-builder.Services.AddDbContext<CodeRunDbContext>(options =>
-    options.UseNpgsql(connectionString));
+    services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+    services.AddHostedService<CodeValidationConsumer>();
+    services.AddHostedService<CodeExecutionConsumer>();
 
-// Get MongoDB connection settings from environment variables
-var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "localhost"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27018"}/{Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db"}";
-var mongoDatabaseName = Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+    // PostgreSQL configuration
+    var postgresConnectionString = GetPostgresConnectionString(configuration);
+    services.AddDbContext<CodeRunDbContext>(options =>
+        options.UseNpgsql(postgresConnectionString));
 
-// Register MongoDB client as a singleton
-builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+    // MongoDB configuration
+    var mongoDatabaseName = GetMongoDatabaseName();
+    services.AddSingleton<IMongoClient, MongoClient>(sp =>
+    {
+        return CreateMongoClient(mongoDatabaseName);
+    });
+
+    services.AddSingleton(sp =>
+    {
+        var client = sp.GetRequiredService<IMongoClient>();
+        return client.GetDatabase(mongoDatabaseName);
+    });
+}
+
+(string Host, string User, string Pass, int Port) GetRabbitMqSettings()
 {
+    return (
+        Host: Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost",
+        User: Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat",
+        Pass: Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa",
+        Port: int.Parse(Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672")
+    );
+}
+
+string GetPostgresConnectionString(IConfiguration configuration)
+{
+    var connectionString = configuration.GetConnectionString("CodeRunDatabase");
+
+    return connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+        .Replace("${DB_PORT}", Environment.GetEnvironmentVariable("DB_PORT") ?? "5433")
+        .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeRunDb")
+        .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
+        .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa") ?? throw new InvalidOperationException("No connection string provided for DB connector");
+}
+
+MongoClient CreateMongoClient(string mongoDatabaseName)
+{
+    var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "localhost"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27018"}/{mongoDatabaseName}";
+
     var mongoClient = new MongoClient(mongoConnectionString);
 
     // Try to ping the MongoDB server to check the connection
@@ -112,63 +160,59 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
         Console.ForegroundColor = ConsoleColor.Red;
         Console.WriteLine($"Failed to connect to MongoDB at {mongoConnectionString}: " + ex.Message);
         Console.ResetColor(); // Reset to default color
-        throw; // Optionally, you can decide if you want to stop the app if MongoDB is not reachable
+        throw; // Optionally, stop the app if MongoDB is not reachable
     }
 
     return mongoClient;
-});
+}
 
-// Register MongoDB database instance
-builder.Services.AddSingleton(sp =>
+string GetMongoDatabaseName()
 {
-    var client = sp.GetRequiredService<IMongoClient>();
-    return client.GetDatabase(mongoDatabaseName);
-});
+    return Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+}
 
-var app = builder.Build();
-
-// Log connection strings
-app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
-app.Logger.LogInformation("RabbitMQ connection: Host={Host}, User={User}, Port={Port}", 
-    rabbitMqSettings.Host, rabbitMqSettings.User, rabbitMqSettings.Port);
-
-// Apply migrations and seed database
-using (var scope = app.Services.CreateScope())
+async Task ApplyDatabaseMigrationsAndSeedingAsync(WebApplication appRuntime)
 {
+    using var scope = appRuntime.Services.CreateScope();
     var services = scope.ServiceProvider;
+
     try
     {
         var context = services.GetRequiredService<CodeRunDbContext>();
         await context.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("Database created successfully");
+        appRuntime.Logger.LogInformation("Database created successfully");
 
-        // Check if seeding is needed based on environment
+        // Seed the database if necessary
         var sqlDirectory = "./SqlScripts";
-        var fileList = new List<string>
-        {
-            "CodeRuns"
-        };
-        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
+        var fileList = new List<string> { "CodeRuns" };
+        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, appRuntime.Logger,
+            GetPostgresConnectionString(appRuntime.Configuration), fileList);
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occurred while applying migrations or seeding the database");
+        appRuntime.Logger.LogError(ex, "An error occurred while applying migrations or seeding the database");
     }
 }
 
-// Use middleware and other configurations
-app.UseMiddleware<ErrorHandlingMiddleware>(); // Custom error handling middleware
-app.UseFastEndpoints();
-app.UseSwaggerGen();
+void LogConnectionDetails(WebApplication appRuntime)
+{
+    var rabbitMqSettings = GetRabbitMqSettings();
+    appRuntime.Logger.LogInformation("Using connection string: {ConnectionString}", GetPostgresConnectionString(appRuntime.Configuration));
+    appRuntime.Logger.LogInformation("RabbitMQ connection: Host={Host}, User={User}, Port={Port}",
+        rabbitMqSettings.Host, rabbitMqSettings.User, rabbitMqSettings.Port);
+}
 
-app.MapHub<CodeRunHub>("/codeRunHub");
-app.UseHttpsRedirection();
-app.UseCors("AllowAllOrigins");
-
-await app.RunAsync();
+void ConfigureMiddleware(WebApplication appRuntime)
+{
+    appRuntime.UseMiddleware<ErrorHandlingMiddleware>(); // Custom error handling middleware
+    appRuntime.UseFastEndpoints();
+    appRuntime.UseSwaggerGen();
+    appRuntime.MapHub<CodeRunHub>("/codeRunHub");
+    appRuntime.UseHttpsRedirection();
+    appRuntime.UseCors("AllowAllOrigins");
+}
 
 /// <summary>
-/// This class is used to start the API,
-/// Partial class is used to add the entry point for CustomWebApplicationFactory
+/// Partial class used to allow for test entry points or other extensions.
 /// </summary>
 public abstract partial class Program;
