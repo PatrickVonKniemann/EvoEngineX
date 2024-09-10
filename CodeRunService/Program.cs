@@ -151,14 +151,14 @@ MongoClient CreateMongoClient(string mongoDatabaseName)
         if (pingResult != null)
         {
             Console.ForegroundColor = ConsoleColor.Green;
-            Console.WriteLine($"Successfully connected to MongoDB at {mongoConnectionString}");
+            Console.WriteLine($"info: Successfully connected to MongoDB at {mongoConnectionString}");
             Console.ResetColor(); // Reset to default color
         }
     }
     catch (Exception ex)
     {
         Console.ForegroundColor = ConsoleColor.Red;
-        Console.WriteLine($"Failed to connect to MongoDB at {mongoConnectionString}: " + ex.Message);
+        Console.WriteLine($"error: Failed to connect to MongoDB at {mongoConnectionString}: " + ex.Message);
         Console.ResetColor(); // Reset to default color
         throw; // Optionally, stop the app if MongoDB is not reachable
     }
