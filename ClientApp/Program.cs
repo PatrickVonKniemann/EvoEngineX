@@ -15,4 +15,12 @@ builder.Services.AddScoped<CodeRunService>();
 builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<CodeRunStatusConnectorService>();
 
+// Read environment variables passed from Docker Compose
+var codeRunServiceUrl = Environment.GetEnvironmentVariable("CODE_RUN_SERVICE_SERVICE_URL");
+var codeBaseServiceUrl = Environment.GetEnvironmentVariable("CODE_BASE_SERVICE_SERVICE_URL");
+var userServiceUrl = Environment.GetEnvironmentVariable("USER_SERVICE_URL");
+var formatterServiceUrl = Environment.GetEnvironmentVariable("FORMATTER_SERVICE_URL");
+var executionEngineUrl = Environment.GetEnvironmentVariable("EXECUTION_SERVICE_URL");
+
+
 await builder.Build().RunAsync();

@@ -9,7 +9,6 @@ public class CodeFormatService(
     ILogger<CodeFormatService> logger,
     NotificationService notificationService)
 {
-    private const string BaseUrl = "http://localhost:5004";
 
     public async Task<string?> FormatCodeAsync(string codeToFormat, string platformLanguage)
     {
@@ -29,7 +28,7 @@ public class CodeFormatService(
     {
         try
         {
-            var url = $"{BaseUrl}/{operation}/{platformLanguage.ToLower()}";
+            var url = $"{ServiceUrls.FormatterServiceUrl}/{operation}/{platformLanguage.ToLower()}";
             var content = new CodeRequest { Code = code };
 
             var response = await httpClient.PostAsync(url, DeserializationHelper.CreateJsonContent(content));

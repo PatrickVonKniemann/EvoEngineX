@@ -10,7 +10,7 @@ public class CodeRunStatusConnectorService
     public async Task StartConnectionAsync()
     {
         _hubConnection = new HubConnectionBuilder()
-            .WithUrl("http://localhost:5001/codeRunHub")
+            .WithUrl($"{ServiceUrls.CodeRunServiceUrl}/codeRunHub")
             .Build();
 
         _hubConnection.On<string, string>("ReceiveStatusUpdate",
