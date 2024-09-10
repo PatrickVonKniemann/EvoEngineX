@@ -13,57 +13,107 @@ using MongoDB.Driver;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services
-    .AddFastEndpoints()
-    .SwaggerDocument(o =>
+// Environment-specific configuration
+var environment = builder.Environment.EnvironmentName;
+
+// Configure logging explicitly based on environment
+ConfigureLogging(builder.Logging, environment);
+
+// Add services to the container
+ConfigureServices(builder.Services, builder.Configuration);
+
+var app = builder.Build();
+
+// Log connection string
+app.Logger.LogInformation("Using connection string: {ConnectionString}", GetPostgresConnectionString(builder.Configuration));
+
+// Apply database migrations and seeding
+await ApplyDatabaseMigrationsAndSeedingAsync(app);
+
+ConfigureMiddleware(app);
+
+await app.RunAsync();
+
+// --------------------------
+// Application methods
+// --------------------------
+
+void ConfigureLogging(ILoggingBuilder loggingBuilder, string profileEnvironment)
+{
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+
+    if (profileEnvironment == "Development")
     {
-        o.DocumentSettings = s =>
+        loggingBuilder.AddDebug(); // Add debug-level logging for development
+    }
+
+    loggingBuilder.AddFilter("Microsoft", LogLevel.Warning)
+                  .AddFilter("System", LogLevel.Error);
+}
+
+void ConfigureServices(IServiceCollection services, IConfiguration configuration)
+{
+    services.AddFastEndpoints()
+        .SwaggerDocument(o =>
         {
-            s.Title = "Code Base Service API";
-            s.Version = "v0.0.1";
-        };
+            o.DocumentSettings = s =>
+            {
+                s.Title = "Code Base Service API";
+                s.Version = "v0.0.1";
+            };
+        });
+
+    services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAllOrigins",
+            corsPolicyBuilder => corsPolicyBuilder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
     });
 
-// Configure logging explicitly
-builder.Logging.ClearProviders();
-builder.Logging.AddConsole();
-builder.Services.AddLogging(); // Ensure logging is added first
+    // Register application services
+    services.AddScoped<ICodeBaseCommandService, CodeBaseCommandService>();
+    services.AddScoped<ICodeBaseQueryService, CodeBaseQueryService>();
+    services.AddScoped<ICodeBaseRepository, CodeBaseRepository>();
 
-// Add CORS services
-builder.Services.AddCors(options =>
+    services.AddAutoMapper(cfg => cfg.AddProfile(new CodebaseProfile()));
+
+    // Setup PostgreSQL database connection
+    var connectionString = GetPostgresConnectionString(configuration);
+    services.AddDbContext<CodeBaseDbContext>(options =>
+        options.UseNpgsql(connectionString));
+
+    // Setup MongoDB
+    var mongoDatabaseName = GetMongoDatabaseName();
+    services.AddSingleton<IMongoClient, MongoClient>(sp =>
+    {
+        return CreateMongoClient(mongoDatabaseName);
+    });
+
+    services.AddSingleton(sp =>
+    {
+        var client = sp.GetRequiredService<IMongoClient>();
+        return client.GetDatabase(mongoDatabaseName);
+    });
+}
+
+string GetPostgresConnectionString(IConfiguration configuration)
 {
-    options.AddPolicy("AllowAllOrigins",
-        corsPolicyBuilder => corsPolicyBuilder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-});
+    var connectionString = configuration.GetConnectionString("CodeBaseDatabase");
 
+    return connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
+        .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeBaseServiceDb")
+        .Replace("${DB_PORT}", Environment.GetEnvironmentVariable("DB_PORT") ?? "5433")
+        .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
+        .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa") ?? throw new InvalidOperationException("No connection string provide for DB");
+}
 
-builder.Services.AddScoped<ICodeBaseCommandService, CodeBaseCommandService>();
-builder.Services.AddScoped<ICodeBaseQueryService, CodeBaseQueryService>();
-builder.Services.AddScoped<ICodeBaseRepository, CodeBaseRepository>();
-
-builder.Services.AddAutoMapper(cg => cg.AddProfile(new CodebaseProfile()));
-
-var connectionString = builder.Configuration.GetConnectionString("CodeBaseDatabase");
-connectionString = connectionString?.Replace("${DB_HOST}", Environment.GetEnvironmentVariable("DB_HOST") ?? "localhost")
-    .Replace("${DB_NAME}", Environment.GetEnvironmentVariable("DB_NAME") ?? "CodeBaseServiceDb")
-    .Replace("${DB_PORT}", Environment.GetEnvironmentVariable("DB_PORT") ?? "5433")
-    .Replace("${DB_USER}", Environment.GetEnvironmentVariable("DB_USER") ?? "kolenpat")
-    .Replace("${DB_PASSWORD}", Environment.GetEnvironmentVariable("DB_PASSWORD") ?? "sa");
-
-builder.Services.AddDbContext<CodeBaseDbContext>(options =>
-    options.UseNpgsql(connectionString));
-
-// Get MongoDB connection settings from environment variables
-var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "mongo"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27017"}/{Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db"}";
-var mongoDatabaseName = Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
-
-// Register MongoDB client as a singleton
-builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
+MongoClient CreateMongoClient(string mongoDatabaseName)
 {
+    var mongoConnectionString = $"mongodb://{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_USERNAME") ?? "kolenpat"}:{Environment.GetEnvironmentVariable("MONGO_INITDB_ROOT_PASSWORD") ?? "sa"}@{Environment.GetEnvironmentVariable("MONGO_HOST") ?? "mongo"}:{Environment.GetEnvironmentVariable("MONGO_PORT") ?? "27017"}/{mongoDatabaseName}";
+
     var mongoClient = new MongoClient(mongoConnectionString);
 
     // Try to ping the MongoDB server to check the connection
@@ -88,53 +138,46 @@ builder.Services.AddSingleton<IMongoClient, MongoClient>(sp =>
     }
 
     return mongoClient;
-});
+}
 
-// Register MongoDB database instance
-builder.Services.AddSingleton(sp =>
+string GetMongoDatabaseName()
 {
-    var client = sp.GetRequiredService<IMongoClient>();
-    return client.GetDatabase(mongoDatabaseName);
-});
+    return Environment.GetEnvironmentVariable("MONGO_DB") ?? "evoenginex_db";
+}
 
-var app = builder.Build();
-app.Logger.LogInformation("Using connection string: {ConnectionString}", connectionString);
-
-// Apply migrations
-using (var scope = app.Services.CreateScope())
+async Task ApplyDatabaseMigrationsAndSeedingAsync(WebApplication appRuntime)
 {
+    using var scope = appRuntime.Services.CreateScope();
     var services = scope.ServiceProvider;
+
     try
     {
         var context = services.GetRequiredService<CodeBaseDbContext>();
         await context.Database.EnsureCreatedAsync();
-        app.Logger.LogInformation("Database migrations applied successfully");
-        // Check if seeding is needed based on environment
+        appRuntime.Logger.LogInformation("Database migrations applied successfully");
+
+        // Seed the database if necessary
         var sqlDirectory = "./SqlScripts";
-        var fileList = new List<string>
-        {
-            "CodeBases"
-        };
-        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, app.Logger, connectionString, fileList);
+        var fileList = new List<string> { "CodeBases" };
+        await DbHelper.RunSeedSqlFileAsync(sqlDirectory, appRuntime.Logger,
+            GetPostgresConnectionString(appRuntime.Configuration), fileList);
     }
     catch (Exception ex)
     {
-        app.Logger.LogError(ex, "An error occurred while applying migrations");
+        appRuntime.Logger.LogError(ex, "An error occurred while applying migrations");
     }
 }
 
-app.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom middleware
-app.UseFastEndpoints()
-    .UseSwaggerGen();
-
-app.UseHttpsRedirection();
-app.UseCors("AllowAllOrigins");
-
-await app.RunAsync();
-
+void ConfigureMiddleware(WebApplication appRuntime)
+{
+    appRuntime.UseMiddleware<ErrorHandlingMiddleware>(); // Custom error handling middleware
+    appRuntime.UseFastEndpoints();
+    appRuntime.UseSwaggerGen();
+    appRuntime.UseHttpsRedirection();
+    appRuntime.UseCors("AllowAllOrigins");
+}
 
 /// <summary>
-/// This class is used to start the API,
-/// Partial class is used to add the entry point for CustomWebApplicationFactory
+/// Partial class used to allow for test entry points or other extensions.
 /// </summary>
 public abstract partial class Program;

@@ -7,52 +7,96 @@ using RabbitMQ.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddFastEndpoints();
-builder.Services.AddSwaggerGen();
+// Environment-specific configuration
+var environment = builder.Environment.EnvironmentName;
 
-// Add CORS services
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAllOrigins",
-        corsPolicyBuilder => corsPolicyBuilder
-            .AllowAnyOrigin()
-            .AllowAnyMethod()
-            .AllowAnyHeader());
-});
+// Configure logging explicitly based on environment
+ConfigureLogging(builder.Logging, environment);
 
-builder.Services.AddScoped<ICodeValidationService, CodeValidationService>();
-
-// Get RabbitMQ settings from environment variables
-var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
-var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat";
-var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa";
-var rabbitMqPort = Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672";
-
-builder.Services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
-    new ConnectionFactory
-    {
-        HostName = rabbitMqHost,
-        UserName = rabbitMqUser,
-        Password = rabbitMqPass,
-        Port = int.Parse(rabbitMqPort)
-    });
-
-builder.Services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
-builder.Services.AddSingleton<ICodeValidationService, CodeValidationService>();
-builder.Services.AddHostedService<CodeValidationRequestConsumer>();
+// Add services to the container
+ConfigureServices(builder.Services);
 
 var app = builder.Build();
-app.UseCors("AllowAllOrigins");
 
-if (app.Environment.IsDevelopment())
+ConfigureMiddleware(app);
+
+// --------------------------
+// Application starting point
+// --------------------------
+await app.RunAsync();
+
+// --------------------------
+// Application methods
+// --------------------------
+void ConfigureLogging(ILoggingBuilder loggingBuilder, string profileEnvironment)
 {
-    app.UseDeveloperExceptionPage();
-    app.UseSwagger();
-    app.UseSwaggerUI();
+    loggingBuilder.ClearProviders();
+    loggingBuilder.AddConsole();
+
+    if (profileEnvironment == "Development")
+    {
+        loggingBuilder.AddDebug(); // Add debug-level logging for development
+    }
+
+    loggingBuilder.AddFilter("Microsoft", LogLevel.Warning)
+        .AddFilter("System", LogLevel.Error);
 }
 
-app.UseFastEndpoints()
-    .UseSwaggerGen();
+void ConfigureServices(IServiceCollection services)
+{
+    services.AddEndpointsApiExplorer();
+    services.AddFastEndpoints();
+    services.AddSwaggerGen();
 
-await app.RunAsync();
+    services.AddCors(options =>
+    {
+        options.AddPolicy("AllowAllOrigins",
+            corsPolicyBuilder => corsPolicyBuilder
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .AllowAnyHeader());
+    });
+
+    services.AddScoped<ICodeValidationService, CodeValidationService>();
+
+    // Get RabbitMQ settings from environment variables
+    var rabbitMqHost = Environment.GetEnvironmentVariable("RABBITMQ_HOST") ?? "localhost";
+    var rabbitMqUser = Environment.GetEnvironmentVariable("RABBITMQ_USER") ?? "kolenpat";
+    var rabbitMqPass = Environment.GetEnvironmentVariable("RABBITMQ_PASS") ?? "sa";
+    var rabbitMqPort = Environment.GetEnvironmentVariable("RABBITMQ_PORT") ?? "5672";
+
+    services.AddSingleton<IConnectionFactory, ConnectionFactory>(sp =>
+        new ConnectionFactory
+        {
+            HostName = rabbitMqHost,
+            UserName = rabbitMqUser,
+            Password = rabbitMqPass,
+            Port = int.Parse(rabbitMqPort)
+        });
+
+    services.AddSingleton<IEventPublisher, RabbitMqEventPublisher>();
+    services.AddSingleton<ICodeValidationService, CodeValidationService>();
+    services.AddHostedService<CodeValidationRequestConsumer>();
+}
+
+void ConfigureMiddleware(WebApplication appRuntime)
+{
+    if (appRuntime.Environment.IsDevelopment())
+    {
+        appRuntime.UseDeveloperExceptionPage();
+        appRuntime.UseSwagger();
+        appRuntime.UseSwaggerUI();
+    }
+
+    appRuntime.UseMiddleware<ErrorHandlingMiddleware>(); // Use custom error handling middleware
+    appRuntime.UseFastEndpoints()
+        .UseSwaggerGen();
+
+    appRuntime.UseHttpsRedirection();
+    appRuntime.UseCors("AllowAllOrigins");
+}
+
+/// <summary>
+/// Partial class used to allow for test entry points or other extensions.
+/// </summary>
+public abstract partial class Program;
