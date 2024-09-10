@@ -7,9 +7,9 @@ namespace ClientApp.Services;
 public class CodeFormatService(
     HttpClient httpClient,
     ILogger<CodeFormatService> logger,
-    NotificationService notificationService)
+    NotificationService notificationService,
+    ServiceUrls serviceUrls)
 {
-
     public async Task<string?> FormatCodeAsync(string codeToFormat, string platformLanguage)
     {
         var response = await ProcessRequestAsync<string?>(codeToFormat, platformLanguage, "format");
@@ -28,7 +28,7 @@ public class CodeFormatService(
     {
         try
         {
-            var url = $"{ServiceUrls.FormatterServiceUrl}/{operation}/{platformLanguage.ToLower()}";
+            var url = $"{serviceUrls.FormatterServiceUrl}/{operation}/{platformLanguage.ToLower()}";
             var content = new CodeRequest { Code = code };
 
             var response = await httpClient.PostAsync(url, DeserializationHelper.CreateJsonContent(content));

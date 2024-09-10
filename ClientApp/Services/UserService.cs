@@ -3,6 +3,6 @@ using ExternalDomainEntities.UserDto.Query;
 
 namespace ClientApp.Services;
 
-public class UserService(HttpClient httpClient, ILogger<UserService> logger)
+public class UserService(HttpClient httpClient, ILogger<UserService> logger, ServiceUrls serviceUrls)
     : GenericService<ReadUserListResponse, ReadUserResponse, ReadUserListRequest, CreateUserRequest, UpdateUserRequest>(
-        httpClient, $"{ServiceUrls.UserServiceUrl}/user", logger);
+        httpClient, $"{serviceUrls.UserServiceUrl}/user", logger);

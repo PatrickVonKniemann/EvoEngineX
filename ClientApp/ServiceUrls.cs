@@ -1,10 +1,10 @@
 namespace ClientApp;
 
-public static class ServiceUrls
+public class ServiceUrls
 {
-    public static string CodeRunServiceUrl = "http://localhost:5001";
-    public static string CodeBaseServiceUrl = "http://localhost:5002";
-    public static string UserServiceUrl = "http://localhost:5003";
-    public static string FormatterServiceUrl = "http://localhost:5004";
-    public static string ExecutionEngineUrl = "http://localhost:5005";
+    public string CodeRunServiceUrl {get;set;}
+    public string CodeBaseServiceUrl {get;set;}
+    public string UserServiceUrl {get;set;}
+    public string FormatterServiceUrl {get;set;}
+    public string ExecutionEngineUrl {get;set;}
 }

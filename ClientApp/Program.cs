@@ -16,11 +16,23 @@ builder.Services.AddScoped<NotificationService>();
 builder.Services.AddScoped<CodeRunStatusConnectorService>();
 
 // Read environment variables passed from Docker Compose
-var codeRunServiceUrl = Environment.GetEnvironmentVariable("CODE_RUN_SERVICE_SERVICE_URL");
-var codeBaseServiceUrl = Environment.GetEnvironmentVariable("CODE_BASE_SERVICE_SERVICE_URL");
-var userServiceUrl = Environment.GetEnvironmentVariable("USER_SERVICE_URL");
-var formatterServiceUrl = Environment.GetEnvironmentVariable("FORMATTER_SERVICE_URL");
-var executionEngineUrl = Environment.GetEnvironmentVariable("EXECUTION_SERVICE_URL");
+var codeRunServiceUrl = Environment.GetEnvironmentVariable("CODE_RUN_SERVICE_URL") ?? "http://localhost:5001";
+var codeBaseServiceUrl = Environment.GetEnvironmentVariable("CODE_BASE_SERVICE_URL") ?? "http://localhost:5002";
+var userServiceUrl = Environment.GetEnvironmentVariable("USER_SERVICE_URL") ?? "http://localhost:5003";
+var formatterServiceUrl = Environment.GetEnvironmentVariable("FORMATTER_SERVICE_URL") ?? "http://localhost:5004";
+var executionEngineUrl = Environment.GetEnvironmentVariable("EXECUTION_SERVICE_URL") ?? "http://localhost:5005";
 
+// Create and register the ServiceUrls instance
+var serviceUrls = new ServiceUrls
+{
+    CodeRunServiceUrl = codeRunServiceUrl,
+    CodeBaseServiceUrl = codeBaseServiceUrl,
+    UserServiceUrl = userServiceUrl,
+    FormatterServiceUrl = formatterServiceUrl,
+    ExecutionEngineUrl = executionEngineUrl
+};
+
+// Register ServiceUrls as a singleton or scoped service
+builder.Services.AddSingleton(serviceUrls);
 
 await builder.Build().RunAsync();

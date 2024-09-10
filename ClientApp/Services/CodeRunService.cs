@@ -3,9 +3,12 @@ using ExternalDomainEntities.CodeRunDto.Query;
 
 namespace ClientApp.Services;
 
-public class CodeRunService(HttpClient httpClient, ILogger<CodeRunService> logger)
+public class CodeRunService(
+    HttpClient httpClient,
+    ILogger<CodeRunService> logger,
+    ServiceUrls serviceUrls)
     : GenericService<ReadCodeRunListByCodeBaseIdResponse, ReadCodeRunResponse, ReadCodeRunListRequest,
-        CreateCodeRunRequest, UpdateCodeRunRequest>(httpClient,  $"{ServiceUrls.CodeRunServiceUrl}/code-run", logger)
+        CreateCodeRunRequest, UpdateCodeRunRequest>(httpClient, $"{serviceUrls.CodeRunServiceUrl}/code-run", logger)
 {
     private readonly HttpClient _httpClient = httpClient;
 
@@ -13,7 +16,7 @@ public class CodeRunService(HttpClient httpClient, ILogger<CodeRunService> logge
     // Method to call API and retrieve file bytes
     public async Task<byte[]> GetCodeRunFileAsync(Guid codeRunId)
     {
-        var response = await _httpClient.GetAsync($"{ServiceUrls.CodeRunServiceUrl}/code-run/{codeRunId}/file");
+        var response = await _httpClient.GetAsync($"{serviceUrls.CodeRunServiceUrl}/code-run/{codeRunId}/file");
         if (response.IsSuccessStatusCode)
         {
             return await response.Content.ReadAsByteArrayAsync();

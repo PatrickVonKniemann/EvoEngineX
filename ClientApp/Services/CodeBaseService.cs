@@ -6,12 +6,14 @@ namespace ClientApp.Services;
 
 public class CodeBaseService(
     HttpClient httpClient,
-    ILogger<CodeBaseService> logger)
+    ILogger<CodeBaseService> logger, ServiceUrls serviceUrls)
     : GenericService<ReadCodeBaseListByUserIdResponse, ReadCodeBaseResponse, ReadCodeBaseListRequest,
-        CreateCodeBaseRequest, UpdateCodeBaseRequest>(httpClient, $"{ServiceUrls.CodeBaseServiceUrl}/code-base", logger)
+        CreateCodeBaseRequest, UpdateCodeBaseRequest>(httpClient, $"{serviceUrls.CodeBaseServiceUrl}/code-base", logger)
 {
+    private readonly HttpClient _httpClient = httpClient;
+
     public async Task IncreaseSuccessFullRunCounter(Guid codeBaseId)
     {
-        await httpClient.PostAsJsonAsync($"{ServiceUrls.CodeBaseServiceUrl}/code-base/increase", codeBaseId);
+        await _httpClient.PostAsJsonAsync($"{serviceUrls.CodeBaseServiceUrl}/code-base/increase", codeBaseId);
     }
 }
