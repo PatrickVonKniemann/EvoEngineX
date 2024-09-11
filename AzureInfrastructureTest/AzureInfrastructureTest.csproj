@@ -1,0 +1,19 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <OutputType>Exe</OutputType>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <Folder Include="Project\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Pulumi" Version="3.67.0" />
+      <PackageReference Include="Pulumi.AzureNative" Version="2.60.0" />
+    </ItemGroup>
+
+</Project>

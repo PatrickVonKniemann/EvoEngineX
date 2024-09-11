@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <Nullable>enable</Nullable>
+        <ImplicitUsings>enable</ImplicitUsings>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <None Remove="Properties\launchSettings.json" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Project\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="Pulumi" Version="3.67.0" />
+      <PackageReference Include="Pulumi.Aws" Version="6.51.0" />
+    </ItemGroup>
+
+</Project>
