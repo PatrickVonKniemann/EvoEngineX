@@ -1,9 +1,9 @@
-name: Build and Deploy to AWS
+name: Build, Deploy, and Terraform
 
 on:
   push:
     tags:
-      - 'v*'
+      - 'v*'  # Trigger this workflow when a version tag is pushed
 
 jobs:
   build:
@@ -22,34 +22,7 @@ jobs:
         run: echo "APP_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
-
-      - name: Log in to Amazon ECR
-        run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 376129885232.dkr.ecr.us-east-1.amazonaws.com
-
-      # Updated path to the Dockerfile and build context
-      - name: Build Docker image
-        run: |
-          docker build --build-arg APP_VERSION=${{ env.APP_VERSION }} -t my-dotnet-api:${{ env.APP_VERSION }} -f InfrastructureTestCode/Dockerfile InfrastructureTestCode
-          docker tag my-dotnet-api:${{ env.APP_VERSION }} 376129885232.dkr.ecr.us-east-1.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
-
-      - name: Push Docker image to ECR
-        run: |
-          docker push 376129885232.dkr.ecr.us-east-1.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
-
-  deploy:
-    environment: staging
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v1
+        uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -57,7 +30,33 @@ jobs:
 
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 376129885232.dkr.ecr.us-east-1.amazonaws.com
+          aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com
+
+      - name: Build Docker image
+        run: |
+          docker build --build-arg APP_VERSION=${{ env.APP_VERSION }} -t my-dotnet-api:${{ env.APP_VERSION }} -f InfrastructureTestCode/Dockerfile InfrastructureTestCode
+          docker tag my-dotnet-api:${{ env.APP_VERSION }} 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
+
+      - name: Push Docker image to ECR
+        run: |
+          docker push 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
+
+  deploy:
+    needs: build
+    environment: staging
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
+
+      - name: Log in to Amazon ECR
+        run: |
+          aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com
 
       - name: Update ECS service with the new image
         run: |
@@ -65,4 +64,31 @@ jobs:
             --cluster my-dotnet-cluster \
             --service my-dotnet-service \
             --force-new-deployment \
-            --region us-east-1
+            --region ${{ secrets.REGION }}
+
+  terraform:
+    needs: deploy
+    runs-on: ubuntu-latest
+    environment: staging
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      # Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      - name: Initialize Terraform AWS
+        working-directory: ../../MultiCloudInfra/aws  # Adjust path to your Terraform files
+        run: terraform init
+        
+      - name: Plan Terraform AWS
+        working-directory: ../../MultiCloudInfra/aws  # Adjust path to your Terraform files
+        run: terraform plan -out=tfplan
+
+      - name: Apply Terraform Changes
+        working-directory: ../../MultiCloudInfra/aws  # Adjust path to your Terraform files
+        run: terraform apply -auto-approve tfplan
