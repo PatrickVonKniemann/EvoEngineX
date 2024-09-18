@@ -30,7 +30,7 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRolePolicy" {
 }
 
 # Create the ECR Repository
-resource "aws_ecr_repository" "my_dotnet_api" {
+resource "aws_ecr_repository" "test_api" {
   name = "test-api"
   force_delete = true
 }
@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "my_dotnet_task" {
 
   container_definitions = jsonencode([{
     name      = "test-api"
-    image     = "${aws_ecr_repository.my_dotnet_api.repository_url}:latest"
+    image     = "${aws_ecr_repository.test_api.repository_url}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
@@ -79,16 +79,16 @@ resource "aws_ecs_service" "my_dotnet_service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.my_dotnet_api_target_group.arn
+    target_group_arn = aws_lb_target_group.test_api_target_group.arn
     container_name   = "test-api"
     container_port   = 80
   }
 
-  depends_on = [aws_lb_listener.my_dotnet_api_listener]
+  depends_on = [aws_lb_listener.test_api_listener]
 }
 
 # Application Load Balancer
-resource "aws_lb" "my_dotnet_api_lb" {
+resource "aws_lb" "test_api_lb" {
   name               = "test-api-lb"
   internal           = false
   load_balancer_type = "application"
@@ -97,7 +97,7 @@ resource "aws_lb" "my_dotnet_api_lb" {
 }
 
 # Target Group for the Load Balancer
-resource "aws_lb_target_group" "my_dotnet_api_target_group" {
+resource "aws_lb_target_group" "test_api_target_group" {
   name        = "test-api-tg"
   port        = 80
   protocol    = "HTTP"
@@ -106,13 +106,13 @@ resource "aws_lb_target_group" "my_dotnet_api_target_group" {
 }
 
 # Listener for the Load Balancer
-resource "aws_lb_listener" "my_dotnet_api_listener" {
-  load_balancer_arn = aws_lb.my_dotnet_api_lb.arn
+resource "aws_lb_listener" "test_api_listener" {
+  load_balancer_arn = aws_lb.test_api_lb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.my_dotnet_api_target_group.arn
+    target_group_arn = aws_lb_target_group.test_api_target_group.arn
   }
 }
