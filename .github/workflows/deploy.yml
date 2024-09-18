@@ -82,13 +82,13 @@ jobs:
           terraform_wrapper: false
 
       - name: Initialize Terraform AWS
-        working-directory: ../../MultiCloudInfra/aws  # Adjust path to your Terraform files
+        working-directory: MultiCloudInfra/aws  # Adjust path to your Terraform files
         run: terraform init
         
       - name: Plan Terraform AWS
-        working-directory: ../../MultiCloudInfra/aws  # Adjust path to your Terraform files
+        working-directory: MultiCloudInfra/aws  # Adjust path to your Terraform files
         run: terraform plan -out=tfplan
 
       - name: Apply Terraform Changes
-        working-directory: ../../MultiCloudInfra/aws  # Adjust path to your Terraform files
+        working-directory: MultiCloudInfra/aws  # Adjust path to your Terraform files
         run: terraform apply -auto-approve tfplan
