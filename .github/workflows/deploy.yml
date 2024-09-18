@@ -34,7 +34,7 @@ jobs:
 
       - name: Build Docker image
         run: |
-          docker build --build-arg APP_VERSION=${{ env.APP_VERSION }} -t my-dotnet-api:${{ env.APP_VERSION }} -f InfrastructureTestCode/Dockerfile InfrastructureTestCode
+          docker build --platform linux/amd64 --build-arg APP_VERSION=${{ env.APP_VERSION }} -t my-dotnet-api:${{ env.APP_VERSION }} -f InfrastructureTestCode/Dockerfile InfrastructureTestCode
           docker tag my-dotnet-api:${{ env.APP_VERSION }} 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
 
       - name: Push Docker image to ECR
