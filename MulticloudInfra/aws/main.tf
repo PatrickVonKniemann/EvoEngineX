@@ -46,7 +46,7 @@ resource "aws_ecs_task_definition" "my_dotnet_task" {
 
   container_definitions = jsonencode([{
     name      = "my-dotnet-api"
-    image     = "${aws_ecr_repository.my_dotnet_api.repository_url}:1.0.1"
+    image     = "${aws_ecr_repository.my_dotnet_api.repository_url}:1.1.17"
     essential = true
     portMappings = [{
       containerPort = 80
