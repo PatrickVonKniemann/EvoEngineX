@@ -31,13 +31,13 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRolePolicy" {
 
 # Create the ECR Repository
 resource "aws_ecr_repository" "my_dotnet_api" {
-  name = "my-dotnet-api"
+  name = "test-api"
   force_delete = true
 }
 
 # ECS Task Definition
 resource "aws_ecs_task_definition" "my_dotnet_task" {
-  family                   = "my-dotnet-api"
+  family                   = "test-api"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
@@ -45,8 +45,8 @@ resource "aws_ecs_task_definition" "my_dotnet_task" {
   cpu                      = "256"
 
   container_definitions = jsonencode([{
-    name      = "my-dotnet-api"
-    image     = "${aws_ecr_repository.my_dotnet_api.repository_url}:1.1.18"
+    name      = "test-api"
+    image     = "${aws_ecr_repository.my_dotnet_api.repository_url}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
@@ -56,7 +56,7 @@ resource "aws_ecs_task_definition" "my_dotnet_task" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = "/ecs/my-dotnet-api"
+        "awslogs-group"         = "/ecs/test-api"
         "awslogs-region"        = "us-east-1"
         "awslogs-stream-prefix" = "ecs"
       }
@@ -80,7 +80,7 @@ resource "aws_ecs_service" "my_dotnet_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.my_dotnet_api_target_group.arn
-    container_name   = "my-dotnet-api"
+    container_name   = "test-api"
     container_port   = 80
   }
 
@@ -89,7 +89,7 @@ resource "aws_ecs_service" "my_dotnet_service" {
 
 # Application Load Balancer
 resource "aws_lb" "my_dotnet_api_lb" {
-  name               = "my-dotnet-api-lb"
+  name               = "test-api-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["sg-097a6a7e63727eb39"]
@@ -98,7 +98,7 @@ resource "aws_lb" "my_dotnet_api_lb" {
 
 # Target Group for the Load Balancer
 resource "aws_lb_target_group" "my_dotnet_api_target_group" {
-  name        = "my-dotnet-api-tg"
+  name        = "test-api-tg"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = "vpc-0b40a65925c8d2210"
