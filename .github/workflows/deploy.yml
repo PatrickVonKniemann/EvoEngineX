@@ -1,4 +1,4 @@
-name: Build, Deploy, and Terraform
+name: Build, Push Docker Image, and Deploy via Terraform
 
 on:
   push:
@@ -32,7 +32,7 @@ jobs:
         run: |
           aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com
 
-      - name: Build Docker image
+      - name: Build Docker image and push to ECR
         run: |
           docker buildx create --use
           docker buildx inspect --bootstrap
@@ -40,50 +40,21 @@ jobs:
             -t 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }} \
             -f InfrastructureTestCode/Dockerfile InfrastructureTestCode --push
 
-      - name: Push Docker image to ECR
-        run: |
-          docker push 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
-
-  deploy:
+  terraform:
     needs: build
     environment: staging
     runs-on: ubuntu-latest
-
-    steps:
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.REGION }}
-
-      - name: Log in to Amazon ECR
-        run: |
-          aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin 376129885232.dkr.ecr.${{ secrets.REGION }}.amazonaws.com
-
-      - name: Update ECS service with the new image
-        run: |
-          aws ecs update-service \
-            --cluster my-dotnet-cluster \
-            --service my-dotnet-service \
-            --force-new-deployment \
-            --region ${{ secrets.REGION }}
-
-  terraform:
-    needs: deploy
-    runs-on: ubuntu-latest
-    environment: staging
-  
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
-  
+      
       # Set up Terraform
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_wrapper: false
-  
+      
       # Pass AWS credentials as environment variables to Terraform
       - name: Initialize Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
@@ -92,7 +63,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.REGION }}
         run: terraform init
-  
+
       - name: Plan Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
         env:
@@ -100,7 +71,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.REGION }}
         run: terraform plan -out=tfplan
-  
+
       - name: Apply Terraform Changes
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
         env:
