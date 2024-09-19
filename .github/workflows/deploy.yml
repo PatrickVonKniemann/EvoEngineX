@@ -83,8 +83,8 @@ jobs:
       - name: Import Existing Resources
         working-directory: MulticloudInfra/aws
         run: |
-          terraform import aws_ecs_cluster.test_api_cluster test-api-cluster
-          terraform import aws_ecr_repository.test_api arn:aws:ecr:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:repository/test-api
+          terraform import aws_ecs_cluster.test_api_cluster arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/test-api-cluster
+          terraform import aws_ecr_repository.test_api test-api
           terraform import aws_ecs_task_definition.test_api_task test-api
           terraform import aws_ecs_service.test_api_service arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:service/test-api-service
           terraform import aws_lb.test_api_lb arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:loadbalancer/app/test-api-lb/<your-loadbalancer-id>
