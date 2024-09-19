@@ -11,13 +11,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Print secrets (for debugging)
-        run: |
-          echo "AWS Access Key ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
-          echo "AWS Secret Access Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
-          echo "AWS Account ID: ${{ secrets.AWS_ACCOUNT_ID }}"
-          echo "Region: ${{ secrets.REGION }}"
-
       - name: Checkout code
         uses: actions/checkout@v2
 
@@ -80,16 +73,16 @@ jobs:
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
         run: terraform init
 
-      - name: Import Existing Resources
-        working-directory: MulticloudInfra/aws
-        run: |
-          terraform import aws_ecs_cluster.test_api_cluster arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/test-api-cluster
-          terraform import aws_ecr_repository.test_api test-api
-          terraform import aws_ecs_task_definition.test_api_task test-api
-          terraform import aws_ecs_service.test_api_service arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:service/test-api-service
-          terraform import aws_lb.test_api_lb arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:loadbalancer/app/test-api-lb/<your-loadbalancer-id>
-          terraform import aws_lb_target_group.test_api_target_group arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:targetgroup/test-api-tg/<your-targetgroup-id>
-          terraform import aws_lb_listener.test_api_listener arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:listener/app/test-api-lb/<your-listener-id>
+#      - name: Import Existing Resources
+#        working-directory: MulticloudInfra/aws
+#        run: |
+#          terraform import aws_ecs_cluster.test_api_cluster arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/test-api-cluster
+#          terraform import aws_ecr_repository.test_api test-api
+#          terraform import aws_ecs_task_definition.test_api_task test-api
+#          terraform import aws_ecs_service.test_api_service arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:service/test-api-service
+#          terraform import aws_lb.test_api_lb arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:loadbalancer/app/test-api-lb/<your-loadbalancer-id>
+#          terraform import aws_lb_target_group.test_api_target_group arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:targetgroup/test-api-tg/<your-targetgroup-id>
+#          terraform import aws_lb_listener.test_api_listener arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:listener/app/test-api-lb/<your-listener-id>
 
       - name: Plan Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
