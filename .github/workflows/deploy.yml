@@ -59,7 +59,11 @@ jobs:
         uses: hashicorp/setup-terraform@v1
         with:
           terraform_wrapper: false
-      
+          
+      # Run import script before Terraform apply
+      - name: Import existing resources
+        run: MulticloudInfra/import_resources.sh
+        
       # Pass AWS credentials as environment variables to Terraform
       - name: Initialize Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
