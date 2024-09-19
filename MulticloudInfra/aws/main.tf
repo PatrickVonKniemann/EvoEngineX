@@ -3,8 +3,8 @@ provider "aws" {
 }
 
 # Create an ECS cluster
-resource "aws_ecs_cluster" "my_dotnet_cluster" {
-  name = "my-dotnet-cluster"
+resource "aws_ecs_cluster" "test_api_cluster" {
+  name = "test-api-cluster"
 }
 
 # Create an IAM Role for ECS task execution
@@ -36,7 +36,7 @@ resource "aws_ecr_repository" "test_api" {
 }
 
 # ECS Task Definition
-resource "aws_ecs_task_definition" "my_dotnet_task" {
+resource "aws_ecs_task_definition" "test_api_task" {
   family                   = "test-api"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
@@ -65,10 +65,10 @@ resource "aws_ecs_task_definition" "my_dotnet_task" {
 }
 
 # ECS Service
-resource "aws_ecs_service" "my_dotnet_service" {
+resource "aws_ecs_service" "test_api_service" {
   name            = "test-api-service"
-  cluster         = aws_ecs_cluster.my_dotnet_cluster.id
-  task_definition = aws_ecs_task_definition.my_dotnet_task.arn
+  cluster         = aws_ecs_cluster.test_api_cluster.id
+  task_definition = aws_ecs_task_definition.test_api_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
