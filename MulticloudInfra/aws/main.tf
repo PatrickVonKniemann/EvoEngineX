@@ -32,11 +32,7 @@ resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRolePolicy" {
 # Create the ECR Repository
 resource "aws_ecr_repository" "test_api" {
   name = "test-api"
-  force_delete = true
-  lifecycle {
-    prevent_destroy = true  # Prevents Terraform from destroying this resource
-    ignore_changes  = [name]  # Ignores changes in name, preventing recreation
-  }
+  force_delete = true  # Allows Terraform to force delete the repository
 }
 
 # ECS Task Definition
@@ -98,10 +94,6 @@ resource "aws_lb" "test_api_lb" {
   load_balancer_type = "application"
   security_groups    = ["sg-097a6a7e63727eb39"]
   subnets            = ["subnet-0a9f456c125753831", "subnet-075e54dfa8cf31286"]
-  lifecycle {
-    prevent_destroy = true  # Prevents Terraform from destroying this resource
-    ignore_changes  = [name]  # Ignores changes in name, preventing recreation
-  }
 }
 
 # Target Group for the Load Balancer
@@ -111,10 +103,6 @@ resource "aws_lb_target_group" "test_api_target_group" {
   protocol    = "HTTP"
   vpc_id      = "vpc-0b40a65925c8d2210"
   target_type = "ip"
-  lifecycle {
-    prevent_destroy = true  # Prevents Terraform from destroying this resource
-    ignore_changes  = [name]  # Ignores changes in name, preventing recreation
-  }
 }
 
 # Listener for the Load Balancer
