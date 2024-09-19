@@ -1,23 +1,22 @@
 #!/bin/bash
 
-# Import IAM Role if it exists
-if aws iam get-role --role-name ecsTaskExecutionRole &> /dev/null; then
-  terraform import aws_iam_role.ecsTaskExecutionRole ecsTaskExecutionRole
-fi
+# Import ECS cluster
+terraform import aws_ecs_cluster.test_api_cluster arn:aws:ecs:us-east-1:<AWS_ACCOUNT_ID>:cluster/test-api-cluster
 
-# Import ECR Repository if it exists
-if aws ecr describe-repositories --repository-names test-api &> /dev/null; then
-  terraform import aws_ecr_repository.test_api test-api
-fi
+# Import ECR repository
+terraform import aws_ecr_repository.test_api arn:aws:ecr:us-east-1:<AWS_ACCOUNT_ID>:repository/test-api
 
-# Import Load Balancer if it exists
-LB_ARN=$(aws elbv2 describe-load-balancers --names test-api-lb --query "LoadBalancers[0].LoadBalancerArn" --output text)
-if [ "$LB_ARN" != "None" ]; then
-  terraform import aws_lb.test_api_lb $LB_ARN
-fi
+# Import ECS task definition
+terraform import aws_ecs_task_definition.test_api_task test-api
 
-# Import Target Group if it exists
-TG_ARN=$(aws elbv2 describe-target-groups --names test-api-tg --query "TargetGroups[0].TargetGroupArn" --output text)
-if [ "$TG_ARN" != "None" ]; then
-  terraform import aws_lb_target_group.test_api_target_group $TG_ARN
-fi
+# Import ECS service
+terraform import aws_ecs_service.test_api_service arn:aws:ecs:us-east-1:<AWS_ACCOUNT_ID>:service/test-api-service
+
+# Import Load Balancer
+terraform import aws_lb.test_api_lb arn:aws:elasticloadbalancing:us-east-1:<AWS_ACCOUNT_ID>:loadbalancer/app/test-api-lb/<ID>
+
+# Import Target Group
+terraform import aws_lb_target_group.test_api_target_group arn:aws:elasticloadbalancing:us-east-1:<AWS_ACCOUNT_ID>:targetgroup/test-api-tg/<ID>
+
+# Import Listener
+terraform import aws_lb_listener.test_api_listener arn:aws:elasticloadbalancing:us-east-1:<AWS_ACCOUNT_ID>:listener/app/test-api-lb/<ID>/<LISTENER_ID>
