@@ -11,6 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Print secrets (for debugging)
+        run: |
+          echo "AWS Access Key ID: ${{ secrets.AWS_ACCESS_KEY_ID }}"
+          echo "AWS Secret Access Key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          echo "AWS Account ID: ${{ secrets.AWS_ACCOUNT_ID }}"
+          echo "Region: ${{ secrets.REGION }}"
+
       - name: Checkout code
         uses: actions/checkout@v2
 
