@@ -61,10 +61,11 @@ jobs:
           terraform_wrapper: false
           
       # Run import script before Terraform apply
-      - name: Set execution permission and run import script
+      - name: Run Import Script
         run: |
-          chmod +x MulticloudInfra/import_resources.sh
-          ./MulticloudInfra/import_resources.sh
+          cd MulticloudInfra/aws
+          chmod +x import_resources.sh
+          ./import_resources.sh
         
       # Pass AWS credentials as environment variables to Terraform
       - name: Initialize Terraform AWS
