@@ -66,7 +66,7 @@ resource "aws_ecs_task_definition" "my_dotnet_task" {
 
 # ECS Service
 resource "aws_ecs_service" "my_dotnet_service" {
-  name            = "my-dotnet-service"
+  name            = "test-api-service"
   cluster         = aws_ecs_cluster.my_dotnet_cluster.id
   task_definition = aws_ecs_task_definition.my_dotnet_task.arn
   desired_count   = 1
