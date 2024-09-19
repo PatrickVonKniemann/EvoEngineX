@@ -1,5 +1,5 @@
 # Ensure AWS_ACCOUNT_ID is set before running the script
-AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID:-"your-actual-aws-account-id"}
+AWS_ACCOUNT_ID=${AWS_ACCOUNT_ID:-"376129885232"}
 
 terraform import aws_ecs_cluster.test_api_cluster arn:aws:ecs:us-east-1:$AWS_ACCOUNT_ID:cluster/test-api-cluster
 terraform import aws_ecr_repository.test_api arn:aws:ecr:us-east-1:$AWS_ACCOUNT_ID:repository/test-api
