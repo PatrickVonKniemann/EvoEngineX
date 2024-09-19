@@ -60,34 +60,37 @@ jobs:
         with:
           terraform_wrapper: false
 
-      # Configure AWS credentials for Terraform
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v2
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.REGION }}
+      # **Terraform destroy before apply**
+      - name: Destroy old infrastructure
+        working-directory: MulticloudInfra/aws
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.REGION }}
+        run: terraform destroy -auto-approve
 
       # Pass AWS credentials as environment variables to Terraform
       - name: Initialize Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
-        run: terraform init
-
-#      - name: Import Existing Resources
-#        working-directory: MulticloudInfra/aws
-#        run: |
-#          terraform import aws_ecs_cluster.test_api_cluster arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:cluster/test-api-cluster
-#          terraform import aws_ecr_repository.test_api test-api
-#          terraform import aws_ecs_task_definition.test_api_task test-api
-#          terraform import aws_ecs_service.test_api_service arn:aws:ecs:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:service/test-api-service
-#          terraform import aws_lb.test_api_lb arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:loadbalancer/app/test-api-lb/<your-loadbalancer-id>
-#          terraform import aws_lb_target_group.test_api_target_group arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:targetgroup/test-api-tg/<your-targetgroup-id>
-#          terraform import aws_lb_listener.test_api_listener arn:aws:elasticloadbalancing:${{ secrets.REGION }}:${{ secrets.AWS_ACCOUNT_ID }}:listener/app/test-api-lb/<your-listener-id>
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.REGION }}
+        run: |
+          terraform init
 
       - name: Plan Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.REGION }}
         run: terraform plan -out=tfplan
 
       - name: Apply Terraform Changes
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.REGION }}
         run: terraform apply -auto-approve tfplan
