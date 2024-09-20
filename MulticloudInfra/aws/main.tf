@@ -3,6 +3,7 @@ variable "aws_region" {
   default = "us-east-1"
 }
 
+# TODO put this to variable
 variable "ecr_repository_url" {
   description = "The name of the ECR repository"
   type        = string
@@ -85,7 +86,7 @@ resource "aws_ecs_task_definition" "test_dotnet_api_test_task" {
 
   container_definitions = jsonencode([{
     name      = var.ECS_CLUSTER_NAME
-    image     = "${var.ECR_REPOSITORY_NAME}:latest"
+    image     = "${var.ecr_repository_url}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
