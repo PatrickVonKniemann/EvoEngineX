@@ -57,13 +57,13 @@ jobs:
       # Set environment variables for Terraform and script
       - name: Set Shared Variables
         run: |
-          echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
-          echo "AWS_ACCOUNT_ID=376129885232" >> $GITHUB_ENV
-          echo "ECS_CLUSTER_NAME=test-dotnet-api-test-cluster" >> $GITHUB_ENV
-          echo "ECR_REPOSITORY_NAME=test-api" >> $GITHUB_ENV
-          echo "IAM_ROLE_NAME=TaskExecutionDotnetApiTest" >> $GITHUB_ENV
-          echo "LOAD_BALANCER_NAME=test-dotnet-api-test-lb" >> $GITHUB_ENV
-          echo "TARGET_GROUP_NAME=test-dotnet-api-test-tg" >> $GITHUB_ENV
+          echo "AWS_REGION=us-east-1"
+          echo "AWS_ACCOUNT_ID=376129885232"
+          echo "ECS_CLUSTER_NAME=test-dotnet-api-test-cluster"
+          echo "ECR_REPOSITORY_NAME=test-api"
+          echo "IAM_ROLE_NAME=TaskExecutionDotnetApiTest"
+          echo "LOAD_BALANCER_NAME=test-dotnet-api-test-lb"
+          echo "TARGET_GROUP_NAME=test-dotnet-api-test-tg"
 
       # Run the script to clean up old resources
       - name: Destroy old resources
@@ -98,7 +98,14 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.REGION }}
-        run: terraform plan -out=tfplan
+        run: |
+          terraform plan \
+            -var "ECS_CLUSTER_NAME=$ECS_CLUSTER_NAME" \
+            -var "ECR_REPOSITORY_NAME=$ECR_REPOSITORY_NAME" \
+            -var "IAM_ROLE_NAME=$IAM_ROLE_NAME" \
+            -var "LOAD_BALANCER_NAME=$LOAD_BALANCER_NAME" \
+            -var "TARGET_GROUP_NAME=$TARGET_GROUP_NAME" \
+            -out=tfplan
 
       # Apply Terraform Changes
       - name: Apply Terraform Changes
