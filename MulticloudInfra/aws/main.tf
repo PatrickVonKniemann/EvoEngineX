@@ -8,8 +8,8 @@ resource "aws_ecs_cluster" "test_api_cluster" {
 }
 
 # Create an IAM Role for ECS task execution
-resource "aws_iam_role" "ecsTaskExecutionRole" {
-  name = "ecsTaskExecutionRole"
+resource "aws_iam_role" "TaskExecutionEcs" {
+  name = "TaskExecutionEcs"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -24,15 +24,9 @@ resource "aws_iam_role" "ecsTaskExecutionRole" {
 }
 
 # Attach the required Amazon ECS Task Execution Role policy
-resource "aws_iam_role_policy_attachment" "ecsTaskExecutionRolePolicy" {
-  role       = aws_iam_role.ecsTaskExecutionRole.name
+resource "aws_iam_role_policy_attachment" "TaskExecutionEcsPolicy" {
+  role       = aws_iam_role.TaskExecutionEcs.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
-}
-
-# Create the ECR Repository
-resource "aws_ecr_repository" "test_api" {
-  name = "test-api"
-  force_delete = true  # Allows Terraform to force delete the repository
 }
 
 # ECS Task Definition
@@ -40,13 +34,13 @@ resource "aws_ecs_task_definition" "test_api_task" {
   family                   = "test-api"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
-  execution_role_arn       = aws_iam_role.ecsTaskExecutionRole.arn
+  execution_role_arn       = aws_iam_role.TaskExecutionEcs.arn
   memory                   = "512"
   cpu                      = "256"
 
   container_definitions = jsonencode([{
     name      = "test-api"
-    image     = "${aws_ecr_repository.test_api.repository_url}:latest"
+    image     = "${var.ecr_repository_url}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
