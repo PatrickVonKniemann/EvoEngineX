@@ -36,6 +36,14 @@ aws ecs delete-cluster --cluster "$ECS_CLUSTER_NAME" || true
 echo "Deleting ECR repository..."
 aws ecr delete-repository --repository-name "$ECR_REPOSITORY_NAME" --force || true
 
+# Delete Target Group (delete before the load balancer)
+if [ "$TARGET_GROUP_ARN" != "None" ]; then
+    echo "Deleting Target Group..."
+    aws elbv2 delete-target-group --target-group-arn "$TARGET_GROUP_ARN" || true
+else
+    echo "Target Group not found."
+fi
+
 # Delete Load Balancer
 if [ "$LOAD_BALANCER_ARN" != "None" ]; then
     echo "Deleting Load Balancer..."
@@ -46,14 +54,8 @@ fi
 
 # Wait for Load Balancer deletion
 echo "Waiting for Load Balancer to be deleted..."
-aws elbv2 wait load-balancers-deleted --load-balancer-arns "$LOAD_BALANCER_ARN" || true
-
-# Delete Target Group
-if [ "$TARGET_GROUP_ARN" != "None" ]; then
-    echo "Deleting Target Group..."
-    aws elbv2 delete-target-group --target-group-arn "$TARGET_GROUP_ARN" || true
-else
-    echo "Target Group not found."
+if [ "$LOAD_BALANCER_ARN" != "None" ]; then
+    aws elbv2 wait load-balancers-deleted --load-balancer-arns "$LOAD_BALANCER_ARN" || true
 fi
 
 # Detach and delete IAM Role policies
@@ -75,3 +77,5 @@ done
 # Delete IAM Role
 echo "Deleting IAM Role..."
 aws iam delete-role --role-name "$IAM_ROLE_NAME" || true
+
+echo "Deletion script completed successfully."
