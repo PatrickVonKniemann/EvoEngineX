@@ -3,8 +3,8 @@ provider "aws" {
 }
 
 # Create an ECS cluster
-resource "aws_ecs_cluster" "test_api_cluster" {
-  name = "test-api-cluster"
+resource "aws_ecs_cluster" "test_api2_cluster" {
+  name = "test-api2-cluster"
 }
 
 # Create an IAM Role for ECS task execution
@@ -30,8 +30,8 @@ resource "aws_iam_role_policy_attachment" "TaskExecutionEcsPolicy" {
 }
 
 # ECS Task Definition
-resource "aws_ecs_task_definition" "test_api_task" {
-  family                   = "test-api"
+resource "aws_ecs_task_definition" "test_api2_task" {
+  family                   = "test-api2"
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.TaskExecutionEcs.arn
@@ -39,7 +39,7 @@ resource "aws_ecs_task_definition" "test_api_task" {
   cpu                      = "256"
 
   container_definitions = jsonencode([{
-    name      = "test-api"
+    name      = "test-api2"
     image     = "${var.ecr_repository_url}:latest"
     essential = true
     portMappings = [{
@@ -50,7 +50,7 @@ resource "aws_ecs_task_definition" "test_api_task" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = "/ecs/test-api"
+        "awslogs-group"         = "/ecs/test-api2"
         "awslogs-region"        = "us-east-1"
         "awslogs-stream-prefix" = "ecs"
       }
@@ -59,10 +59,10 @@ resource "aws_ecs_task_definition" "test_api_task" {
 }
 
 # ECS Service
-resource "aws_ecs_service" "test_api_service" {
-  name            = "test-api-service"
-  cluster         = aws_ecs_cluster.test_api_cluster.id
-  task_definition = aws_ecs_task_definition.test_api_task.arn
+resource "aws_ecs_service" "test_api2_service" {
+  name            = "test-api2-service"
+  cluster         = aws_ecs_cluster.test_api2_cluster.id
+  task_definition = aws_ecs_task_definition.test_api2_task.arn
   desired_count   = 1
   launch_type     = "FARGATE"
 
@@ -73,17 +73,17 @@ resource "aws_ecs_service" "test_api_service" {
   }
 
   load_balancer {
-    target_group_arn = aws_lb_target_group.test_api_target_group.arn
-    container_name   = "test-api"
+    target_group_arn = aws_lb_target_group.test_api2_target_group.arn
+    container_name   = "test-api2"
     container_port   = 80
   }
 
-  depends_on = [aws_lb_listener.test_api_listener]
+  depends_on = [aws_lb_listener.test_api2_listener]
 }
 
 # Application Load Balancer
-resource "aws_lb" "test_api_lb" {
-  name               = "test-api-lb"
+resource "aws_lb" "test_api2_lb" {
+  name               = "test-api2-lb"
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["sg-097a6a7e63727eb39"]
@@ -91,8 +91,8 @@ resource "aws_lb" "test_api_lb" {
 }
 
 # Target Group for the Load Balancer
-resource "aws_lb_target_group" "test_api_target_group" {
-  name        = "test-api-tg"
+resource "aws_lb_target_group" "test_api2_target_group" {
+  name        = "test-api2-tg"
   port        = 80
   protocol    = "HTTP"
   vpc_id      = "vpc-0b40a65925c8d2210"
@@ -100,13 +100,13 @@ resource "aws_lb_target_group" "test_api_target_group" {
 }
 
 # Listener for the Load Balancer
-resource "aws_lb_listener" "test_api_listener" {
-  load_balancer_arn = aws_lb.test_api_lb.arn
+resource "aws_lb_listener" "test_api2_listener" {
+  load_balancer_arn = aws_lb.test_api2_lb.arn
   port              = "80"
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
-    target_group_arn = aws_lb_target_group.test_api_target_group.arn
+    target_group_arn = aws_lb_target_group.test_api2_target_group.arn
   }
 }
