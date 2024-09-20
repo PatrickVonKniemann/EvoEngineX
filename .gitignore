@@ -53,3 +53,5 @@ DesktopApp/build/
 .Trashes
 
 Configs/docker-compose.env
+
+*.0_x5

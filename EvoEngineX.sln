@@ -62,7 +62,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureInfrastructureTest", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Test", "Test", "{9EE21B73-3448-43AE-92A9-2D43FB3E4461}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiCloudInfra", "MulticloudInfra\MultiCloudInfra.csproj", "{044DB69C-802B-42EE-8551-7EE668641AAF}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiCloudInfra", "MultiCloudInfra\MultiCloudInfra.csproj", "{044DB69C-802B-42EE-8551-7EE668641AAF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

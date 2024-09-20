@@ -1,12 +1,13 @@
-name: Build and Deploy to AWS
+name: Build, Push Docker Image, and Deploy via Terraform
 
 on:
   push:
     tags:
-      - 'v*'  # This triggers the workflow on tags starting with "v", like "v1.0.0"
+      - 'v*'  # Trigger this workflow when a version tag is pushed
 
 jobs:
   build:
+    environment: staging
     runs-on: ubuntu-latest
 
     steps:
@@ -20,32 +21,97 @@ jobs:
         id: vars
         run: echo "APP_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.REGION }}
+
       - name: Log in to Amazon ECR
         run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 376129885232.dkr.ecr.us-east-1.amazonaws.com
+          aws ecr get-login-password --region ${{ secrets.REGION }} | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com
 
-      - name: Build Docker image
+      - name: Ensure ECR repository exists
         run: |
-          docker build --build-arg APP_VERSION=${{ env.APP_VERSION }} -t my-dotnet-api:${{ env.APP_VERSION }} .
-          docker tag my-dotnet-api:${{ env.APP_VERSION }} 376129885232.dkr.ecr.us-east-1.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
+          aws ecr describe-repositories --repository-names test-api || \
+          aws ecr create-repository --repository-name test-api
 
-      - name: Push Docker image to ECR
+      - name: Build Docker image and push to ECR
         run: |
-          docker push 376129885232.dkr.ecr.us-east-1.amazonaws.com/my-dotnet-api:${{ env.APP_VERSION }}
+          docker buildx create --use
+          docker buildx inspect --bootstrap
+          docker buildx build --platform linux/amd64 --build-arg APP_VERSION=${{ env.APP_VERSION }} \
+            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/test-api:${{ env.APP_VERSION }} \
+            -f InfrastructureTestCode/Dockerfile InfrastructureTestCode --push
 
-  deploy:
+  terraform:
     needs: build
+    environment: staging
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: Log in to Amazon ECR
-        run: |
-          aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 376129885232.dkr.ecr.us-east-1.amazonaws.com
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Update ECS service with the new image
+      # Set environment variables for Terraform and script
+      - name: Set Shared Variables
         run: |
-          aws ecs update-service \
-            --cluster my-dotnet-cluster \
-            --service my-dotnet-service \
-            --force-new-deployment \
-            --region us-east-1
+          echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
+          echo "AWS_ACCOUNT_ID=376129885232" >> $GITHUB_ENV
+          echo "ECS_CLUSTER_NAME=test-dotnet-api-test-cluster" >> $GITHUB_ENV
+          echo "ECR_REPOSITORY_NAME=test-api" >> $GITHUB_ENV
+          echo "IAM_ROLE_NAME=TaskExecutionDotnetApiTest" >> $GITHUB_ENV
+          echo "LOAD_BALANCER_NAME=test-dotnet-api-test-lb" >> $GITHUB_ENV
+          echo "TARGET_GROUP_NAME=test-dotnet-api-test-tg" >> $GITHUB_ENV
+
+      # Run the script to clean up old resources
+      - name: Destroy old resources
+        run: |
+          chmod +x MulticloudInfra/aws/delete_resources.sh
+          ./MulticloudInfra/aws/delete_resources.sh $ECS_CLUSTER_NAME $ECR_REPOSITORY_NAME $IAM_ROLE_NAME $LOAD_BALANCER_NAME $TARGET_GROUP_NAME $AWS_REGION $AWS_ACCOUNT_ID
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+
+      # Set up Terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v1
+        with:
+          terraform_wrapper: false
+
+      # Pass AWS credentials and shared variables to Terraform
+      - name: Initialize Terraform AWS
+        working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          terraform init -upgrade
+
+      # Plan Terraform
+      - name: Plan Terraform AWS
+        working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: |
+          terraform plan \
+            -var "ECS_CLUSTER_NAME=${{ env.ECS_CLUSTER_NAME }}" \
+            -var "ECR_REPOSITORY_NAME=${{ env.ECR_REPOSITORY_NAME }}" \
+            -var "IAM_ROLE_NAME=${{ env.IAM_ROLE_NAME }}" \
+            -var "LOAD_BALANCER_NAME=${{ env.LOAD_BALANCER_NAME }}" \
+            -var "TARGET_GROUP_NAME=${{ env.TARGET_GROUP_NAME }}" \
+            -out=tfplan
+
+      # Apply Terraform Changes
+      - name: Apply Terraform Changes
+        working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+        run: terraform apply -auto-approve tfplan
