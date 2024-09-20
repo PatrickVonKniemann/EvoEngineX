@@ -56,6 +56,22 @@ else
     echo "Target Group not found."
 fi
 
+# Detach and delete IAM Role policies
+echo "Detaching policies from IAM Role..."
+POLICIES=$(aws iam list-attached-role-policies --role-name "$IAM_ROLE_NAME" --query 'AttachedPolicies[*].PolicyArn' --output text)
+for POLICY_ARN in $POLICIES; do
+    echo "Detaching policy $POLICY_ARN from role $IAM_ROLE_NAME"
+    aws iam detach-role-policy --role-name "$IAM_ROLE_NAME" --policy-arn "$POLICY_ARN"
+done
+
+# Delete inline policies attached to IAM Role
+echo "Deleting inline policies from IAM Role..."
+INLINE_POLICIES=$(aws iam list-role-policies --role-name "$IAM_ROLE_NAME" --query 'PolicyNames' --output text)
+for INLINE_POLICY in $INLINE_POLICIES; do
+    echo "Deleting inline policy $INLINE_POLICY from role $IAM_ROLE_NAME"
+    aws iam delete-role-policy --role-name "$IAM_ROLE_NAME" --policy-name "$INLINE_POLICY"
+done
+
 # Delete IAM Role
 echo "Deleting IAM Role..."
 aws iam delete-role --role-name "$IAM_ROLE_NAME"
