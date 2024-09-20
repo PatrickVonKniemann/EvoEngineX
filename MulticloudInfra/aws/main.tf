@@ -1,10 +1,13 @@
+
+# AWS provider configuration
 provider "aws" {
-  region = "us-east-1"
+  region = var.aws_region
 }
 
 # Create an ECS cluster
 resource "aws_ecs_cluster" "test_dotnet_api_test_cluster" {
-  name = "test-dotnet-api-test-cluster"
+  name = var.ECS_CLUSTER_NAME
+
   lifecycle {
     create_before_destroy = true
   }
@@ -12,7 +15,7 @@ resource "aws_ecs_cluster" "test_dotnet_api_test_cluster" {
 
 # Create an IAM Role for ECS task execution
 resource "aws_iam_role" "TaskExecutionDotnetApiTest" {
-  name = "TaskExecutionDotnetApiTest"
+  name = var.IAM_ROLE_NAME
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -42,7 +45,7 @@ resource "aws_iam_role_policy_attachment" "TaskExecutionDotnetApiTestPolicy" {
 
 # ECS Task Definition
 resource "aws_ecs_task_definition" "test_dotnet_api_test_task" {
-  family                   = "test-dotnet-api-test"
+  family                   = var.ECS_CLUSTER_NAME
   network_mode             = "awsvpc"
   requires_compatibilities = ["FARGATE"]
   execution_role_arn       = aws_iam_role.TaskExecutionDotnetApiTest.arn
@@ -50,8 +53,8 @@ resource "aws_ecs_task_definition" "test_dotnet_api_test_task" {
   cpu                      = "256"
 
   container_definitions = jsonencode([{
-    name      = "test-dotnet-api-test"
-    image     = "${var.ecr_repository_url}:latest"
+    name      = var.ECS_CLUSTER_NAME
+    image     = "${var.ECR_REPOSITORY_NAME}:latest"
     essential = true
     portMappings = [{
       containerPort = 80
@@ -61,8 +64,8 @@ resource "aws_ecs_task_definition" "test_dotnet_api_test_task" {
     logConfiguration = {
       logDriver = "awslogs"
       options = {
-        "awslogs-group"         = "/ecs/test-dotnet-api-test"
-        "awslogs-region"        = "us-east-1"
+        "awslogs-group"         = "/ecs/${var.ECS_CLUSTER_NAME}"
+        "awslogs-region"        = var.aws_region
         "awslogs-stream-prefix" = "ecs"
       }
     }
@@ -75,7 +78,7 @@ resource "aws_ecs_task_definition" "test_dotnet_api_test_task" {
 
 # ECS Service
 resource "aws_ecs_service" "test_dotnet_api_test_service" {
-  name            = "test-dotnet-api-test-service"
+  name            = "${var.ECS_CLUSTER_NAME}-service"
   cluster         = aws_ecs_cluster.test_dotnet_api_test_cluster.id
   task_definition = aws_ecs_task_definition.test_dotnet_api_test_task.arn
   desired_count   = 1
@@ -89,7 +92,7 @@ resource "aws_ecs_service" "test_dotnet_api_test_service" {
 
   load_balancer {
     target_group_arn = aws_lb_target_group.test_dotnet_api_test_target_group.arn
-    container_name   = "test-dotnet-api-test"
+    container_name   = var.ECS_CLUSTER_NAME
     container_port   = 80
   }
 
@@ -102,7 +105,7 @@ resource "aws_ecs_service" "test_dotnet_api_test_service" {
 
 # Application Load Balancer
 resource "aws_lb" "test_dotnet_api_test_lb" {
-  name               = "test-dotnet-api-test-lb"
+  name               = var.LOAD_BALANCER_NAME
   internal           = false
   load_balancer_type = "application"
   security_groups    = ["sg-097a6a7e63727eb39"]
@@ -115,7 +118,7 @@ resource "aws_lb" "test_dotnet_api_test_lb" {
 
 # Target Group for the Load Balancer
 resource "aws_lb_target_group" "test_dotnet_api_test_target_group" {
-  name        = "test-dotnet-api-test-tg"
+  name        = var.TARGET_GROUP_NAME
   port        = 80
   protocol    = "HTTP"
   vpc_id      = "vpc-0b40a65925c8d2210"
@@ -140,4 +143,9 @@ resource "aws_lb_listener" "test_dotnet_api_test_listener" {
   lifecycle {
     create_before_destroy = true
   }
+}
+
+# Output section
+output "ecr_repository_url" {
+  value = aws_ecr_repository
 }
