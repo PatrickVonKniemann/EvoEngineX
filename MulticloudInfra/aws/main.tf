@@ -175,8 +175,3 @@ resource "aws_lb_listener" "test_dotnet_api_test_listener" {
     create_before_destroy = true
   }
 }
-
-# Output section
-output "ecr_repository_url" {
-  value = ecr_repository_url
-}
