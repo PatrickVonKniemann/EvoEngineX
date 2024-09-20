@@ -178,5 +178,5 @@ resource "aws_lb_listener" "test_dotnet_api_test_listener" {
 
 # Output section
 output "ecr_repository_url" {
-  value = aws_ecr_repository
+  value = ecr_repository_url
 }
