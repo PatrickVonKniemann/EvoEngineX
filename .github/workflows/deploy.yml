@@ -34,15 +34,15 @@ jobs:
 
       - name: Ensure ECR repository exists
         run: |
-          aws ecr describe-repositories --repository-names test-api || \
-          aws ecr create-repository --repository-name test-api
+          aws ecr describe-repositories --repository-names ${{ secrets.REPO_NAME }} || \
+          aws ecr create-repository --repository-name ${{ secrets.REPO_NAME }}
 
       - name: Build Docker image and push to ECR
         run: |
           docker buildx create --use
           docker buildx inspect --bootstrap
           docker buildx build --platform linux/amd64 --build-arg APP_VERSION=${{ env.APP_VERSION }} \
-            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/test-api:${{ env.APP_VERSION }} \
+            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.REPO_NAME }}:${{ env.APP_VERSION }} \
             -f InfrastructureTestCode/Dockerfile InfrastructureTestCode --push
 
   terraform:
@@ -60,7 +60,7 @@ jobs:
           echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
           echo "AWS_ACCOUNT_ID=376129885232" >> $GITHUB_ENV
           echo "ECS_CLUSTER_NAME=test-dotnet-api-test-cluster" >> $GITHUB_ENV
-          echo "ECR_REPOSITORY_NAME=test-api" >> $GITHUB_ENV
+          echo "ECR_REPOSITORY_NAME=${{ secrets.REPO_NAME }}" >> $GITHUB_ENV
           echo "IAM_ROLE_NAME=TaskExecutionDotnetApiTest" >> $GITHUB_ENV
           echo "LOAD_BALANCER_NAME=test-dotnet-api-test-lb" >> $GITHUB_ENV
           echo "TARGET_GROUP_NAME=test-dotnet-api-test-tg" >> $GITHUB_ENV

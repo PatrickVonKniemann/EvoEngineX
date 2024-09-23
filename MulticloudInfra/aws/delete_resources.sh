@@ -12,6 +12,9 @@ AWS_ACCOUNT_ID=$7
 LOAD_BALANCER_ARN=$(aws elbv2 describe-load-balancers --names "$LOAD_BALANCER_NAME" --query 'LoadBalancers[0].LoadBalancerArn' --output text)
 
 # Fetch the Target Group ARN
+
+echo "Deleting target group"
+echo "$TARGET_GROUP_NAME"
 TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups --names "$TARGET_GROUP_NAME" --query 'TargetGroups[0].TargetGroupArn' --output text)
 
 # Delete ECS service
