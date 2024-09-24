@@ -33,8 +33,8 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 }
 
 resource "aws_ecs_task_definition" "simpledotnetapi_task" {
-  family                   = "${var.ecr_repository_name}-task"  # Use repo name to match deployment
-  requires_compatibilities = ["FARGATE"]
+  family                   = "${var.ecr_repository_name}-task"
+  requires_compatibilities = ["FARGATE"]  # Correctly set Fargate compatibility
   network_mode             = "awsvpc"
   cpu                      = "256"
   memory                   = "512"
@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
 
   container_definitions = jsonencode([
     {
-      name      = "${var.ecr_repository_name}"  # Match the repository name
+      name      = "${var.ecr_repository_name}"
       image     = "${aws_ecr_repository.simpledotnetapi.repository_url}:latest"
       essential = true
       portMappings = [{
@@ -89,8 +89,10 @@ resource "aws_ecs_service" "simpledotnetapi_service" {
   desired_count   = 1
 
   network_configuration {
-    subnets          = ["subnet-0a9f456c125753831"]  # Use your public Subnet ID
+    subnets          = ["subnet-0a9f456c125753831"]  # Public Subnet ID
     security_groups  = [aws_security_group.ecs_service_sg.id]
-    assign_public_ip = true  # This ensures the task gets a public IP address
+    assign_public_ip = true  # Ensure this is true in public subnets
   }
+
+  launch_type = "FARGATE"  # Ensure Fargate is correctly set
 }
