@@ -49,9 +49,9 @@ jobs:
 
           # Optionally, push to the 'latest' tag if you want to maintain the latest version as well
           docker tag 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
-          376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest
+          376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:v1.1.95
           
-          docker push 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest
+          docker push 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:v1.1.95
 
 
 
