@@ -58,11 +58,20 @@ resource "aws_security_group" "ecs_service_sg" {
   description = "Allow inbound traffic for ECS"
   vpc_id      = "vpc-0b40a65925c8d2210"  # Replace with your actual VPC ID
 
+  # Allow HTTP traffic from the public
   ingress {
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    cidr_blocks = ["0.0.0.0/0"]  # Open to all IP addresses
+  }
+
+  # Allow HTTPS traffic if needed
+  ingress {
+    from_port   = 443
+    to_port     = 443
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]  # Open to all IP addresses
   }
 
   egress {
@@ -74,14 +83,14 @@ resource "aws_security_group" "ecs_service_sg" {
 }
 
 resource "aws_ecs_service" "simpledotnetapi_service" {
-  name            = "${var.ecr_repository_name}-service"  # Match service name
+  name            = "${var.ecr_repository_name}-service"
   cluster         = aws_ecs_cluster.simpledotnetapi_cluster.id
   task_definition = aws_ecs_task_definition.simpledotnetapi_task.arn
   desired_count   = 1
 
   network_configuration {
-    subnets          = ["subnet-0a9f456c125753831"]  # Replace with your actual Subnet ID
+    subnets          = ["subnet-0a9f456c125753831"]  # Use your public Subnet ID
     security_groups  = [aws_security_group.ecs_service_sg.id]
-    assign_public_ip = true
+    assign_public_ip = true  # This ensures the task gets a public IP address
   }
 }
