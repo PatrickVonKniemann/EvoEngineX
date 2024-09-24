@@ -42,38 +42,28 @@ jobs:
 
       - name: Build Docker image and push to ECR
         run: |
-          # Debugging - show Docker info
-          echo "### Docker Info ###"
-          docker info
-
-          # Create a new builder instance and debug it
+          # Create a new builder instance
           docker buildx create --use --name debug_builder
           docker buildx inspect debug_builder --bootstrap
-          
-          # Debugging - show available builders and their statuses
-          echo "### Available Docker Builders ###"
-          docker buildx ls
 
-          # Build and tag the Docker image with more detailed output
-          echo "### Building Docker Image ###"
+          # Build, tag, and load the image locally
+          echo "### Building and Loading Docker Image Locally ###"
           docker buildx build --platform linux/amd64 --build-arg APP_VERSION=${{ env.APP_VERSION }} \
-            -t 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
-            -f InfrastructureTestCode/Dockerfile InfrastructureTestCode --progress=plain --push
-          
-          # Debugging - check the result of the image build
-          echo "### Docker Images After Build ###"
-          docker images
+            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
+            --load -f InfrastructureTestCode/Dockerfile InfrastructureTestCode
 
-          # Optionally push it as 'latest'
-          echo "### Tagging and Pushing 'latest' Image ###"
-          docker tag 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
-          376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest
-          
-          docker push 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest
+          # Push the versioned tag to ECR
+          echo "### Pushing Versioned Tag ###"
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }}
 
-          # Debugging - show logs of pushed images
-          echo "### Images After Push ###"
-          docker images
+          # Tag the image as 'latest' locally
+          echo "### Tagging and Pushing 'latest' Tag ###"
+          docker tag ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
+          ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/simpledotnetapi:latest
+          
+          # Push the 'latest' tag to ECR
+          docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/simpledotnetapi:latest
+
 
 
   terraform:
@@ -88,8 +78,8 @@ jobs:
       # Set environment variables for Terraform and script
       - name: Set Shared Variables
         run: |
-          echo "AWS_REGION=us-east-1" >> $GITHUB_ENV
-          echo "AWS_ACCOUNT_ID=376129885232" >> $GITHUB_ENV
+          echo "AWS_REGION=${{ secrets.REGION }}" >> $GITHUB_ENV
+          echo "AWS_ACCOUNT_ID=${{ secrets.AWS_ACCOUNT_ID }}" >> $GITHUB_ENV
           echo "ECS_CLUSTER_NAME=${{ secrets.REPO_NAME }}-cluster" >> $GITHUB_ENV
           echo "ECR_REPOSITORY_NAME=${{ secrets.REPO_NAME }}" >> $GITHUB_ENV
           echo "IAM_ROLE_NAME=ecsTaskExecutionRole" >> $GITHUB_ENV
