@@ -64,7 +64,7 @@ jobs:
           echo "IAM_ROLE_NAME=ecsTaskExecutionRole" >> $GITHUB_ENV
           echo "LOAD_BALANCER_NAME=${{ secrets.REPO_NAME }}-lb" >> $GITHUB_ENV
           echo "TARGET_GROUP_NAME=${{ secrets.REPO_NAME }}-tg" >> $GITHUB_ENV
-          echo "SERVICE_GROUP_NAME="ecs-service-sg" >> $GITHUB_ENV
+          echo "SERVICE_GROUP_NAME=ecs-service-sg" >> $GITHUB_ENV
 
       # Run the script to clean up old resources
       - name: Destroy old resources
