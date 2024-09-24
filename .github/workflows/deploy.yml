@@ -64,12 +64,13 @@ jobs:
           echo "IAM_ROLE_NAME=ecsTaskExecutionRole" >> $GITHUB_ENV
           echo "LOAD_BALANCER_NAME=simpledotnetapi-lb" >> $GITHUB_ENV
           echo "TARGET_GROUP_NAME=simpledotnetapi-tg" >> $GITHUB_ENV
+          echo "SERVICE_GROUP_NAME="ecs-service-sg" >> $GITHUB_ENV
 
       # Run the script to clean up old resources
       - name: Destroy old resources
         run: |
           chmod +x MulticloudInfra/aws/delete_resources.sh
-          ./MulticloudInfra/aws/delete_resources.sh $ECS_CLUSTER_NAME $ECR_REPOSITORY_NAME $IAM_ROLE_NAME $LOAD_BALANCER_NAME $TARGET_GROUP_NAME $AWS_REGION $AWS_ACCOUNT_ID
+          ./MulticloudInfra/aws/delete_resources.sh $ECS_CLUSTER_NAME $ECR_REPOSITORY_NAME $IAM_ROLE_NAME $LOAD_BALANCER_NAME $TARGET_GROUP_NAME $AWS_REGION $AWS_ACCOUNT_ID $SERVICE_GROUP_NAME
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
