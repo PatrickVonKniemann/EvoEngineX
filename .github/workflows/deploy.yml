@@ -81,6 +81,12 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
 
+
+      - name: Debug APP_VERSION for terraform 1
+        run: echo "App Version is ${{ env.APP_VERSION }}"
+      - name: Debug APP_VERSION in Terraform Job 2
+        run: echo "Terraform APP_VERSION is ${{ needs.build.outputs.app_version }}"
+
       # Set environment variables for Terraform and script
       - name: Set Shared Variables
         run: |
@@ -92,7 +98,7 @@ jobs:
           echo "LOAD_BALANCER_NAME=${{ secrets.REPO_NAME }}-lb" >> $GITHUB_ENV
           echo "TARGET_GROUP_NAME=${{ secrets.REPO_NAME }}-tg" >> $GITHUB_ENV
           echo "SERVICE_GROUP_NAME=ecs-service-sg" >> $GITHUB_ENV
-          echo "APP_VERSION=${{ needs.build.outputs.app_version }}" >> $GITHUB_ENV
+          echo "APP_VERSION=${{ env.APP_VERSION }}" >> $GITHUB_ENV
 
       # Set up Terraform
       - name: Set up Terraform
@@ -118,7 +124,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          terraform plan -out=tfplan -var="APP_VERSION=${{ needs.build.outputs.app_version }}"
+          terraform plan -out=tfplan -var="APP_VERSION=${{ env.APP_VERSION }}"
 
       # Apply Terraform Changes
       - name: Apply Terraform Changes
