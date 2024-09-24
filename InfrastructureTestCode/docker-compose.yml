@@ -7,5 +7,6 @@ services:
       dockerfile: ./Dockerfile
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - APP_VERSION=v1.0.3
     ports:
       - "5010:8080"  
