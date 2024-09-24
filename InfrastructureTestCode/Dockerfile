@@ -21,5 +21,11 @@ RUN dotnet publish "InfrastructureTestCode.csproj" -c Release -o /app/publish
 # Build the runtime container
 FROM base AS final
 WORKDIR /app
+
+# Pass APP_VERSION from build args to environment
+ARG APP_VERSION
+ENV APP_VERSION=$APP_VERSION
+
 COPY --from=build /app/publish .
+
 ENTRYPOINT ["dotnet", "InfrastructureTestCode.dll"]

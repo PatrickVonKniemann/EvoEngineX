@@ -17,3 +17,8 @@ variable "service_group_name" {
   description = "The name of the security group for the ECS service"
   default     = "ecs-service-sg"
 }
+
+variable "app_version" {
+  description = "1.0.1"
+  default     = "1.0.1"
+}

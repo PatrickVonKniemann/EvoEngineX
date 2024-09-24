@@ -49,8 +49,16 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
         containerPort = 8080
         hostPort      = 8080
       }]
+      environment = [
+        {
+          name  = "APP_VERSION"
+          value = "${var.app_version}"  # Ensure this matches your GitHub tag version
+        }
+      ]
     }
   ])
+  
+  
 }
 
 resource "aws_security_group" "ecs_service_sg" {
