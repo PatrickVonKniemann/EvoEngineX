@@ -61,34 +61,34 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
   
 }
 
-resource "aws_security_group" "ecs_service_sg" {
-  name        = "${var.service_group_name}"  # Matches the service group name from deploy.yml
-  description = "Allow inbound traffic for ECS"
-  vpc_id      = "vpc-0b40a65925c8d2210"  # Replace with your actual VPC ID
-
-  # Allow HTTP traffic from the public
-  ingress {
-    from_port   = 8080
-    to_port     = 8080
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Open to all IP addresses
-  }
-
-  # Allow HTTPS traffic if needed
-  ingress {
-    from_port   = 443
-    to_port     = 443
-    protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]  # Open to all IP addresses
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"  # Allow all outbound traffic
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
+# resource "aws_security_group" "ecs_service_sg" {
+#   name        = "${var.service_group_name}"  # Matches the service group name from deploy.yml
+#   description = "Allow inbound traffic for ECS"
+#   vpc_id      = "vpc-0b40a65925c8d2210"  # Replace with your actual VPC ID
+# 
+#   # Allow HTTP traffic from the public
+#   ingress {
+#     from_port   = 8080
+#     to_port     = 8080
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]  # Open to all IP addresses
+#   }
+# 
+#   # Allow HTTPS traffic if needed
+#   ingress {
+#     from_port   = 443
+#     to_port     = 443
+#     protocol    = "tcp"
+#     cidr_blocks = ["0.0.0.0/0"]  # Open to all IP addresses
+#   }
+# 
+#   egress {
+#     from_port   = 0
+#     to_port     = 0
+#     protocol    = "-1"  # Allow all outbound traffic
+#     cidr_blocks = ["0.0.0.0/0"]
+#   }
+# }
 
 resource "aws_ecs_service" "simpledotnetapi_service" {
   name            = "${var.ecr_repository_name}-service"
@@ -98,7 +98,7 @@ resource "aws_ecs_service" "simpledotnetapi_service" {
 
   network_configuration {
     subnets          = ["subnet-0a9f456c125753831"]  # Public Subnet ID
-    security_groups  = [aws_security_group.ecs_service_sg.id]
+    security_groups  = ["sg-0fd2dd246b9966fbe"]
     assign_public_ip = true  # Ensure this is true in public subnets
   }
 
