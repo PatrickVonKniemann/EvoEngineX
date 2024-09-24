@@ -41,9 +41,18 @@ jobs:
         run: |
           docker buildx create --use
           docker buildx inspect --bootstrap
+          
+          # Build the Docker image with the specified version and push to a manual address and tag
           docker buildx build --platform linux/amd64 --build-arg APP_VERSION=${{ env.APP_VERSION }} \
-            -t ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/${{ secrets.REPO_NAME }}:${{ env.APP_VERSION }} \
+            -t 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
             -f InfrastructureTestCode/Dockerfile InfrastructureTestCode --push
+
+          # Optionally, push to the 'latest' tag if you want to maintain the latest version as well
+          docker tag 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:${{ env.APP_VERSION }} \
+          376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest
+          
+          docker push 376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest
+
 
 
   terraform:
