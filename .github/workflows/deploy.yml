@@ -9,7 +9,7 @@ jobs:
   build:
     environment: staging
     runs-on: ubuntu-latest
-
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -21,9 +21,14 @@ jobs:
         id: vars
         run: echo "APP_VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
 
+      - name: Set output APP_VERSION
+        id: version
+        run: echo "::set-output name=app_version::${{ env.APP_VERSION }}"
+
       - name: Debug APP_VERSION
         run: echo "App Version is ${{ env.APP_VERSION }}"
-    
+      
+      
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v2
         with:
@@ -67,8 +72,6 @@ jobs:
           # Push the 'latest' tag to ECR
           docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.REGION }}.amazonaws.com/simpledotnetapi:latest
 
-
-
   terraform:
     needs: build
     environment: staging
@@ -89,16 +92,7 @@ jobs:
           echo "LOAD_BALANCER_NAME=${{ secrets.REPO_NAME }}-lb" >> $GITHUB_ENV
           echo "TARGET_GROUP_NAME=${{ secrets.REPO_NAME }}-tg" >> $GITHUB_ENV
           echo "SERVICE_GROUP_NAME=ecs-service-sg" >> $GITHUB_ENV
-
-      # Run the script to clean up old resources
-      - name: Destroy old resources
-        run: |
-          chmod +x MulticloudInfra/aws/delete_resources.sh
-          ./MulticloudInfra/aws/delete_resources.sh $ECS_CLUSTER_NAME $ECR_REPOSITORY_NAME $IAM_ROLE_NAME $LOAD_BALANCER_NAME $TARGET_GROUP_NAME $AWS_REGION $AWS_ACCOUNT_ID $SERVICE_GROUP_NAME
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
+          echo "APP_VERSION=${{ needs.build.outputs.app_version }}" >> $GITHUB_ENV
 
       # Set up Terraform
       - name: Set up Terraform
@@ -116,7 +110,7 @@ jobs:
         run: |
           terraform init -upgrade
 
-      # Plan Terraform
+      # Plan Terraform and pass APP_VERSION
       - name: Plan Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
         env:
@@ -124,7 +118,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          terraform plan -out=tfplan
+          terraform plan -out=tfplan -var="APP_VERSION=${{ needs.build.outputs.app_version }}"
 
       # Apply Terraform Changes
       - name: Apply Terraform Changes
@@ -133,4 +127,4 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
-        run: terraform apply -var="APP_VERSION=${{ env.APP_VERSION }}" -auto-approve tfplan
+        run: terraform apply -auto-approve tfplan
