@@ -34,9 +34,9 @@ aws ecs wait services-inactive --cluster "$ECS_CLUSTER_NAME" --services "$SERVIC
 echo "Deleting ECS cluster..."
 aws ecs delete-cluster --cluster "$ECS_CLUSTER_NAME" || true
 
-# Delete ECR repository
-echo "Deleting ECR repository..."
-aws ecr delete-repository --repository-name "$ECR_REPOSITORY_NAME" --force || true
+## Delete ECR repository
+#echo "Deleting ECR repository..."
+#aws ecr delete-repository --repository-name "$ECR_REPOSITORY_NAME" --force || true
 
 # Delete Target Group (delete before the load balancer)
 if [ "$TARGET_GROUP_ARN" != "None" ]; then
@@ -47,18 +47,18 @@ else
 fi
 
 # Delete Load Balancer
-if [ "$LOAD_BALANCER_ARN" != "None" ]; then
-    echo "Deleting Load Balancer..."
-    aws elbv2 delete-load-balancer --load-balancer-arn "$LOAD_BALANCER_ARN" || true
-else
-    echo "Load Balancer not found."
-fi
+#if [ "$LOAD_BALANCER_ARN" != "None" ]; then
+#    echo "Deleting Load Balancer..."
+#    aws elbv2 delete-load-balancer --load-balancer-arn "$LOAD_BALANCER_ARN" || true
+#else
+#    echo "Load Balancer not found."
+#fi
 
 # Wait for Load Balancer deletion
-echo "Waiting for Load Balancer to be deleted..."
-if [ "$LOAD_BALANCER_ARN" != "None" ]; then
-    aws elbv2 wait load-balancers-deleted --load-balancer-arns "$LOAD_BALANCER_ARN" || true
-fi
+#echo "Waiting for Load Balancer to be deleted..."
+#if [ "$LOAD_BALANCER_ARN" != "None" ]; then
+#    aws elbv2 wait load-balancers-deleted --load-balancer-arns "$LOAD_BALANCER_ARN" || true
+#fi
 
 # Delete Security Group
 echo "Deleting Security Group..."

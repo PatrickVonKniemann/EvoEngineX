@@ -2,9 +2,9 @@ provider "aws" {
   region = "us-east-1"
 }
 
-resource "aws_ecr_repository" "simpledotnetapi" {
-  name = "${var.ecr_repository_name}"  # Matches the repository name from deploy.yml
-}
+# resource "aws_ecr_repository" "simpledotnetapi" {
+#   name = "${var.ecr_repository_name}"  # Matches the repository name from deploy.yml
+# }
 
 resource "aws_ecs_cluster" "simpledotnetapi_cluster" {
   name = "${var.ecs_cluster_name}"  # Matches ECS cluster name from deploy.yml
