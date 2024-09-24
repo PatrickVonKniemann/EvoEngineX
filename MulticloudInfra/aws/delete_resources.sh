@@ -7,14 +7,13 @@ LOAD_BALANCER_NAME=$4
 TARGET_GROUP_NAME=$5
 AWS_REGION=$6
 AWS_ACCOUNT_ID=$7
+SECURITY_GROUP_NAME=$8  # Add Security Group Name
 
 # Fetch the Load Balancer ARN
 LOAD_BALANCER_ARN=$(aws elbv2 describe-load-balancers --names "$LOAD_BALANCER_NAME" --query 'LoadBalancers[0].LoadBalancerArn' --output text)
 
 # Fetch the Target Group ARN
-
 echo "Deleting target group"
-echo "$TARGET_GROUP_NAME"
 TARGET_GROUP_ARN=$(aws elbv2 describe-target-groups --names "$TARGET_GROUP_NAME" --query 'TargetGroups[0].TargetGroupArn' --output text)
 
 # Delete ECS service
@@ -59,6 +58,15 @@ fi
 echo "Waiting for Load Balancer to be deleted..."
 if [ "$LOAD_BALANCER_ARN" != "None" ]; then
     aws elbv2 wait load-balancers-deleted --load-balancer-arns "$LOAD_BALANCER_ARN" || true
+fi
+
+# Delete Security Group
+echo "Deleting Security Group..."
+SECURITY_GROUP_ID=$(aws ec2 describe-security-groups --filters Name=group-name,Values="$SECURITY_GROUP_NAME" --query 'SecurityGroups[0].GroupId' --output text)
+if [ "$SECURITY_GROUP_ID" != "None" ]; then
+    aws ec2 delete-security-group --group-id "$SECURITY_GROUP_ID" || true
+else
+    echo "Security Group not found."
 fi
 
 # Detach and delete IAM Role policies
