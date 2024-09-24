@@ -43,7 +43,7 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
   container_definitions = jsonencode([
     {
       name      = "simpledotnetapi"
-      image     = "376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:v1.1.95"  # Explicitly specify the manual address and tag
+      image     = "376129885232.dkr.ecr.us-east-1.amazonaws.com/simpledotnetapi:latest"  # Explicitly specify the manual address and tag
       essential = true
       portMappings = [{
         containerPort = 8080
