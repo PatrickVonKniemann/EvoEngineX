@@ -122,7 +122,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          terraform plan -out=tfplan -var="APP_VERSION=${{ env.APP_VERSION }}"
+          terraform plan -out=tfplan
 
       # Apply Terraform Changes
       - name: Apply Terraform Changes
