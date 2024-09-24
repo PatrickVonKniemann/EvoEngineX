@@ -3,15 +3,15 @@ provider "aws" {
 }
 
 resource "aws_ecr_repository" "simpledotnetapi" {
-  name = "simpledotnetapi"
+  name = "${var.ecr_repository_name}"  # Matches the repository name from deploy.yml
 }
 
 resource "aws_ecs_cluster" "simpledotnetapi_cluster" {
-  name = "simpledotnetapi-cluster"
+  name = "${var.ecs_cluster_name}"  # Matches ECS cluster name from deploy.yml
 }
 
 resource "aws_iam_role" "ecs_task_execution_role" {
-  name = "ecsTaskExecutionRole"
+  name = "${var.iam_role_name}"  # Matches IAM role name from deploy.yml
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -33,7 +33,7 @@ resource "aws_iam_role_policy_attachment" "ecs_task_execution_role_policy" {
 }
 
 resource "aws_ecs_task_definition" "simpledotnetapi_task" {
-  family                   = "simpledotnetapi-task"
+  family                   = "${var.ecr_repository_name}-task"  # Use repo name to match deployment
   requires_compatibilities = ["FARGATE"]
   network_mode             = "awsvpc"
   cpu                      = "256"
@@ -42,7 +42,7 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
 
   container_definitions = jsonencode([
     {
-      name      = "simpledotnetapi"
+      name      = "${var.ecr_repository_name}"  # Match the repository name
       image     = "${aws_ecr_repository.simpledotnetapi.repository_url}:latest"
       essential = true
       portMappings = [{
@@ -54,7 +54,7 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
 }
 
 resource "aws_security_group" "ecs_service_sg" {
-  name        = "ecs-service-sg"
+  name        = "${var.service_group_name}"  # Matches the service group name from deploy.yml
   description = "Allow inbound traffic for ECS"
   vpc_id      = "vpc-0b40a65925c8d2210"  # Replace with your actual VPC ID
 
@@ -74,7 +74,7 @@ resource "aws_security_group" "ecs_service_sg" {
 }
 
 resource "aws_ecs_service" "simpledotnetapi_service" {
-  name            = "simpledotnetapi-service"
+  name            = "${var.ecr_repository_name}-service"  # Match service name
   cluster         = aws_ecs_cluster.simpledotnetapi_cluster.id
   task_definition = aws_ecs_task_definition.simpledotnetapi_task.arn
   desired_count   = 1
