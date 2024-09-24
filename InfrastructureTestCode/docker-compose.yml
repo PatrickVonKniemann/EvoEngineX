@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  simpledotnetapi:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    ports:
+      - "5010:8080"  
