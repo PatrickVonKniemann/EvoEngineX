@@ -52,7 +52,7 @@ resource "aws_ecs_task_definition" "simpledotnetapi_task" {
       environment = [
         {
           name  = "APP_VERSION"
-          value = "${var.APP_VERSION}"  # Ensure this matches your GitHub tag version
+          value = "${var.app_version}"  # Ensure this matches your GitHub tag version
         }
       ]
     }

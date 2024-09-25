@@ -18,7 +18,7 @@ variable "service_group_name" {
   default     = "ecs-service-sg"
 }
 
-variable "APP_VERSION" {
-  description = "1.0.1"
+variable "app_version" {
+  description = "App version"
   default     = "1.0.1"
 }

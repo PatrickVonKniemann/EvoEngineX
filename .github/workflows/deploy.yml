@@ -118,11 +118,12 @@ jobs:
       - name: Plan Terraform AWS
         working-directory: MulticloudInfra/aws  # Adjust path to your Terraform files
         env:
+          APP_VERSION: ${{ env.APP_VERSION }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: ${{ secrets.AWS_REGION }}
         run: |
-          terraform plan -out=tfplan
+          terraform plan -out=tfplan -var "app_version=${APP_VERSION}"
 
       # Apply Terraform Changes
       - name: Apply Terraform Changes
